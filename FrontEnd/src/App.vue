@@ -1,12 +1,12 @@
 <script setup>
-import fourth from './views/fourth.vue'
+import first from './views/first.vue'
 </script>
 
 <template>
   <div class="layout">
     <div class="content">
       <!-- 컨텐츠 (여기 안에 각자 만든 페이지 VIEW 파일이 들어가는거임)-->
-      <fourth />
+      <first />
     </div>
   </div>
 </template>
@@ -182,7 +182,7 @@ button {
   /*padding: 48px 16px 60px;*/
   height: 100vh;
   position: relative;
-  overflow: hidden;
+  /*overflow: hidden;*/
 }
 
 </style>
