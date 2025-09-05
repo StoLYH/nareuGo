@@ -7,8 +7,6 @@ import ItemRegistView from "./views/ItemRegistView.vue";
   <div class="layout">
     <div class="content">
       <!-- 컨텐츠 (여기 안에 각자 만든 페이지 VIEW 파일이 들어가는거임)-->
-      <!-- <ItemDetailView /> -->
-      <ItemRegistView />
     </div>
   </div>
 </template>
