@@ -1,9 +1,12 @@
-<script setup></script>
+<script setup>
+
+</script>
 
 <template>
   <div class="layout">
     <div class="content">
-      <!-- 컨텐츠 (여기 안에 각자 만든 페이지 VIEW 파일이 들어가는거임)-->
+      <!-- 택배 도착현황 페이지 -->
+
     </div>
   </div>
 </template>
@@ -168,13 +171,13 @@ button {
   min-height: 100vh;
   display: flex;
   justify-content: center;
-  align-items: center;
-  background-color: white;
+  align-items: flex-start;
+  background-color: #f8f9fa;
   box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
 }
 
 .content {
   width: 100%;
-  padding: 48px 16px 60px;
+  /*padding: 48px 16px 60px;*/
 }
 </style>
