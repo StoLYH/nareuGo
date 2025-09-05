@@ -1,5 +1,7 @@
 <script setup>
 import fourth from './views/fourth.vue'
+import ItemDetailView from "./views/ItemDetailView.vue";
+import ItemRegistView from "./views/ItemRegistView.vue";
 </script>
 
 <template>
@@ -179,10 +181,7 @@ button {
 
 .content {
   width: 100%;
-  /*padding: 48px 16px 60px;*/
-  height: 100vh;
-  position: relative;
-  overflow: hidden;
+  height: 100vh; /* [추가] content가 화면 전체 높이를 차지하도록 설정 */
 }
 
 </style>
