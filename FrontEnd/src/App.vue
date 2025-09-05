@@ -1,14 +1,12 @@
 <script setup>
-import fourth from './views/fourth.vue'
-import ItemDetailView from "./views/ItemDetailView.vue";
-import ItemRegistView from "./views/ItemRegistView.vue";
+
 </script>
 
 <template>
   <div class="layout">
     <div class="content">
-      <!-- 컨텐츠 (여기 안에 각자 만든 페이지 VIEW 파일이 들어가는거임)-->
-      <fourth />
+      <!-- 상품 목록 페이지 표시 -->
+
     </div>
   </div>
 </template>
