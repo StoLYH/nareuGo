@@ -13,4 +13,4 @@ public class NareuGoBackendApplication {
 }
 
 
-// 빌드 테스트1
+// 빌드 테스트2
