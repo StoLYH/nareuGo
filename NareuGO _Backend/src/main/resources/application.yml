@@ -1,1 +1,79 @@
-spring.application.name=NareuGO _Backend
+spring:
+  application:
+    name: NareuGO_Backend   # 프로젝트 이름 통일
+
+  profiles:
+    active: local
+    group:
+      local: local,common
+      blue: blue,common
+      green: green,common
+
+# 공통 설정
+---
+spring:
+  config:
+    activate:
+      on-profile: common
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://${DB_HOST}:${DB_PORT}/${DB_NAME}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
+        format_sql: true
+
+mybatis:
+  mapper-locations: classpath*:mappers/*.xml
+  type-aliases-package: com.ssafy.mvc.model.dto
+  configuration:
+    map-underscore-to-camel-case: true
+
+# Local 환경
+---
+spring:
+  config:
+    activate:
+      on-profile: local
+
+server:
+  port: ${SERVER_PORT_LOCAL}
+  serverAddress: ${SERVER_ADDRESS_LOCAL}
+  env: local
+
+serverName: local_server
+
+# Blue 환경
+---
+spring:
+  config:
+    activate:
+      on-profile: blue
+
+server:
+  port: ${SERVER_PORT_BLUE}
+  serverAddress: ${SERVER_ADDRESS_BLUE}
+  env: blue
+
+serverName: blue_server
+
+# Green 환경
+---
+spring:
+  config:
+    activate:
+      on-profile: green
+
+server:
+  port: ${SERVER_PORT_GREEN}
+  serverAddress: ${SERVER_ADDRESS_GREEN}
+  env: green
+
+serverName: green_server
