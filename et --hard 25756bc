@@ -1,0 +1,46 @@
+[33m18f163e[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mFE/develop[m[33m, [m[1;31morigin/FE/develop[m[33m)[m HEAD@{0}: pull origin FE/develop: Fast-forward
+[33m25756bc[m HEAD@{1}: checkout: moving from BE/develop to FE/develop
+[33md7f125b[m[33m ([m[1;31morigin/BE/develop[m[33m, [m[1;32mmaster[m[33m, [m[1;32mBE/develop[m[33m)[m HEAD@{2}: checkout: moving from master to BE/develop
+[33md7f125b[m[33m ([m[1;31morigin/BE/develop[m[33m, [m[1;32mmaster[m[33m, [m[1;32mBE/develop[m[33m)[m HEAD@{3}: commit: fix :master
+[33m2f852fc[m HEAD@{4}: checkout: moving from BE/develop to master
+[33mdebc8de[m HEAD@{5}: checkout: moving from master to BE/develop
+[33m2f852fc[m HEAD@{6}: checkout: moving from BE/develop to master
+[33mdebc8de[m HEAD@{7}: checkout: moving from master to BE/develop
+[33m2f852fc[m HEAD@{8}: checkout: moving from BE/develop to master
+[33mdebc8de[m HEAD@{9}: reset: moving to HEAD
+[33mdebc8de[m HEAD@{10}: reset: moving to origin/BE/develop
+[33mdebc8de[m HEAD@{11}: reset: moving to debc8de54cf2d0b3da842383f72e4bd01fcdf288
+[33me8a725e[m HEAD@{12}: checkout: moving from FE/develop to BE/develop
+[33m25756bc[m HEAD@{13}: checkout: moving from master to FE/develop
+[33m2f852fc[m HEAD@{14}: checkout: moving from BE/develop to master
+[33me8a725e[m HEAD@{15}: commit: fix: remove FrontEnd directory
+[33mdebc8de[m HEAD@{16}: reset: moving to HEAD
+[33mdebc8de[m HEAD@{17}: commit: fix: structure
+[33mab29a8a[m HEAD@{18}: checkout: moving from master to BE/develop
+[33m2f852fc[m HEAD@{19}: checkout: moving from FE/develop to master
+[33m25756bc[m HEAD@{20}: checkout: moving from master to FE/develop
+[33m2f852fc[m HEAD@{21}: checkout: moving from BE/develop to master
+[33mab29a8a[m HEAD@{22}: reset: moving to HEAD
+[33mab29a8a[m HEAD@{23}: reset: moving to HEAD
+[33mab29a8a[m HEAD@{24}: reset: moving to HEAD
+[33mab29a8a[m HEAD@{25}: checkout: moving from master to BE/develop
+[33m2f852fc[m HEAD@{26}: checkout: moving from BE/develop to master
+[33mab29a8a[m HEAD@{27}: commit: feat: Backend_upload
+[33m25a2a7c[m HEAD@{28}: checkout: moving from FE/develop to BE/develop
+[33m25a2a7c[m HEAD@{29}: pull origin FE/develop: Fast-forward
+[33m383e5ff[m HEAD@{30}: checkout: moving from FE/yonghoon to FE/develop
+[33ma2105d9[m[33m ([m[1;31morigin/FE/yonghoon[m[33m, [m[1;32mFE/yonghoon[m[33m)[m HEAD@{31}: commit: fix: fileName_correct
+[33m383e5ff[m HEAD@{32}: checkout: moving from FE/develop to FE/yonghoon
+[33m383e5ff[m HEAD@{33}: pull origin FE/develop: Fast-forward
+[33m2fb0e70[m HEAD@{34}: checkout: moving from master to FE/develop
+[33m2f852fc[m HEAD@{35}: commit: update
+[33m6b23642[m HEAD@{36}: checkout: moving from FE/yonghoon to master
+[33m6b23642[m HEAD@{37}: checkout: moving from master to FE/yonghoon
+[33m6b23642[m HEAD@{38}: commit: feat: design
+[33m2fb0e70[m HEAD@{39}: checkout: moving from FE/develop to master
+[33m2fb0e70[m HEAD@{40}: checkout: moving from master to FE/develop
+[33m2fb0e70[m HEAD@{41}: pull origin master: Fast-forward
+[33m14cf475[m HEAD@{42}: commit: feat: Restructure
+[33m1ed942a[m HEAD@{43}: commit: feat: Restructure
+[33me63ed99[m HEAD@{44}: commit: feat:front Upload
+[33m35cf5b0[m HEAD@{45}: clone: from https://lab.ssafy.com/s13-mobility-smarthome-sub1/S13P21A501.git
