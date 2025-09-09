@@ -1,9 +1,17 @@
-<script setup></script>
+<script setup>
+
+import fourth from "./views/fourth.vue";
+import ItemDetailView from "./views/ItemDetailView.vue";
+import ItemRegistView from "./views/ItemRegistView.vue";
+import NotificationListView from "./views/NotificationListView.vue";
+
+
+</script>
 
 <template>
   <div class="layout">
     <div class="content">
-      <!-- 컨텐츠 (여기 안에 각자 만든 페이지 VIEW 파일이 들어가는거임)-->
+
     </div>
   </div>
 </template>
@@ -168,13 +176,14 @@ button {
   min-height: 100vh;
   display: flex;
   justify-content: center;
-  align-items: center;
-  background-color: white;
+  align-items: flex-start;
+  background-color: #f8f9fa;
   box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
 }
 
 .content {
   width: 100%;
-  padding: 48px 16px 60px;
+  height: 100vh; /* [추가] content가 화면 전체 높이를 차지하도록 설정 */
+
 }
 </style>
