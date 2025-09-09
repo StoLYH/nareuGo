@@ -1,12 +1,9 @@
-<script setup>
-import first from './views/first.vue'
-</script>
+<script setup></script>
 
 <template>
   <div class="layout">
     <div class="content">
       <!-- 컨텐츠 (여기 안에 각자 만든 페이지 VIEW 파일이 들어가는거임)-->
-      <first />
     </div>
   </div>
 </template>
@@ -176,13 +173,8 @@ button {
   box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
 }
 
-
 .content {
   width: 100%;
-  /*padding: 48px 16px 60px;*/
-  height: 100vh;
-  position: relative;
-  /*overflow: hidden;*/
+  padding: 48px 16px 60px;
 }
-
 </style>
