@@ -1,3 +1,30 @@
+stages:
+  - build
+  - deploy
+
+variables:
+  JAR_NAME: live_server.jar
+  DOCKER_IMAGE: $DOCKERHUB_USERNAME/live_server
+
+# ========================
+# Build 단계 (CI)
+# ========================
+build:
+  stage: build
+  image: gradle:7-jdk11
+  script:
+    - cd "NareuGO _Backend"
+    - chmod +x ./gradlew
+    - ./gradlew clean build -x test
+    - docker login -u "$DOCKERHUB_USERNAME" -p "$DOCKERHUB_TOKEN"
+    - docker build --platform linux/amd64 -t $DOCKER_IMAGE:latest -f Dockerfile .
+    - docker push $DOCKER_IMAGE:latest
+  only:
+    - master
+
+# ========================
+# Deploy 단계 (CD)
+# ========================
 deploy:
   stage: deploy
   before_script:
