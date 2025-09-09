@@ -18,7 +18,7 @@ build:
     - docker build --platform linux/amd64 -t $DOCKER_IMAGE:latest -f Dockerfile .
     - docker push $DOCKER_IMAGE:latest
   only:
-    - main
+    - master
 
 # Deploy 단계 (CD)
 deploy:
@@ -67,4 +67,4 @@ deploy:
         sudo docker stop ${CURRENT_UPSTREAM} && sudo docker rm ${CURRENT_UPSTREAM}
       "
   only:
-    - main
+    - master
