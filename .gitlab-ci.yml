@@ -29,14 +29,15 @@ deploy:
   stage: deploy
   before_script:
     - sudo apt-get update -y && sudo apt-get install -y openssh-client curl
-    # SSH 키 세팅
     - mkdir -p ~/.ssh
     - echo "$EC2_SSH_KEY" | tr -d '\r' > ~/.ssh/id_rsa
     - chmod 600 ~/.ssh/id_rsa
     - ssh-keyscan $LIVE_SERVER_IP >> ~/.ssh/known_hosts
   script:
     - |
+      echo "====== [1] 헬스체크 요청 시작 ======"
       STATUS=$(curl -o /dev/null -w "%{http_code}" "http://$LIVE_SERVER_IP/env" || true)
+      echo "STATUS: $STATUS"
       if [ "$STATUS" = "200" ]; then
         CURRENT_UPSTREAM=$(curl -s "http://$LIVE_SERVER_IP/env")
       else
@@ -44,6 +45,7 @@ deploy:
       fi
       echo "현재 upstream: $CURRENT_UPSTREAM"
 
+      echo "====== [2] 업스트림 판별 ======"
       if [ "$CURRENT_UPSTREAM" = "blue" ]; then
         CURRENT_PORT=8080
         STOPPED_PORT=8081
@@ -53,22 +55,34 @@ deploy:
         STOPPED_PORT=8080
         TARGET_UPSTREAM=blue
       else
-        echo "error"; exit 1
+        echo "error: unknown upstream"
+        exit 1
       fi
+      echo "CURRENT_PORT=$CURRENT_PORT"
+      echo "STOPPED_PORT=$STOPPED_PORT"
+      echo "TARGET_UPSTREAM=$TARGET_UPSTREAM"
 
+      echo "====== [3] 새로운 컨테이너 띄우기 ======"
       ssh -o StrictHostKeyChecking=no ubuntu@$LIVE_SERVER_IP "
+        set -x
         sudo docker pull $DOCKER_IMAGE:latest &&
         sudo docker-compose -f docker-compose-${TARGET_UPSTREAM}.yml up -d
       "
 
+      echo "====== [4] 새 컨테이너 헬스체크 ======"
       curl --retry 15 --retry-delay 5 http://$LIVE_SERVER_IP:$STOPPED_PORT/env || exit 1
 
+      echo "====== [5] Nginx 라우팅 갱신 ======"
       ssh -o StrictHostKeyChecking=no ubuntu@$LIVE_SERVER_IP "
+        set -x
         sudo docker exec -i nginxserver bash -c 'echo \"set \\\$service_url ${TARGET_UPSTREAM};\" > /etc/nginx/conf.d/service-env.inc && nginx -s reload'
       "
 
+      echo "====== [6] 기존 컨테이너 중지 및 삭제 ======"
       ssh -o StrictHostKeyChecking=no ubuntu@$LIVE_SERVER_IP "
-        sudo docker stop ${CURRENT_UPSTREAM} || true && sudo docker rm ${CURRENT_UPSTREAM} || true
+        set -x
+        sudo docker stop ${CURRENT_UPSTREAM} || true &&
+        sudo docker rm ${CURRENT_UPSTREAM} || true
       "
   only:
     - master
