@@ -1,108 +1,14 @@
+# ====================================================================
+# 메인 CI/CD 설정 파일
+# 역할: ci 폴더에 있는 백엔드/프론트엔드 파이프라인 파일을 불러옵니다.
+# ====================================================================
+
+# 1. 전체 파이프라인에서 사용할 단계(Stages)를 정의합니다.
 stages:
   - build
   - deploy
 
-variables:
-  JAR_NAME: live_server.jar
-  DOCKER_IMAGE: $DOCKERHUB_USERNAME/a501 # 도커허브에 저장되는 이름
-
-# ========================
-# Build 단계 (CI)
-# ========================
-build:
-  stage: build
-  image: gradle:7-jdk17
-  tags:
-    - ec2-runner # ✅ 러너 태그 추가
-  script:
-    - cd "NareuGO_Backend"
-    - chmod +x ./gradlew
-    - ./gradlew clean build -x test
-    - docker login -u "$DOCKERHUB_USERNAME" -p "$DOCKERHUB_TOKEN"
-    - docker build --platform linux/amd64 -t $DOCKER_IMAGE:latest -f Dockerfile .
-    - docker push $DOCKER_IMAGE:latest
-  only:
-    - master
-
-# ========================
-# Deploy 단계 (CD)
-# ========================
-deploy:
-  stage: deploy
-  tags:
-    - ec2-runner # ✅ 러너 태그 추가
-  before_script:
-    - sudo apt-get update -y && sudo apt-get install -y openssh-client curl
-    - mkdir -p ~/.ssh
-    - echo "$EC2_SSH_KEY" | tr -d '\r' > ~/.ssh/id_rsa
-    - chmod 600 ~/.ssh/id_rsa
-    - ssh-keyscan $LIVE_SERVER_IP >> ~/.ssh/known_hosts
-  script:
-    - |
-      echo "====== [1] 헬스체크 요청 시작 ======"
-      STATUS=$(curl -o /dev/null -w "%{http_code}" "http://$LIVE_SERVER_IP/env" || true)
-      echo "STATUS: $STATUS"
-
-      if [ "$STATUS" = "200" ]; then
-        CURRENT_UPSTREAM=$(curl -s "http://$LIVE_SERVER_IP/env")
-      else
-        CURRENT_UPSTREAM=green
-      fi
-
-      echo "현재 upstream: $CURRENT_UPSTREAM"
-      echo "====== [2] 업스트림 판별 ======"
-      if [ "$CURRENT_UPSTREAM" = "blue" ]; then
-        CURRENT_PORT=8080
-        STOPPED_PORT=8081
-        TARGET_UPSTREAM=green
-      elif [ "$CURRENT_UPSTREAM" = "green" ]; then
-        CURRENT_PORT=8081
-        STOPPED_PORT=8080
-        TARGET_UPSTREAM=blue
-      else
-        echo "error: unknown upstream"
-        exit 1
-      fi
-
-      echo "CURRENT_PORT=$CURRENT_PORT"
-      echo "STOPPED_PORT=$STOPPED_PORT"
-      echo "TARGET_UPSTREAM=$TARGET_UPSTREAM"
-
-      echo "====== [3] 새로운 컨테이너 띄우기 ======"
-      ssh -o StrictHostKeyChecking=no ubuntu@$LIVE_SERVER_IP "
-        set -x
-        sudo docker pull $DOCKER_IMAGE:latest &&
-        sudo docker-compose -f docker-compose-${TARGET_UPSTREAM}.yml up -d
-      "
-
-      echo "====== [4] 새 컨테이너 헬스체크 ======"
-      # 초기 대기 시간 (Spring Boot 기동 확보)
-      sleep 40
-
-      MAX_RETRY=30
-      RETRY_COUNT=0
-      until curl -s http://$LIVE_SERVER_IP:$STOPPED_PORT/env > /dev/null; do
-        RETRY_COUNT=$((RETRY_COUNT+1))
-        if [ $RETRY_COUNT -ge $MAX_RETRY ]; then
-          echo "❌ 새 컨테이너 헬스체크 실패 (최대 대기 ${MAX_RETRY}회)"
-          exit 1
-        fi
-        echo "⏳ 컨테이너 기동 대기중... (${RETRY_COUNT}/${MAX_RETRY})"
-        sleep 10
-      done
-      echo "✅ 새 컨테이너 헬스체크 성공"
-
-      echo "====== [5] Nginx 라우팅 갱신 ======"
-      ssh -o StrictHostKeyChecking=no ubuntu@$LIVE_SERVER_IP "
-        set -x
-        sudo docker exec -i nginxserver bash -c 'echo \"set \\\$service_url ${TARGET_UPSTREAM};\" > /etc/nginx/conf.d/service-env.inc && nginx -s reload'
-      "
-
-      echo "====== [6] 기존 컨테이너 중지 및 삭제 ======"
-      ssh -o StrictHostKeyChecking=no ubuntu@$LIVE_SERVER_IP "
-        set -x
-        sudo docker stop ${CURRENT_UPSTREAM} || true &&
-        sudo docker rm ${CURRENT_UPSTREAM} || true
-      "
-  only:
-    - master
+# 2. 외부 CI/CD 설정 파일을 포함시킵니다.
+include:
+  - "/ci/frontend-ci.yml"
+  - "/ci/backend-ci.yml"
