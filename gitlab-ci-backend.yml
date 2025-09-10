@@ -30,7 +30,7 @@ build-backend:
 deploy-backend:
   stage: deploy
   tags:
-    - ec2-runner
+    - ec2-runner-backend  
   before_script:
     - echo "====== [Deploy-BE] 배포 환경을 준비합니다. (패키지 설치 및 SSH 설정) ======"
     - apt-get update -y && apt-get install -y openssh-client curl
