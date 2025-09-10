@@ -8,5 +8,5 @@ stages:
 
 include:
   # ci/ 폴더 경로를 제거하고 파일 이름만 남깁니다.
-  - "frontend-ci.yml"
-  - "backend-ci.yml"
+  - "gitlab-ci-frontend.yml"
+  - "gitlab-ci-backend.yml"
