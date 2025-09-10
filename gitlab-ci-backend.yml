@@ -9,7 +9,7 @@ variables:
 # 1. 백엔드 빌드 잡(Job)
 build-backend:
   stage: build
-  image: gradle:7-jdk17
+  image: gradle:7-jdk21
   tags:
     - ec2-runner
   script:

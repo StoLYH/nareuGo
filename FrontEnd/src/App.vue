@@ -5,7 +5,7 @@ import Login from "./views/Login.vue";
 <template>
   <div class="layout">
     <div class="content">
-      <!-- 1234 -->
+      <!-- 12345-->
       <Login />
     </div>
   </div>
