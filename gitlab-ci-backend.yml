@@ -13,7 +13,7 @@ build:
   stage: build
   image: gradle:7-jdk21
   tags:
-    - ec2-runner # ✅ 러너 태그 추가
+    - ec2-runner-backend # ✅ 러너 태그 추가
   script:
     - cd "NareuGO_Backend"
     - chmod +x ./gradlew
