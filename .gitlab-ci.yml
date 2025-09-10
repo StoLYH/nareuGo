@@ -1,19 +1,9 @@
-# ====================================================================
-# 1. 파이프라인 단계(Stages) 정의
-# ====================================================================
+---
 stages:
   - build
   - deploy
-
-# ====================================================================
-# 2. 전역 변수(Variables) 정의
-# ====================================================================
 variables:
   DOCKER_IMAGE: $DOCKERHUB_USERNAME/a501
-
-# ====================================================================
-# 3. 백엔드 빌드 잡(Job)
-# ====================================================================
 build-backend:
   stage: build
   image: gradle:7-jdk17
@@ -29,13 +19,9 @@ build-backend:
     - docker build --platform linux/amd64 -t $DOCKER_IMAGE:latest -f Dockerfile .
     - docker push $DOCKER_IMAGE:latest
   rules:
-    - if: '$CI_COMMIT_BRANCH == "master"'
+    - if: $CI_COMMIT_BRANCH == "master"
       changes:
         - NareuGO_Backend/**/*
-
-# ====================================================================
-# 4. 프론트엔드 빌드 잡(Job)
-# ====================================================================
 build-frontend:
   stage: build
   image: node:18
@@ -52,13 +38,9 @@ build-frontend:
       - FrontEnd/dist/
     expire_in: 1 hour
   rules:
-    - if: '$CI_COMMIT_BRANCH == "master"'
+    - if: $CI_COMMIT_BRANCH == "master"
       changes:
         - FrontEnd/**/*
-
-# ====================================================================
-# 5. 배포 잡(Job) - ★들여쓰기 수정된 버전★
-# ====================================================================
 deploy:
   stage: deploy
   tags:
@@ -76,18 +58,24 @@ deploy:
     - echo "====== 단계 1: 프론트엔드 파일 배포 시작 ======"
     - rsync -avz --delete ./FrontEnd/dist/ ubuntu@$LIVE_SERVER_IP:/var/www/html/
     - echo "✅ 프론트엔드 파일 배포 완료"
-    - |
+    - >
       echo "====== 단계 2: 백엔드 무중단 배포 시작 ======"
+
       echo "--> 2-1. 현재 운영 중인 upstream 확인..."
+
       STATUS=$(curl -o /dev/null -w "%{http_code}" "http://$LIVE_SERVER_IP/env" || true)
+
       if [ "$STATUS" = "200" ]; then
         CURRENT_UPSTREAM=$(curl -s "http://$LIVE_SERVER_IP/env")
       else
         CURRENT_UPSTREAM=green
       fi
+
       echo "    현재 upstream: $CURRENT_UPSTREAM"
 
+
       echo "--> 2-2. 배포할 Target upstream 결정..."
+
       if [ "$CURRENT_UPSTREAM" = "blue" ]; then
         TARGET_UPSTREAM=green
         STOPPED_PORT=8081
@@ -95,18 +83,26 @@ deploy:
         TARGET_UPSTREAM=blue
         STOPPED_PORT=8080
       fi
+
       echo "    배포 Target: $TARGET_UPSTREAM"
 
+
       echo "--> 2-3. 새 Docker 컨테이너 실행..."
+
       ssh -o StrictHostKeyChecking=no ubuntu@$LIVE_SERVER_IP "
         sudo docker pull $DOCKER_IMAGE:latest &&
         sudo docker-compose -f docker-compose-${TARGET_UPSTREAM}.yml up -d
       "
 
+
       echo "--> 2-4. 새 컨테이너 Health Check 시작 (최대 5분 대기)..."
+
       sleep 40
+
       MAX_RETRY=30
+
       RETRY_COUNT=0
+
       until curl -s http://$LIVE_SERVER_IP:$STOPPED_PORT/env > /dev/null; do
         RETRY_COUNT=$((RETRY_COUNT+1))
         if [ $RETRY_COUNT -ge $MAX_RETRY ]; then
@@ -116,22 +112,28 @@ deploy:
         echo "    ⏳ 컨테이너 기동 대기중... (${RETRY_COUNT}/${MAX_RETRY})"
         sleep 10
       done
+
       echo "    ✅ 새 컨테이너 Health Check 성공"
 
+
       echo "--> 2-5. Nginx 경로를 새 upstream으로 전환..."
+
       ssh -o StrictHostKeyChecking=no ubuntu@$LIVE_SERVER_IP "
         sudo docker exec -i nginxserver bash -c 'echo \"set \\\$service_url ${TARGET_UPSTREAM};\" > /etc/nginx/conf/d/service-env.inc && nginx -s reload'
       "
 
+
       echo "--> 2-6. 이전 upstream 컨테이너 종료 및 삭제..."
+
       ssh -o StrictHostKeyChecking=no ubuntu@$LIVE_SERVER_IP "
         sudo docker stop ${CURRENT_UPSTREAM} || true &&
         sudo docker rm ${CURRENT_UPSTREAM} || true
       "
 
+
       echo "====== ✅ 백엔드 무중단 배포 완료 ======"
   rules:
-    - if: '$CI_COMMIT_BRANCH == "master"'
+    - if: $CI_COMMIT_BRANCH == "master"
       changes:
         - NareuGO_Backend/**/*
         - FrontEnd/**/*
