@@ -1,18 +1,24 @@
+# ====================================================================
+# 1. 파이프라인 단계(Stages) 정의
+# ====================================================================
 stages:
   - build
   - deploy
 
+# ====================================================================
+# 2. 전역 변수(Variables) 정의
+# ====================================================================
 variables:
   DOCKER_IMAGE: $DOCKERHUB_USERNAME/a501
 
 # ====================================================================
-# 백엔드 빌드
+# 3. 백엔드 빌드 잡(Job) - Docker executor 사용
 # ====================================================================
 build-backend:
   stage: build
   image: gradle:7-jdk17
   tags:
-    - ec2-runner
+    - docker
   script:
     - echo "====== [Backend] Gradle 빌드를 시작합니다. ======"
     - cd "NareuGO_Backend"
@@ -28,19 +34,19 @@ build-backend:
         - NareuGO_Backend/**/*
 
 # ====================================================================
-# 프론트엔드 빌드
+# 4. 프론트엔드 빌드 잡(Job) - Docker executor 사용
 # ====================================================================
 build-frontend:
   stage: build
   image: node:18
   tags:
-    - ec2-runner
+    - docker
   script:
     - echo "====== [Frontend] Vue/React 빌드를 시작합니다. ======"
     - cd FrontEnd
     - npm install
     - npm run build
-    - echo "====== [Frontend] 빌드 결과물(dist)을 artifacts로 저장합니다. ======"
+    - echo "====== [Frontend] 빌드 완료 ======"
   artifacts:
     paths:
       - FrontEnd/dist/
@@ -51,35 +57,40 @@ build-frontend:
         - FrontEnd/**/*
 
 # ====================================================================
-# 배포
+# 5. 배포 잡(Job)
 # ====================================================================
 deploy:
   stage: deploy
+  image: docker:20.10.16
+  services:
+    - docker:20.10.16-dind
   tags:
-    - ec2-runner
+    - docker
   dependencies:
     - build-frontend
   before_script:
-    - apt-get update -y && apt-get install -y openssh-client curl rsync
+    - apk add --no-cache openssh-client rsync curl bash
     - mkdir -p ~/.ssh
     - echo "$EC2_SSH_KEY" | tr -d '\r' > ~/.ssh/id_rsa
     - chmod 600 ~/.ssh/id_rsa
     - ssh-keyscan -H $LIVE_SERVER_IP >> ~/.ssh/known_hosts
   script:
-    - |
-      echo "====== 단계 1: 프론트엔드 파일 배포 시작 ======"
-      rsync -avz --delete ./FrontEnd/dist/ ubuntu@$LIVE_SERVER_IP:/var/www/html/
-      echo "✅ 프론트엔드 파일 배포 완료"
+    # --- 1. 프론트엔드 배포 ---
+    - echo "====== 단계 1: 프론트엔드 파일 배포 시작 ======"
+    - rsync -avz --delete ./FrontEnd/dist/ ubuntu@$LIVE_SERVER_IP:/var/www/html/
+    - echo "✅ 프론트엔드 파일 배포 완료"
 
-      echo "====== 단계 2: 백엔드 무중단 배포 시작 ======"
-      STATUS=$(curl -o /dev/null -w "%{http_code}" "http://$LIVE_SERVER_IP/env" || true)
+    # --- 2. 백엔드 무중단 배포 ---
+    - echo "====== 단계 2: 백엔드 무중단 배포 시작 ======"
+    - STATUS=$(curl -o /dev/null -w "%{http_code}" "http://$LIVE_SERVER_IP/env" || true)
+    - |
       if [ "$STATUS" = "200" ]; then
         CURRENT_UPSTREAM=$(curl -s "http://$LIVE_SERVER_IP/env")
       else
         CURRENT_UPSTREAM=green
       fi
-      echo "현재 upstream: $CURRENT_UPSTREAM"
-
+    - echo "현재 upstream: $CURRENT_UPSTREAM"
+    - |
       if [ "$CURRENT_UPSTREAM" = "blue" ]; then
         TARGET_UPSTREAM=green
         STOPPED_PORT=8081
@@ -87,11 +98,9 @@ deploy:
         TARGET_UPSTREAM=blue
         STOPPED_PORT=8080
       fi
-      echo "배포 Target: $TARGET_UPSTREAM"
-
-      ssh -o StrictHostKeyChecking=no ubuntu@$LIVE_SERVER_IP "sudo docker pull $DOCKER_IMAGE:latest && sudo docker-compose -f docker-compose-${TARGET_UPSTREAM}.yml up -d"
-
-      echo "새 컨테이너 Health Check 시작..."
+    - echo "배포 Target: $TARGET_UPSTREAM"
+    - ssh -o StrictHostKeyChecking=no ubuntu@$LIVE_SERVER_IP "sudo docker pull $DOCKER_IMAGE:latest && sudo docker-compose -f docker-compose-${TARGET_UPSTREAM}.yml up -d"
+    - |
       RETRY=0
       MAX_RETRY=30
       until curl -s http://$LIVE_SERVER_IP:$STOPPED_PORT/env > /dev/null; do
@@ -103,13 +112,10 @@ deploy:
         echo "⏳ 대기중... ($RETRY/$MAX_RETRY)"
         sleep 10
       done
-      echo "✅ 새 컨테이너 Health Check 성공"
-
-      ssh -o StrictHostKeyChecking=no ubuntu@$LIVE_SERVER_IP "sudo docker exec -i nginxserver bash -c 'echo \"set \$service_url ${TARGET_UPSTREAM};\" > /etc/nginx/conf.d/service-env.inc && nginx -s reload'"
-
-      ssh -o StrictHostKeyChecking=no ubuntu@$LIVE_SERVER_IP "sudo docker stop ${CURRENT_UPSTREAM} || true && sudo docker rm ${CURRENT_UPSTREAM} || true"
-
-      echo "====== ✅ 백엔드 무중단 배포 완료 ======"
+    - echo "✅ 새 컨테이너 Health Check 성공"
+    - ssh -o StrictHostKeyChecking=no ubuntu@$LIVE_SERVER_IP "sudo docker exec -i nginxserver bash -c 'echo \"set \$service_url ${TARGET_UPSTREAM};\" > /etc/nginx/conf.d/service-env.inc && nginx -s reload'"
+    - ssh -o StrictHostKeyChecking=no ubuntu@$LIVE_SERVER_IP "sudo docker stop ${CURRENT_UPSTREAM} || true && sudo docker rm ${CURRENT_UPSTREAM} || true"
+    - echo "====== ✅ 백엔드 무중단 배포 완료 ======"
   rules:
     - if: '$CI_COMMIT_BRANCH == "master"'
       changes:
