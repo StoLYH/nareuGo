@@ -32,7 +32,7 @@ deploy-frontend:
     - build-frontend # build-frontend 잡의 결과물(artifacts)을 가져옵니다.
   before_script:
     - echo "====== [Deploy-FE] 배포 환경을 준비합니다. (패키지 설치 및 SSH 설정) ======"
-    - apt-get update -y && apt-get install -y openssh-client rsync
+    - apk update && apk add openssh-client rsync
     - mkdir -p ~/.ssh
     - echo "$EC2_SSH_KEY" | tr -d '\r' > ~/.ssh/id_rsa
     - chmod 600 ~/.ssh/id_rsa
