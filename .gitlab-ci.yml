@@ -69,7 +69,10 @@ deploy:
     - echo "배포 Target: $TARGET_UPSTREAM"
     - ssh -o StrictHostKeyChecking=no ubuntu@$LIVE_SERVER_IP "sudo docker pull $DOCKER_IMAGE:latest"
     - ssh -o StrictHostKeyChecking=no ubuntu@$LIVE_SERVER_IP "sudo docker-compose -f docker-compose-${TARGET_UPSTREAM}.yml up -d"
-    - bash -c 'RETRY=0; MAX_RETRY=30; until curl -s http://$LIVE_SERVER_IP:$STOPPED_PORT/env > /dev/null; do RETRY=$((RETRY+1)); if [ $RETRY -ge $MAX_RETRY ]; then echo "❌ Health Check 실패"; exit 1; fi; echo "⏳ 컨테이너 기동 대기중 ($RETRY/$MAX_RETRY)"; sleep 10; done'
+    - echo "Health Check 시작"
+    - RETRY=0
+    - MAX_RETRY=30
+    - until curl -s http://$LIVE_SERVER_IP:$STOPPED_PORT/env > /dev/null; do RETRY=$((RETRY+1)); if [ $RETRY -ge $MAX_RETRY ]; then echo '❌ Health Check 실패'; exit 1; fi; echo "⏳ 컨테이너 기동 대기중 ($RETRY/$MAX_RETRY)"; sleep 10; done
     - echo "✅ Health Check 성공"
     - ssh -o StrictHostKeyChecking=no ubuntu@$LIVE_SERVER_IP "sudo docker exec -i nginxserver bash -c 'echo \"set \$service_url ${TARGET_UPSTREAM};\" > /etc/nginx/conf.d/service-env.inc && nginx -s reload'"
     - ssh -o StrictHostKeyChecking=no ubuntu@$LIVE_SERVER_IP "sudo docker stop ${CURRENT_UPSTREAM} || true && sudo docker rm ${CURRENT_UPSTREAM} || true"

@@ -9,7 +9,7 @@ import Login from "./views/Login.vue";
 <template>
   <div class="layout">
     <div class="content">
-      <!-- 테스트 1 -->
+      <!-- 테스트 2 -->
       <Login />
     </div>
   </div>
