@@ -5,9 +5,6 @@ stages:
 variables:
   DOCKER_IMAGE: $DOCKERHUB_USERNAME/a501
 
-# ===============================
-# 1. 백엔드 빌드
-# ===============================
 build-backend:
   stage: build
   image: gradle:7-jdk17
@@ -27,9 +24,6 @@ build-backend:
       changes:
         - NareuGO_Backend/**/*
 
-# ===============================
-# 2. 프론트엔드 빌드
-# ===============================
 build-frontend:
   stage: build
   image: node:18
@@ -50,9 +44,6 @@ build-frontend:
       changes:
         - FrontEnd/**/*
 
-# ===============================
-# 3. 배포 (무중단)
-# ===============================
 deploy:
   stage: deploy
   tags:
@@ -67,24 +58,17 @@ deploy:
     - chmod 600 ~/.ssh/id_rsa
     - ssh-keyscan -H $LIVE_SERVER_IP >> ~/.ssh/known_hosts
   script:
-    # --- 1. 프론트엔드 배포 ---
-    - echo "====== 단계 1: 프론트엔드 파일 배포 시작 ======"
+    - echo "====== 단계 1: 프론트엔드 파일 배포 ======"
     - rsync -avz --delete ./FrontEnd/dist/ ubuntu@$LIVE_SERVER_IP:/var/www/html/
-    - echo "✅ 프론트엔드 파일 배포 완료"
-
-    # --- 2. 백엔드 무중단 배포 ---
-    - echo "====== 단계 2: 백엔드 무중단 배포 시작 ======"
+    - echo "✅ 프론트엔드 배포 완료"
+    - echo "====== 단계 2: 백엔드 무중단 배포 ======"
     - STATUS=$(curl -o /dev/null -w "%{http_code}" "http://$LIVE_SERVER_IP/env" || true)
     - if [ "$STATUS" = "200" ]; then CURRENT_UPSTREAM=$(curl -s "http://$LIVE_SERVER_IP/env"); else CURRENT_UPSTREAM=green; fi
     - echo "현재 upstream: $CURRENT_UPSTREAM"
     - if [ "$CURRENT_UPSTREAM" = "blue" ]; then TARGET_UPSTREAM=green; STOPPED_PORT=8081; else TARGET_UPSTREAM=blue; STOPPED_PORT=8080; fi
     - echo "배포 Target: $TARGET_UPSTREAM"
-
-    - echo "새 Docker 컨테이너 실행..."
     - ssh -o StrictHostKeyChecking=no ubuntu@$LIVE_SERVER_IP "sudo docker pull $DOCKER_IMAGE:latest"
     - ssh -o StrictHostKeyChecking=no ubuntu@$LIVE_SERVER_IP "sudo docker-compose -f docker-compose-${TARGET_UPSTREAM}.yml up -d"
-
-    - echo "컨테이너 Health Check 시작..."
     - |
       RETRY=0
       MAX_RETRY=30
@@ -94,16 +78,13 @@ deploy:
           echo "❌ Health Check 실패"
           exit 1
         fi
-        echo "⏳ 컨테이너 기동 대기중... ($RETRY/$MAX_RETRY)"
+        echo "⏳ 컨테이너 기동 대기중 ($RETRY/$MAX_RETRY)"
         sleep 10
       done
-    - echo "✅ 새 컨테이너 Health Check 성공"
-    - echo "Nginx upstream 전환..."
+    - echo "✅ Health Check 성공"
     - ssh -o StrictHostKeyChecking=no ubuntu@$LIVE_SERVER_IP "sudo docker exec -i nginxserver bash -c 'echo \"set \$service_url ${TARGET_UPSTREAM};\" > /etc/nginx/conf.d/service-env.inc && nginx -s reload'"
-
-    - echo "이전 컨테이너 종료 및 삭제..."
     - ssh -o StrictHostKeyChecking=no ubuntu@$LIVE_SERVER_IP "sudo docker stop ${CURRENT_UPSTREAM} || true && sudo docker rm ${CURRENT_UPSTREAM} || true"
-    - echo "====== ✅ 백엔드 무중단 배포 완료 ======"
+    - echo "====== 백엔드 무중단 배포 완료 ======"
   rules:
     - if: '$CI_COMMIT_BRANCH == "master"'
       changes:
