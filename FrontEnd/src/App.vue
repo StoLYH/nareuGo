@@ -1,8 +1,4 @@
 <script setup>
-import fourth from "./views/fourth.vue";
-import ItemDetailView from "./views/ItemDetailView.vue";
-import ItemRegistView from "./views/ItemRegistView.vue";
-import NotificationListView from "./views/NotificationListView.vue";
 import Login from "./views/Login.vue";
 </script>
 
