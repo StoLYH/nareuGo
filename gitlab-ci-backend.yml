@@ -11,7 +11,7 @@ variables:
 # ========================
 build:
   stage: build
-  image: gradle:7-jdk17
+  image: gradle:7-jdk21
   tags:
     - ec2-runner # ✅ 러너 태그 추가
   script:
