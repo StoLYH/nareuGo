@@ -28,27 +28,20 @@ build:
 deploy:
   stage: deploy
   before_script:
-    - apt-get update -y && apt-get install -y openssh-client curl
+    - sudo apt-get update -y && sudo apt-get install -y openssh-client curl
     # SSH 키 세팅
     - mkdir -p ~/.ssh
     - echo "$EC2_SSH_KEY" | tr -d '\r' > ~/.ssh/id_rsa
     - chmod 600 ~/.ssh/id_rsa
     - ssh-keyscan $LIVE_SERVER_IP >> ~/.ssh/known_hosts
-
   script:
     - |
       STATUS=$(curl -o /dev/null -w "%{http_code}" "http://$LIVE_SERVER_IP/env" || true)
-
       if [ "$STATUS" = "200" ]; then
         CURRENT_UPSTREAM=$(curl -s "http://$LIVE_SERVER_IP/env")
       else
-        # 최초 배포 시 무조건 green부터 시작
-        CURRENT_UPSTREAM=none
-        TARGET_UPSTREAM=green
-        CURRENT_PORT=0
-        STOPPED_PORT=8081
+        CURRENT_UPSTREAM=green
       fi
-
       echo "현재 upstream: $CURRENT_UPSTREAM"
 
       if [ "$CURRENT_UPSTREAM" = "blue" ]; then
@@ -59,13 +52,9 @@ deploy:
         CURRENT_PORT=8081
         STOPPED_PORT=8080
         TARGET_UPSTREAM=blue
+      else
+        echo "error"; exit 1
       fi
-
-      # GitLab 전역 환경변수 파일에 저장 (다음 명령에서도 사용됨)
-      echo "CURRENT_UPSTREAM=$CURRENT_UPSTREAM" >> $CI_ENVIRONMENT_FILE
-      echo "CURRENT_PORT=$CURRENT_PORT" >> $CI_ENVIRONMENT_FILE
-      echo "STOPPED_PORT=$STOPPED_PORT" >> $CI_ENVIRONMENT_FILE
-      echo "TARGET_UPSTREAM=$TARGET_UPSTREAM" >> $CI_ENVIRONMENT_FILE
 
       ssh -o StrictHostKeyChecking=no ubuntu@$LIVE_SERVER_IP "
         sudo docker pull $DOCKER_IMAGE:latest &&
@@ -78,10 +67,8 @@ deploy:
         sudo docker exec -i nginxserver bash -c 'echo \"set \\\$service_url ${TARGET_UPSTREAM};\" > /etc/nginx/conf.d/service-env.inc && nginx -s reload'
       "
 
-      if [ \"$CURRENT_UPSTREAM\" != \"none\" ]; then
-        ssh -o StrictHostKeyChecking=no ubuntu@$LIVE_SERVER_IP "
-          sudo docker stop ${CURRENT_UPSTREAM} && sudo docker rm ${CURRENT_UPSTREAM}
-        "
-      fi
+      ssh -o StrictHostKeyChecking=no ubuntu@$LIVE_SERVER_IP "
+        sudo docker stop ${CURRENT_UPSTREAM} || true && sudo docker rm ${CURRENT_UPSTREAM} || true
+      "
   only:
     - master
