@@ -29,6 +29,11 @@ deploy:
   stage: deploy
   before_script:
     - sudo apt-get update -y && sudo apt-get install -y openssh-client curl
+    # SSH 키 세팅
+    - mkdir -p ~/.ssh
+    - echo "$EC2_SSH_KEY" | tr -d '\r' > ~/.ssh/id_rsa
+    - chmod 600 ~/.ssh/id_rsa
+    - ssh-keyscan $LIVE_SERVER_IP >> ~/.ssh/known_hosts
   script:
     - |
       STATUS=$(curl -o /dev/null -w "%{http_code}" "http://$LIVE_SERVER_IP/env" || true)
