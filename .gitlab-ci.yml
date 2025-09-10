@@ -3,86 +3,106 @@ stages:
   - deploy
 
 variables:
-  DOCKER_IMAGE: $DOCKERHUB_USERNAME/a501
+  JAR_NAME: live_server.jar
+  DOCKER_IMAGE: $DOCKERHUB_USERNAME/a501 # 도커허브에 저장되는 이름
 
-build-backend:
+# ========================
+# Build 단계 (CI)
+# ========================
+build:
   stage: build
-  image: gradle:7-jdk11
+  image: gradle:7-jdk17
+  tags:
+    - ec2-runner # ✅ 러너 태그 추가
   script:
-    - cd NareuGO_Backend
+    - cd "NareuGO_Backend"
     - chmod +x ./gradlew
     - ./gradlew clean build -x test
     - docker login -u "$DOCKERHUB_USERNAME" -p "$DOCKERHUB_TOKEN"
     - docker build --platform linux/amd64 -t $DOCKER_IMAGE:latest -f Dockerfile .
     - docker push $DOCKER_IMAGE:latest
-  rules:
-    - if: '$CI_COMMIT_BRANCH == "master"'
-      changes:
-        - NareuGO_Backend/**/*
+  only:
+    - master
 
-build-frontend:
-  stage: build
-  image: node:18
-  script:
-    - cd FrontEnd
-    - npm install
-    - npm run build
-  artifacts:
-    paths:
-      - FrontEnd/dist/
-    expire_in: 1 hour
-  rules:
-    - if: '$CI_COMMIT_BRANCH == "master"'
-      changes:
-        - FrontEnd/**/*
-
+# ========================
+# Deploy 단계 (CD)
+# ========================
 deploy:
   stage: deploy
-  dependencies:
-    - build-frontend
+  tags:
+    - ec2-runner # ✅ 러너 태그 추가
   before_script:
-    - apt-get update -y && apt-get install -y openssh-client curl rsync
+    - sudo apt-get update -y && sudo apt-get install -y openssh-client curl
     - mkdir -p ~/.ssh
     - echo "$EC2_SSH_KEY" | tr -d '\r' > ~/.ssh/id_rsa
     - chmod 600 ~/.ssh/id_rsa
-    - ssh-keyscan -H $LIVE_SERVER_IP >> ~/.ssh/known_hosts
+    - ssh-keyscan $LIVE_SERVER_IP >> ~/.ssh/known_hosts
   script:
-    # 프론트엔드 배포
-    - rsync -avz --delete -e "ssh -o StrictHostKeyChecking=no" ./FrontEnd/dist/ ubuntu@$LIVE_SERVER_IP:/var/www/html/
-
-    # 백엔드 무중단 배포
-    - STATUS=$(curl -o /dev/null -w "%{http_code}" "http://$LIVE_SERVER_IP/env" || true)
     - |
+      echo "====== [1] 헬스체크 요청 시작 ======"
+      STATUS=$(curl -o /dev/null -w "%{http_code}" "http://$LIVE_SERVER_IP/env" || true)
+      echo "STATUS: $STATUS"
+
       if [ "$STATUS" = "200" ]; then
         CURRENT_UPSTREAM=$(curl -s "http://$LIVE_SERVER_IP/env")
       else
         CURRENT_UPSTREAM=green
       fi
-    - |
+
+      echo "현재 upstream: $CURRENT_UPSTREAM"
+      echo "====== [2] 업스트림 판별 ======"
       if [ "$CURRENT_UPSTREAM" = "blue" ]; then
-        TARGET_UPSTREAM=green
+        CURRENT_PORT=8080
         STOPPED_PORT=8081
-      else
-        TARGET_UPSTREAM=blue
+        TARGET_UPSTREAM=green
+      elif [ "$CURRENT_UPSTREAM" = "green" ]; then
+        CURRENT_PORT=8081
         STOPPED_PORT=8080
+        TARGET_UPSTREAM=blue
+      else
+        echo "error: unknown upstream"
+        exit 1
       fi
-    - ssh -o StrictHostKeyChecking=no ubuntu@$LIVE_SERVER_IP "sudo docker pull $DOCKER_IMAGE:latest"
-    - ssh -o StrictHostKeyChecking=no ubuntu@$LIVE_SERVER_IP "sudo docker-compose -f docker-compose-${TARGET_UPSTREAM}.yml up -d"
-    - |
-      RETRY=0
+
+      echo "CURRENT_PORT=$CURRENT_PORT"
+      echo "STOPPED_PORT=$STOPPED_PORT"
+      echo "TARGET_UPSTREAM=$TARGET_UPSTREAM"
+
+      echo "====== [3] 새로운 컨테이너 띄우기 ======"
+      ssh -o StrictHostKeyChecking=no ubuntu@$LIVE_SERVER_IP "
+        set -x
+        sudo docker pull $DOCKER_IMAGE:latest &&
+        sudo docker-compose -f docker-compose-${TARGET_UPSTREAM}.yml up -d
+      "
+
+      echo "====== [4] 새 컨테이너 헬스체크 ======"
+      # 초기 대기 시간 (Spring Boot 기동 확보)
+      sleep 40
+
       MAX_RETRY=30
+      RETRY_COUNT=0
       until curl -s http://$LIVE_SERVER_IP:$STOPPED_PORT/env > /dev/null; do
-        RETRY=$((RETRY+1))
-        if [ $RETRY -ge $MAX_RETRY ]; then
-          echo 'Health Check 실패'
+        RETRY_COUNT=$((RETRY_COUNT+1))
+        if [ $RETRY_COUNT -ge $MAX_RETRY ]; then
+          echo "❌ 새 컨테이너 헬스체크 실패 (최대 대기 ${MAX_RETRY}회)"
           exit 1
         fi
+        echo "⏳ 컨테이너 기동 대기중... (${RETRY_COUNT}/${MAX_RETRY})"
         sleep 10
       done
-    - ssh -o StrictHostKeyChecking=no ubuntu@$LIVE_SERVER_IP "sudo docker exec -i nginxserver bash -c 'echo \"set \\\$service_url ${TARGET_UPSTREAM};\" > /etc/nginx/conf.d/service-env.inc && nginx -s reload'"
-    - ssh -o StrictHostKeyChecking=no ubuntu@$LIVE_SERVER_IP "sudo docker stop ${CURRENT_UPSTREAM} || true && sudo docker rm ${CURRENT_UPSTREAM} || true"
-  rules:
-    - if: '$CI_COMMIT_BRANCH == "master"'
-      changes:
-        - NareuGO_Backend/**/*
-        - FrontEnd/**/*
+      echo "✅ 새 컨테이너 헬스체크 성공"
+
+      echo "====== [5] Nginx 라우팅 갱신 ======"
+      ssh -o StrictHostKeyChecking=no ubuntu@$LIVE_SERVER_IP "
+        set -x
+        sudo docker exec -i nginxserver bash -c 'echo \"set \\\$service_url ${TARGET_UPSTREAM};\" > /etc/nginx/conf.d/service-env.inc && nginx -s reload'
+      "
+
+      echo "====== [6] 기존 컨테이너 중지 및 삭제 ======"
+      ssh -o StrictHostKeyChecking=no ubuntu@$LIVE_SERVER_IP "
+        set -x
+        sudo docker stop ${CURRENT_UPSTREAM} || true &&
+        sudo docker rm ${CURRENT_UPSTREAM} || true
+      "
+  only:
+    - master
