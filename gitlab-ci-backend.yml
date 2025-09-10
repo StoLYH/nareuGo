@@ -9,15 +9,9 @@ variables:
 # 1. 백엔드 빌드 잡(Job)
 build-backend:
   stage: build
-  image: gradle:jdk21 # ✅ 이미지 이름 수정 (gradle:7-jdk21 -> gradle:jdk21)
+  image: gradle:7-jdk21
   tags:
     - ec2-runner
-  # --- ✅ 아래 before_script 섹션을 통째로 추가해주세요 ---
-  before_script:
-    - echo "====== [Backend] Docker CLI를 설치합니다. ======"
-    # gradle:jdk21 이미지는 Debian 기반이므로 apt-get을 사용합니다.
-    - apt-get update -y && apt-get install -y docker.io
-  # ----------------------------------------------------
   script:
     - echo "====== [Backend] Gradle 빌드를 시작합니다. ======"
     - cd "NareuGO_Backend"
