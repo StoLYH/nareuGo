@@ -1,11 +1,10 @@
 <script setup>
 import Login from "./views/Login.vue";
 </script>
-
 <template>
   <div class="layout">
     <div class="content">
-      <!-- 123456-->
+      <!-- 1234567 -->
       <Login />
     </div>
   </div>
