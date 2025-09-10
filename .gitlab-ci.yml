@@ -76,20 +76,7 @@ deploy:
       "
 
       echo "====== [4] 새 컨테이너 헬스체크 ======"
-      sleep 20   # 컨테이너 기동 대기 (초기 대기 시간)
-
-      MAX_RETRY=30
-      RETRY_COUNT=0
-      until curl -s http://$LIVE_SERVER_IP:$STOPPED_PORT/env > /dev/null; do
-        RETRY_COUNT=$((RETRY_COUNT+1))
-        if [ $RETRY_COUNT -ge $MAX_RETRY ]; then
-          echo "❌ 새 컨테이너 헬스체크 실패 (최대 대기 ${MAX_RETRY}회)"
-          exit 1
-        fi
-        echo "⏳ 컨테이너 기동 대기중... (${RETRY_COUNT}/${MAX_RETRY})"
-        sleep 10
-      done
-      echo "✅ 새 컨테이너 헬스체크 성공"
+      curl --retry 15 --retry-delay 5 http://$LIVE_SERVER_IP:$STOPPED_PORT/env || exit 1
 
       echo "====== [5] Nginx 라우팅 갱신 ======"
       ssh -o StrictHostKeyChecking=no ubuntu@$LIVE_SERVER_IP "
