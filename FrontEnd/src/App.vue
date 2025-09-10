@@ -9,7 +9,6 @@ import Login from "./views/Login.vue";
 <template>
   <div class="layout">
     <div class="content">
-      <!-- 테스트 53 -->
       <Login />
     </div>
   </div>
