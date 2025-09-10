@@ -38,3 +38,5 @@ out/
 
 ### 비밀키 ###
 *.env
+/NareuGO_Backend/src/main/resources/.env
+**/.env
