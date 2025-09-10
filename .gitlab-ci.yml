@@ -80,17 +80,40 @@ deploy:
 
     # --- 2. 백엔드 무중단 배포 ---
     - echo "====== 단계 2: 백엔드 무중단 배포 시작 ======"
-    - 'STATUS=$(curl -o /dev/null -w "%{http_code}" "http://$LIVE_SERVER_IP/env" || true)'
-    - 'if [ "$STATUS" = "200" ]; then CURRENT_UPSTREAM=$(curl -s "http://$LIVE_SERVER_IP/env"); else CURRENT_UPSTREAM=green; fi'
-    - 'echo "현재 upstream: $CURRENT_UPSTREAM"'
-    - 'if [ "$CURRENT_UPSTREAM" = "blue" ]; then TARGET_UPSTREAM=green; STOPPED_PORT=8081; else TARGET_UPSTREAM=blue; STOPPED_PORT=8080; fi'
-    - 'echo "배포 Target: $TARGET_UPSTREAM"'
-    - 'ssh -o StrictHostKeyChecking=no ubuntu@$LIVE_SERVER_IP "sudo docker pull $DOCKER_IMAGE:latest && sudo docker-compose -f docker-compose-${TARGET_UPSTREAM}.yml up -d"'
-    - 'echo "새 컨테이너 Health Check 시작..."'
-    - 'RETRY=0; MAX_RETRY=30; until curl -s http://$LIVE_SERVER_IP:$STOPPED_PORT/env > /dev/null; do RETRY=$((RETRY+1)); if [ $RETRY -ge $MAX_RETRY ]; then echo "❌ Health Check 실패"; exit 1; fi; echo "⏳ 대기중... ($RETRY/$MAX_RETRY)"; sleep 10; done'
+    - STATUS=$(curl -o /dev/null -w "%{http_code}" "http://$LIVE_SERVER_IP/env" || true)
+    - |
+      if [ "$STATUS" = "200" ]; then
+        CURRENT_UPSTREAM=$(curl -s "http://$LIVE_SERVER_IP/env")
+      else
+        CURRENT_UPSTREAM=green
+      fi
+    - echo "현재 upstream: $CURRENT_UPSTREAM"
+    - |
+      if [ "$CURRENT_UPSTREAM" = "blue" ]; then
+        TARGET_UPSTREAM=green
+        STOPPED_PORT=8081
+      else
+        TARGET_UPSTREAM=blue
+        STOPPED_PORT=8080
+      fi
+    - echo "배포 Target: $TARGET_UPSTREAM"
+    - ssh -o StrictHostKeyChecking=no ubuntu@$LIVE_SERVER_IP "sudo docker pull $DOCKER_IMAGE:latest && sudo docker-compose -f docker-compose-${TARGET_UPSTREAM}.yml up -d"
+    - echo "새 컨테이너 Health Check 시작..."
+    - |
+      RETRY=0
+      MAX_RETRY=30
+      until curl -s http://$LIVE_SERVER_IP:$STOPPED_PORT/env > /dev/null; do
+        RETRY=$((RETRY+1))
+        if [ $RETRY -ge $MAX_RETRY ]; then
+          echo "❌ Health Check 실패"
+          exit 1
+        fi
+        echo "⏳ 대기중... ($RETRY/$MAX_RETRY)"
+        sleep 10
+      done
     - echo "✅ 새 컨테이너 Health Check 성공"
-    - 'ssh -o StrictHostKeyChecking=no ubuntu@$LIVE_SERVER_IP "sudo docker exec -i nginxserver bash -c '\''echo \"set \$service_url ${TARGET_UPSTREAM};\" > /etc/nginx/conf.d/service-env.inc && nginx -s reload'\''"'
-    - 'ssh -o StrictHostKeyChecking=no ubuntu@$LIVE_SERVER_IP "sudo docker stop ${CURRENT_UPSTREAM} || true && sudo docker rm ${CURRENT_UPSTREAM} || true"'
+    - ssh -o StrictHostKeyChecking=no ubuntu@$LIVE_SERVER_IP "sudo docker exec -i nginxserver bash -c 'echo \"set \$service_url ${TARGET_UPSTREAM};\" > /etc/nginx/conf.d/service-env.inc && nginx -s reload'"
+    - ssh -o StrictHostKeyChecking=no ubuntu@$LIVE_SERVER_IP "sudo docker stop ${CURRENT_UPSTREAM} || true && sudo docker rm ${CURRENT_UPSTREAM} || true"
     - echo "====== ✅ 백엔드 무중단 배포 완료 ======"
   rules:
     - if: '$CI_COMMIT_BRANCH == "master"'
