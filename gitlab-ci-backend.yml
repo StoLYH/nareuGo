@@ -1,100 +1,108 @@
-# ====================================================================
-# 백엔드 CI/CD 파이프라인
-# ====================================================================
+stages:
+  - build
+  - deploy
 
 variables:
-  # 백엔드 Docker 이미지를 Docker Hub에 푸시할 때 사용할 이미지 이름입니다.
-  DOCKER_IMAGE: $DOCKERHUB_USERNAME/a501
+  JAR_NAME: live_server.jar
+  DOCKER_IMAGE: $DOCKERHUB_USERNAME/a501 # 도커허브에 저장되는 이름
 
-# 1. 백엔드 빌드 잡(Job)
-build-backend:
+# ========================
+# Build 단계 (CI)
+# ========================
+build:
   stage: build
   image: gradle:7-jdk21
   tags:
-    - ec2-runner
+    - ec2-runner-backend # ✅ 러너 태그 추가
   script:
-    - echo "====== [Backend] Gradle 빌드를 시작합니다. ======"
     - cd "NareuGO_Backend"
     - chmod +x ./gradlew
     - ./gradlew clean build -x test
-    - echo "====== [Backend] Docker 이미지를 빌드하고 푸시합니다. ======"
     - docker login -u "$DOCKERHUB_USERNAME" -p "$DOCKERHUB_TOKEN"
     - docker build --platform linux/amd64 -t $DOCKER_IMAGE:latest -f Dockerfile .
     - docker push $DOCKER_IMAGE:latest
-  rules:
-    - if: '$CI_COMMIT_BRANCH == "master"'
-      changes:
-        - NareuGO_Backend/**/*
+  only:
+    - master
 
-# 2. 백엔드 배포 잡(Job)
-deploy-backend:
+# ========================
+# Deploy 단계 (CD)
+# ========================
+deploy:
   stage: deploy
   tags:
-    - ec2-runner-backend  
+    - ec2-runner-backend   # ✅ 러너 태그 추가
   before_script:
-    - echo "====== [Deploy-BE] 배포 환경을 준비합니다. (패키지 설치 및 SSH 설정) ======"
-    - apt-get update -y && apt-get install -y openssh-client curl
+    - sudo apt-get update -y && sudo apt-get install -y openssh-client curl
     - mkdir -p ~/.ssh
     - echo "$EC2_SSH_KEY" | tr -d '\r' > ~/.ssh/id_rsa
     - chmod 600 ~/.ssh/id_rsa
-    - ssh-keyscan -H $LIVE_SERVER_IP >> ~/.ssh/known_hosts
+    - ssh-keyscan $LIVE_SERVER_IP >> ~/.ssh/known_hosts
   script:
     - |
-      echo "====== [Deploy-BE] 백엔드 무중단 배포 시작 ======"
+      echo "====== [1] 헬스체크 요청 시작 ======"
+      STATUS=$(curl -o /dev/null -w "%{http_code}" "http://$LIVE_SERVER_IP/env" || true)
+      echo "STATUS: $STATUS"
 
-      echo "--> 2-1. 현재 운영 중인 upstream 확인..."
-      STATUS=$(curl -s -o /dev/null -w "%{http_code}" "http://$LIVE_SERVER_IP/env" || true)
       if [ "$STATUS" = "200" ]; then
         CURRENT_UPSTREAM=$(curl -s "http://$LIVE_SERVER_IP/env")
       else
         CURRENT_UPSTREAM=green
       fi
-      echo "    현재 upstream: $CURRENT_UPSTREAM"
 
-      echo "--> 2-2. 배포할 Target upstream 결정..."
+      echo "현재 upstream: $CURRENT_UPSTREAM"
+      echo "====== [2] 업스트림 판별 ======"
       if [ "$CURRENT_UPSTREAM" = "blue" ]; then
-        TARGET_UPSTREAM=green
+        CURRENT_PORT=8080
         STOPPED_PORT=8081
-      else
-        TARGET_UPSTREAM=blue
+        TARGET_UPSTREAM=green
+      elif [ "$CURRENT_UPSTREAM" = "green" ]; then
+        CURRENT_PORT=8081
         STOPPED_PORT=8080
+        TARGET_UPSTREAM=blue
+      else
+        echo "error: unknown upstream"
+        exit 1
       fi
-      echo "    배포 Target: $TARGET_UPSTREAM"
 
-      echo "--> 2-3. 새 Docker 컨테이너 실행..."
+      echo "CURRENT_PORT=$CURRENT_PORT"
+      echo "STOPPED_PORT=$STOPPED_PORT"
+      echo "TARGET_UPSTREAM=$TARGET_UPSTREAM"
+
+      echo "====== [3] 새로운 컨테이너 띄우기 ======"
       ssh -o StrictHostKeyChecking=no ubuntu@$LIVE_SERVER_IP "
+        set -x
         sudo docker pull $DOCKER_IMAGE:latest &&
         sudo docker-compose -f docker-compose-${TARGET_UPSTREAM}.yml up -d
       "
 
-      echo "--> 2-4. 새 컨테이너 Health Check 시작 (최대 5분 대기)..."
+      echo "====== [4] 새 컨테이너 헬스체크 ======"
+      # 초기 대기 시간 (Spring Boot 기동 확보)
       sleep 40
+
       MAX_RETRY=30
       RETRY_COUNT=0
       until curl -s http://$LIVE_SERVER_IP:$STOPPED_PORT/env > /dev/null; do
         RETRY_COUNT=$((RETRY_COUNT+1))
         if [ $RETRY_COUNT -ge $MAX_RETRY ]; then
-          echo "    ❌ 새 컨테이너 Health Check 실패"
+          echo "❌ 새 컨테이너 헬스체크 실패 (최대 대기 ${MAX_RETRY}회)"
           exit 1
         fi
-        echo "    ⏳ 컨테이너 기동 대기중... (${RETRY_COUNT}/${MAX_RETRY})"
+        echo "⏳ 컨테이너 기동 대기중... (${RETRY_COUNT}/${MAX_RETRY})"
         sleep 10
       done
-      echo "    ✅ 새 컨테이너 Health Check 성공"
+      echo "✅ 새 컨테이너 헬스체크 성공"
 
-      echo "--> 2-5. Nginx 경로를 새 upstream으로 전환..."
+      echo "====== [5] Nginx 라우팅 갱신 ======"
       ssh -o StrictHostKeyChecking=no ubuntu@$LIVE_SERVER_IP "
+        set -x
         sudo docker exec -i nginxserver bash -c 'echo \"set \\\$service_url ${TARGET_UPSTREAM};\" > /etc/nginx/conf.d/service-env.inc && nginx -s reload'
       "
 
-      echo "--> 2-6. 이전 upstream 컨테이너 종료 및 삭제..."
+      echo "====== [6] 기존 컨테이너 중지 및 삭제 ======"
       ssh -o StrictHostKeyChecking=no ubuntu@$LIVE_SERVER_IP "
+        set -x
         sudo docker stop ${CURRENT_UPSTREAM} || true &&
         sudo docker rm ${CURRENT_UPSTREAM} || true
       "
-
-      echo "====== ✅ [Deploy-BE] 백엔드 무중단 배포 완료 ======"
-  rules:
-    - if: '$CI_COMMIT_BRANCH == "master"'
-      changes:
-        - NareuGO_Backend/**/*
+  only:
+    - master
