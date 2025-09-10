@@ -5,7 +5,7 @@
 # 1. 프론트엔드 빌드 잡(Job)
 build-frontend:
   stage: build
-  image: node:18
+  image: node:20
   tags:
     - ec2-runner
   script:
