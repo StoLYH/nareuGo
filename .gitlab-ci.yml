@@ -4,7 +4,7 @@ stages:
 
 variables:
   JAR_NAME: live_server.jar
-  DOCKER_IMAGE: $DOCKERHUB_USERNAME/live_server
+  DOCKER_IMAGE: $DOCKERHUB_USERNAME/a501   # 도커허브에 저장되는 이름
 
 # ========================
 # Build 단계 (CI)
@@ -13,7 +13,7 @@ build:
   stage: build
   image: gradle:7-jdk11
   script:
-    - cd "NareuGO _Backend"
+    - cd "NareuGO_Backend"
     - chmod +x ./gradlew
     - ./gradlew clean build -x test
     - docker login -u "$DOCKERHUB_USERNAME" -p "$DOCKERHUB_TOKEN"
