@@ -28,7 +28,7 @@ build:
 deploy:
   stage: deploy
   before_script:
-    - apt-get update -y && apt-get install -y openssh-client curl
+    - sudo apt-get update -y && sudo apt-get install -y openssh-client curl
   script:
     - |
       STATUS=$(curl -o /dev/null -w "%{http_code}" "http://$LIVE_SERVER_IP/env" || true)
