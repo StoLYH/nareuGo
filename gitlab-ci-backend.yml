@@ -40,11 +40,11 @@ deploy:
   script:
     - |
       echo "====== [1] 헬스체크 요청 시작 ======"
-      STATUS=$(curl -o /dev/null -w "%{http_code}" "http://$LIVE_SERVER_IP/env" || true)
+      STATUS=$(curl -o /dev/null -w "%{http_code}" "http://$LIVE_SERVER_IP/api/env" || true)
       echo "STATUS: $STATUS"
 
       if [ "$STATUS" = "200" ]; then
-        CURRENT_UPSTREAM=$(curl -s "http://$LIVE_SERVER_IP/env")
+        CURRENT_UPSTREAM=$(curl -s "http://$LIVE_SERVER_IP/api/env")
       else
         CURRENT_UPSTREAM=green
       fi
@@ -81,7 +81,7 @@ deploy:
 
       MAX_RETRY=30
       RETRY_COUNT=0
-      until curl -s http://$LIVE_SERVER_IP:$STOPPED_PORT/env > /dev/null; do
+      until curl -s http://$LIVE_SERVER_IP:$STOPPED_PORT/api/env > /dev/null; do
         RETRY_COUNT=$((RETRY_COUNT+1))
         if [ $RETRY_COUNT -ge $MAX_RETRY ]; then
           echo "❌ 새 컨테이너 헬스체크 실패 (최대 대기 ${MAX_RETRY}회)"
