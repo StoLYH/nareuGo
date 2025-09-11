@@ -4,12 +4,12 @@ import Login from "./views/Login.vue";
 <template>
   <div class="layout">
     <div class="content">
-      <!-- 1234567 -->
+      <!-- 1234564567 -->
       <Login />
     </div>
 
     
-    
+
   </div>
 </template>
 
