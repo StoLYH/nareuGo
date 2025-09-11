@@ -1,5 +1,17 @@
-package main.java.org.example.nareugobackend.api.service.payment;
+package org.example.nareugobackend.api.service.payment;
 
-public class PaymentServiceImpl {
 
+import lombok.RequiredArgsConstructor;
+import org.example.nareugobackend.api.controller.payment.request.PaymentConfirmRequestDto;
+import org.springframework.stereotype.Service;
+
+@Service
+@RequiredArgsConstructor
+public class PaymentServiceImpl implements PaymentService {
+
+
+    @Override
+    public void confirmPayment(PaymentConfirmRequestDto requestDto) {
+
+    }
 }

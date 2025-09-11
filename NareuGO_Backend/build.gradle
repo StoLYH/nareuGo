@@ -35,6 +35,8 @@ dependencies {
     // ✅ Lombok 의존성
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
+    // ✅ WebClient를 사용하기 위한 라이브러리
+    implementation 'org.springframework.boot:spring-boot-starter-webflux'
 }
 
 tasks.named('test') {

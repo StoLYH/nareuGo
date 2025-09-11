@@ -1,5 +1,9 @@
-package main.java.org.example.nareugobackend.api.service.payment;
+package org.example.nareugobackend.api.service.payment;
 
-public class PaymentService {
+import org.example.nareugobackend.api.controller.payment.request.PaymentConfirmRequestDto;
+
+public interface PaymentService {
+
+    void confirmPayment(PaymentConfirmRequestDto requestDto);
 
 }
