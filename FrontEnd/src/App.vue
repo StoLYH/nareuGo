@@ -1,15 +1,20 @@
 <script setup>
-import Login from "./views/Login.vue";
+import { computed } from "vue";
+import { useAuthStore } from "./stores/auth.js";
+import Navigation from "./components/Navigation.vue";
+
+const authStore = useAuthStore();
+const isLoggedIn = computed(() => authStore.isLoggedIn);
 </script>
 <template>
   <div class="layout">
     <div class="content">
-      <!-- 12345645674 -->
-      <Login />
+      <!-- 네비게이션 (로그인된 사용자만 표시) -->
+      <Navigation v-if="isLoggedIn" />
+
+      <!-- 라우터 뷰로 페이지 전환 -->
+      <router-view />
     </div>
-
-    
-
   </div>
 </template>
 
