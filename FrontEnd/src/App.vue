@@ -1,17 +1,19 @@
 <script setup>
+import { computed } from "vue";
+import { useAuthStore } from "./stores/auth.js";
+import Navigation from "./components/Navigation.vue";
 
-import fourth from "./views/fourth.vue";
-import ItemDetailView from "./views/ItemDetailView.vue";
-import ItemRegistView from "./views/ItemRegistView.vue";
-import NotificationListView from "./views/NotificationListView.vue";
-
-
+const authStore = useAuthStore();
+const isLoggedIn = computed(() => authStore.isLoggedIn);
 </script>
-
 <template>
   <div class="layout">
     <div class="content">
+      <!-- 네비게이션 (로그인된 사용자만 표시) -->
+      <Navigation v-if="isLoggedIn" />
 
+      <!-- 라우터 뷰로 페이지 전환 -->
+      <router-view />
     </div>
   </div>
 </template>
@@ -184,6 +186,5 @@ button {
 .content {
   width: 100%;
   height: 100vh; /* [추가] content가 화면 전체 높이를 차지하도록 설정 */
-
 }
 </style>
