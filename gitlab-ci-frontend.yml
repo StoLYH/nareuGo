@@ -39,8 +39,8 @@ deploy-frontend:
     - ssh-keyscan -H $LIVE_SERVER_IP >> ~/.ssh/known_hosts
   script:
     - echo "====== [Deploy-FE] 프론트엔드 파일 배포 시작 ======"
-    # 컨테이너 nginx가 바라보는 경로에 직접 배포
-    - rsync -avz --delete ./FrontEnd/dist/ ubuntu@$LIVE_SERVER_IP:/usr/share/nginx/html/
+    # Nginx conf 설정과 동일하게 /var/www/html 에 배포
+    - rsync -avz --delete ./FrontEnd/dist/ ubuntu@$LIVE_SERVER_IP:/var/www/html/
     - echo "✅ [Deploy-FE] 프론트엔드 파일 배포 완료"
   rules:
     - if: '$CI_COMMIT_BRANCH == "master"'
