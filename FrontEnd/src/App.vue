@@ -1,18 +1,15 @@
 <script setup>
-
-import fourth from "./views/fourth.vue";
-import ItemDetailView from "./views/ItemDetailView.vue";
-import ItemRegistView from "./views/ItemRegistView.vue";
-import NotificationListView from "./views/NotificationListView.vue";
-
-
+import Login from "./views/Login.vue";
 </script>
-
 <template>
   <div class="layout">
     <div class="content">
-
+      <!-- 12345645674 -->
+      <Login />
     </div>
+
+    
+
   </div>
 </template>
 
@@ -184,6 +181,5 @@ button {
 .content {
   width: 100%;
   height: 100vh; /* [추가] content가 화면 전체 높이를 차지하도록 설정 */
-
 }
 </style>
