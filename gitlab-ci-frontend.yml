@@ -2,7 +2,6 @@
 # 프론트엔드 CI/CD 파이프라인
 # ====================================================================
 
-
 # 1. 프론트엔드 빌드 잡(Job)
 build-frontend:
   stage: build
@@ -12,6 +11,8 @@ build-frontend:
   script:
     - echo "====== [Frontend] Vue 프로젝트 빌드를 시작합니다. ======"
     - cd FrontEnd
+    # ✅ GitLab 변수로부터 .env.production 생성
+    - echo "VITE_BASE_URL=$VITE_BASE_URL" > .env.production
     - npm install
     - npm run build
     - echo "====== [Frontend] 빌드 결과물(dist)을 artifacts로 저장합니다. ======"
