@@ -17,4 +17,8 @@ public interface OrderMapper {
     void repend(@Param("orderId") Long orderId,
                 @Param("buyerId") Long buyerId,
                 @Param("amount") java.math.BigDecimal amount);
+
+    java.util.List<Order> findExpiredPendingOrders();
+
+    void expireOrders(@Param("orderIds") java.util.List<Long> orderIds);
 }
