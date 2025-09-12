@@ -11,14 +11,14 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class ProductServiceImpl implements ProductService {
 
-    ProductMapper productMapper;
+    private final ProductMapper productMapper;
 
     @Transactional
     @Override
     public ProductControllerResponse createProduct(ProductControllerRequest productRequest) {
-
         // TODO 사용자 정보 검증
 
+        // 상품 등록
         productMapper.createProduct(productRequest);
 
         return null;

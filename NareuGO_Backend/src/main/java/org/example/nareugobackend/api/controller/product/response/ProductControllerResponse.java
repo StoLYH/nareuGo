@@ -7,7 +7,5 @@ import lombok.Setter;
 @Setter
 public class ProductControllerResponse {
 
-    // 상품 id 반환
-    Long productId;
-
+    private Long productId;        // 상품 ID
 }

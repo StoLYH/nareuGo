@@ -17,5 +17,4 @@ public class ProductControllerRequest {
     private String siDo;           // si_do
     private String siGunGu;        // si_gun_gu
     private String eupMyeonDong;   // eup_myeon_dong
-
 }

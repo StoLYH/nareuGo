@@ -2,7 +2,9 @@ package org.example.nareugobackend.api.controller.product;
 
 import lombok.RequiredArgsConstructor;
 import org.example.nareugobackend.api.controller.product.request.ProductControllerRequest;
+import org.example.nareugobackend.api.controller.product.response.ProductControllerResponse;
 import org.example.nareugobackend.api.service.product.ProductService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -22,14 +24,12 @@ public class ProductController {
     /**
      * 상품 등록
      *
-     * @return
+     * @param productRequest  상품정보
+     * @return ProductControllerRequest 상품 ID
      */
     @PostMapping()
-    public ResponseEntity<ProductControllerRequest> createProduct(@RequestBody ProductControllerRequest productRequest) {
-
-
-
-        return null;
+    public ResponseEntity<ProductControllerResponse> createProduct(@RequestBody ProductControllerRequest productRequest) {
+        return ResponseEntity.ok(productService.createProduct(productRequest));
     }
 
 
