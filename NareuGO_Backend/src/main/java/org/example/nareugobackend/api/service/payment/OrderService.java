@@ -1,6 +1,6 @@
 package org.example.nareugobackend.api.service.payment;
 
-import org.example.nareugobackend.api.service.payment.response.OrderSummary;
+import org.example.nareugobackend.api.controller.payment.response.OrderSummary;
 
 /**
  * 주문 관련 비즈니스 로직을 처리하는 서비스 인터페이스

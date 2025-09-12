@@ -4,38 +4,34 @@ import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
-import org.example.nareugobackend.domain.payment.Order;
-import org.example.nareugobackend.domain.payment.OrderMapper;
-import org.example.nareugobackend.domain.payment.OrderStatus;
-import org.example.nareugobackend.domain.product.Product;
-import org.example.nareugobackend.domain.product.ProductMapper;
-import org.example.nareugobackend.api.service.payment.response.OrderSummary;
+import org.example.nareugobackend.common.model.Order;
+import org.example.nareugobackend.common.model.OrderStatus;
+import org.example.nareugobackend.mapper.OrderMapper;
+import org.example.nareugobackend.api.controller.payment.response.OrderSummary;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
 public class OrderServiceImpl implements OrderService {
-
-    private final ProductMapper productMapper;
     private final OrderMapper orderMapper;
 
     @Override
     @Transactional
     public Long createPendingOrder(Long productId, Long buyerId) {
-        Product product = productMapper.findById(productId)
-            .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 상품입니다."));
-
-        if (product.getPrice() == null) {
-            throw new IllegalStateException("상품 가격이 없습니다.");
-        }
+        // TODO: Product 조회 로직 추가 필요
+        // Product product = productMapper.findById(productId)
+        //     .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 상품입니다."));
+        // if (product.getPrice() == null) {
+        //     throw new IllegalStateException("상품 가격이 없습니다.");
+        // }
 
         // 동일 상품 최근 주문 조회
         Order latest = orderMapper.findByProductId(productId).orElse(null);
         if (latest != null) {
             // 자동 만료 반영(읽기 시점 만료 규칙 재사용)
             if (latest.getStatus() == OrderStatus.PAYMENT_PENDING && latest.getCreatedAt() != null) {
-                if (java.time.Duration.between(latest.getCreatedAt(), java.time.LocalDateTime.now()).toMinutes() >= 15) {
+                if (Duration.between(latest.getCreatedAt(), LocalDateTime.now()).toMinutes() >= 15) {
                     orderMapper.updateStatus(latest.getOrderId(), OrderStatus.CANCELLED);
                     latest.setStatus(OrderStatus.CANCELLED);
                 }
@@ -50,7 +46,8 @@ public class OrderServiceImpl implements OrderService {
         order.setProductId(productId);
         order.setBuyerId(buyerId);
         order.setStatus(OrderStatus.PAYMENT_PENDING);
-        order.setAmount(product.getPrice());
+        // TODO: 상품 가격 조회 후 설정
+        order.setAmount(BigDecimal.valueOf(10000)); // 임시 가격
         orderMapper.insert(order);
         return order.getOrderId();
     }
@@ -78,5 +75,3 @@ public class OrderServiceImpl implements OrderService {
         return summary;
     }
 }
-
-

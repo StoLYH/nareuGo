@@ -2,8 +2,8 @@ package org.example.nareugobackend.api.service.payment;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.example.nareugobackend.domain.payment.Order;
-import org.example.nareugobackend.domain.payment.OrderMapper;
+import org.example.nareugobackend.common.model.Order;
+import org.example.nareugobackend.mapper.OrderMapper;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

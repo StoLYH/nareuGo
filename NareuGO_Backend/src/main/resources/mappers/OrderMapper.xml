@@ -7,17 +7,17 @@
   중고거래 플랫폼의 주문 생성, 조회, 상태 변경, 자동 만료 등의 
   데이터베이스 작업을 처리합니다.
 -->
-<mapper namespace="org.example.nareugobackend.domain.payment.OrderMapper">
+<mapper namespace="org.example.nareugobackend.mappers.OrderMapper">
   
   <!-- 주문 ID로 주문 정보 조회 -->
-  <select id="findById" resultType="org.example.nareugobackend.domain.payment.Order">
+  <select id="findById" resultType="org.example.nareugobackend.common.model.Order">
     SELECT order_id, product_id, buyer_id, status, amount, created_at, updated_at
     FROM orders
     WHERE order_id = #{orderId}
   </select>
   
   <!-- 상품 ID로 최근 주문 조회 (동시 대기 제한용) -->
-  <select id="findByProductId" resultType="org.example.nareugobackend.domain.payment.Order">
+  <select id="findByProductId" resultType="org.example.nareugobackend.common.model.Order">
     SELECT order_id, product_id, buyer_id, status, amount, created_at, updated_at
     FROM orders
     WHERE product_id = #{productId}
@@ -34,7 +34,7 @@
   </update>
   
   <!-- 새 주문 생성 (결제 대기 상태로 생성) -->
-  <insert id="insert" parameterType="org.example.nareugobackend.domain.payment.Order" useGeneratedKeys="true" keyProperty="orderId">
+  <insert id="insert" parameterType="org.example.nareugobackend.common.model.Order" useGeneratedKeys="true" keyProperty="orderId">
     INSERT INTO orders (product_id, buyer_id, status, amount)
     VALUES (#{productId}, #{buyerId}, #{status}, #{amount})
   </insert>
@@ -47,7 +47,7 @@
   </update>
   
   <!-- 15분 이상 된 결제 대기 주문 조회 (자동 만료 스케줄러용) -->
-  <select id="findExpiredPendingOrders" resultType="org.example.nareugobackend.domain.payment.Order">
+  <select id="findExpiredPendingOrders" resultType="org.example.nareugobackend.common.model.Order">
     SELECT order_id, product_id, buyer_id, status, amount, created_at, updated_at
     FROM orders
     WHERE status = 'PAYMENT_PENDING'
