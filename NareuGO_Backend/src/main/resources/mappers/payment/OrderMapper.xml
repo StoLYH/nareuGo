@@ -1,16 +1,66 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--
+  주문(Order) 관련 MyBatis 매퍼 XML
+  
+  중고거래 플랫폼의 주문 생성, 조회, 상태 변경, 자동 만료 등의 
+  데이터베이스 작업을 처리합니다.
+-->
 <mapper namespace="org.example.nareugobackend.domain.payment.OrderMapper">
+  
+  <!-- 주문 ID로 주문 정보 조회 -->
   <select id="findById" resultType="org.example.nareugobackend.domain.payment.Order">
-    SELECT order_id, product_id, buyer_id, status, created_at, updated_at
+    SELECT order_id, product_id, buyer_id, status, amount, created_at, updated_at
     FROM orders
     WHERE order_id = #{orderId}
   </select>
+  
+  <!-- 상품 ID로 최근 주문 조회 (동시 대기 제한용) -->
+  <select id="findByProductId" resultType="org.example.nareugobackend.domain.payment.Order">
+    SELECT order_id, product_id, buyer_id, status, amount, created_at, updated_at
+    FROM orders
+    WHERE product_id = #{productId}
+    ORDER BY order_id DESC
+    LIMIT 1
+  </select>
+  
+  <!-- 주문 상태 업데이트 -->
   <update id="updateStatus">
     UPDATE orders
     SET status     = #{status},
         updated_at = NOW()
     WHERE order_id = #{orderId}
+  </update>
+  
+  <!-- 새 주문 생성 (결제 대기 상태로 생성) -->
+  <insert id="insert" parameterType="org.example.nareugobackend.domain.payment.Order" useGeneratedKeys="true" keyProperty="orderId">
+    INSERT INTO orders (product_id, buyer_id, status, amount)
+    VALUES (#{productId}, #{buyerId}, #{status}, #{amount})
+  </insert>
+  
+  <!-- 기존 주문을 결제 대기 상태로 재활성화 (미사용) -->
+  <update id="repend">
+    UPDATE orders
+    SET status = 'PAYMENT_PENDING', buyer_id = #{buyerId}, amount = #{amount}, updated_at = NOW()
+    WHERE order_id = #{orderId}
+  </update>
+  
+  <!-- 15분 이상 된 결제 대기 주문 조회 (자동 만료 스케줄러용) -->
+  <select id="findExpiredPendingOrders" resultType="org.example.nareugobackend.domain.payment.Order">
+    SELECT order_id, product_id, buyer_id, status, amount, created_at, updated_at
+    FROM orders
+    WHERE status = 'PAYMENT_PENDING'
+      AND created_at &lt; DATE_SUB(NOW(), INTERVAL 15 MINUTE)
+  </select>
+  
+  <!-- 만료된 주문들을 일괄 취소 처리 (자동 만료 스케줄러용) -->
+  <update id="expireOrders">
+    UPDATE orders
+    SET status = 'CANCELLED', updated_at = NOW()
+    WHERE order_id IN
+    <foreach collection="orderIds" item="orderId" open="(" separator="," close=")">
+      #{orderId}
+    </foreach>
   </update>
 </mapper>

@@ -31,10 +31,21 @@ spring:
         format_sql: true
 
 mybatis:
-  mapper-locations: classpath*:mappers/*.xml
-  type-aliases-package: com.ssafy.mvc.model.dto
+  mapper-locations: classpath*:mappers/**/*.xml
+  type-aliases-package: org.example.nareugobackend.domain
   configuration:
     map-underscore-to-camel-case: true
+
+# ===========================================
+# 토스페이먼츠 결제 API 설정
+# ===========================================
+# 토스페이먼츠 API 연동을 위한 설정값들
+# - secret-key: 토스페이먼츠에서 발급받은 시크릿 키 (환경 변수로 주입)
+# - confirm-url: 토스페이먼츠 결제 승인 API 엔드포인트
+payments:
+  toss:
+    secret-key: ${TOSS_SECRET_KEY} # 환경 변수로 시크릿 키 주입
+    confirm-url: https://api.tosspayments.com/v1/payments/confirm
 
 # Local 환경
 ---
