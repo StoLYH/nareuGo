@@ -10,4 +10,6 @@ public interface OrderMapper {
     Optional<Order> findById(String orderId);
 
     void updateStatus(@Param("orderId") Long orderId, @Param("status") OrderStatus status);
+
+    void insert(@Param("order") Order order);
 }

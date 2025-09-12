@@ -1,6 +1,7 @@
 package org.example.nareugobackend.domain.payment;
 
 public enum OrderStatus {
+    PAYMENT_PENDING,   // 결제 대기
     PAYMENT_COMPLETED, // 결제 완료
     IN_DELIVERY,       // 배송 중
     DELIVERY_COMPLETED,// 배송 완료
