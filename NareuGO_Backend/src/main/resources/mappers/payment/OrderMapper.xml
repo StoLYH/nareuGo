@@ -7,6 +7,13 @@
     FROM orders
     WHERE order_id = #{orderId}
   </select>
+  <select id="findByProductId" resultType="org.example.nareugobackend.domain.payment.Order">
+    SELECT order_id, product_id, buyer_id, status, amount, created_at, updated_at
+    FROM orders
+    WHERE product_id = #{productId}
+    ORDER BY order_id DESC
+    LIMIT 1
+  </select>
   <update id="updateStatus">
     UPDATE orders
     SET status     = #{status},
@@ -17,4 +24,9 @@
     INSERT INTO orders (product_id, buyer_id, status, amount)
     VALUES (#{productId}, #{buyerId}, #{status}, #{amount})
   </insert>
+  <update id="repend">
+    UPDATE orders
+    SET status = 'PAYMENT_PENDING', buyer_id = #{buyerId}, amount = #{amount}, updated_at = NOW()
+    WHERE order_id = #{orderId}
+  </update>
 </mapper>

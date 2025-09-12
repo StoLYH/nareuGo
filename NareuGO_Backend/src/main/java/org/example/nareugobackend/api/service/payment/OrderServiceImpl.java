@@ -30,6 +30,22 @@ public class OrderServiceImpl implements OrderService {
             throw new IllegalStateException("상품 가격이 없습니다.");
         }
 
+        // 동일 상품 최근 주문 조회
+        Order latest = orderMapper.findByProductId(productId).orElse(null);
+        if (latest != null) {
+            // 자동 만료 반영(읽기 시점 만료 규칙 재사용)
+            if (latest.getStatus() == OrderStatus.PAYMENT_PENDING && latest.getCreatedAt() != null) {
+                if (java.time.Duration.between(latest.getCreatedAt(), java.time.LocalDateTime.now()).toMinutes() >= 15) {
+                    orderMapper.updateStatus(latest.getOrderId(), OrderStatus.CANCELLED);
+                    latest.setStatus(OrderStatus.CANCELLED);
+                }
+            }
+            // 아직 유효한 대기가 있으면 차단
+            if (latest.getStatus() == OrderStatus.PAYMENT_PENDING) {
+                throw new IllegalStateException("이미 결제 대기 중인 주문이 있습니다.");
+            }
+        }
+
         Order order = new Order();
         order.setProductId(productId);
         order.setBuyerId(buyerId);
