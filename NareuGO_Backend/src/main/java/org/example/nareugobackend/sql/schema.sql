@@ -39,7 +39,7 @@ CREATE TABLE IF NOT EXISTS `products` (
 CREATE TABLE IF NOT EXISTS `product_images` (
   `image_id` BIGINT NOT NULL AUTO_INCREMENT COMMENT '이미지 ID',
   `product_id` BIGINT NOT NULL COMMENT '상품 ID',
-  `image_url` VARCHAR(255) NOT NULL COMMENT 'S3 이미지 URL',
+  `image_url` VARCHAR(255) NOT NULL COMMENT 'S3 이미지 KEY',
   PRIMARY KEY (`image_id`),
   INDEX `fk_product_images_products_idx` (`product_id` ASC),
   CONSTRAINT `fk_product_images_products`

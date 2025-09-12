@@ -1,14 +1,12 @@
 package org.example.nareugobackend.api.controller.product.request;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import lombok.Getter;
 import lombok.Setter;
-import org.example.nareugobackend.common.model.ProductStatus;
 
 @Getter
 @Setter
-public class ProductRequest {
+public class ProductControllerRequest {
 
     private Long sellerId;         // seller_id
     private String title;          // title

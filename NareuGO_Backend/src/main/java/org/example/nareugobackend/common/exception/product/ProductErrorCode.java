@@ -1,5 +1,5 @@
 package org.example.nareugobackend.common.exception.product;
 
-public record ProductErrorCode() {
+public record ProductErrorCode(String errorCode, String message) {
 
 }
