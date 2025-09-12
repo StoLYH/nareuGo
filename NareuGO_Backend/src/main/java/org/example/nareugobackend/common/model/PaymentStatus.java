@@ -1,4 +1,4 @@
-package org.example.nareugobackend.domain.payment;
+package org.example.nareugobackend.common.model;
 
 /**
  * 결제 상태를 나타내는 열거형

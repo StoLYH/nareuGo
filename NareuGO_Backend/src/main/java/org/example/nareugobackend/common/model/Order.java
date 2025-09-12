@@ -1,4 +1,4 @@
-package org.example.nareugobackend.domain.payment;
+package org.example.nareugobackend.common.model;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -6,11 +6,13 @@ import lombok.Getter;
 import lombok.Setter;
 
 /**
- * 주문 정보를 나타내는 도메인 객체
+ * 주문 정보를 나타내는 MyBatis 엔티티
  * 
  * 중고거래에서 구매자가 상품을 주문할 때 생성되는 엔티티입니다.
  * 채팅방에서 결제 버튼을 누르면 PAYMENT_PENDING 상태로 생성되며,
  * 결제 완료 시 PAYMENT_COMPLETED로 상태가 변경됩니다.
+ * 
+ * MyBatis 매퍼를 통해 orders 테이블과 매핑됩니다.
  * 
  * 주요 필드:
  * - orderId: 주문 고유 ID (DB AUTO_INCREMENT)

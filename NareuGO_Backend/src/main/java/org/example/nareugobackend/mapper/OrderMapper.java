@@ -1,8 +1,10 @@
-package org.example.nareugobackend.domain.payment;
+package org.example.nareugobackend.mapper;
 
 import java.util.Optional;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import org.example.nareugobackend.common.model.Order;
+import org.example.nareugobackend.common.model.OrderStatus;
 
 @Mapper
 public interface OrderMapper {

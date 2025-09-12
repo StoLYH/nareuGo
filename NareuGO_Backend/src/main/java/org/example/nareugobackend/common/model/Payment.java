@@ -1,4 +1,4 @@
-package org.example.nareugobackend.domain.payment;
+package org.example.nareugobackend.common.model;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -6,10 +6,12 @@ import lombok.Getter;
 import lombok.Setter;
 
 /**
- * 결제 정보를 나타내는 도메인 객체
+ * 결제 정보를 나타내는 MyBatis 엔티티
  * 
  * 토스페이먼츠 API를 통해 실제 결제가 승인된 후 생성되는 엔티티입니다.
  * 주문(Order)과 1:1 관계를 가지며, 토스페이먼츠의 결제 고유 키와 승인 정보를 저장합니다.
+ * 
+ * MyBatis 매퍼를 통해 payments 테이블과 매핑됩니다.
  * 
  * 주요 필드:
  * - paymentId: 결제 고유 ID (DB AUTO_INCREMENT)

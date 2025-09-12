@@ -5,7 +5,7 @@ import org.example.nareugobackend.api.controller.payment.request.CreateOrderRequ
 import org.example.nareugobackend.api.controller.payment.response.CreateOrderResponseDto;
 import org.example.nareugobackend.api.controller.payment.response.OrderResponseDto;
 import org.example.nareugobackend.api.service.payment.OrderService;
-import org.example.nareugobackend.api.service.payment.response.OrderSummary;
+import org.example.nareugobackend.api.controller.payment.response.OrderSummary;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
