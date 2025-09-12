@@ -31,8 +31,8 @@ spring:
         format_sql: true
 
 mybatis:
-  mapper-locations: classpath*:mappers/*.xml
-  type-aliases-package: com.ssafy.mvc.model.dto
+  mapper-locations: classpath*:mappers/**/*.xml
+  type-aliases-package: org.example.nareugobackend.domain
   configuration:
     map-underscore-to-camel-case: true
 

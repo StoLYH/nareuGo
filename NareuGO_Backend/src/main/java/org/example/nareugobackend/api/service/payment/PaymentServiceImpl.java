@@ -4,8 +4,10 @@ import lombok.RequiredArgsConstructor;
 import org.example.nareugobackend.api.controller.payment.request.PaymentConfirmRequestDto;
 import org.example.nareugobackend.domain.payment.Order;
 import org.example.nareugobackend.domain.payment.OrderMapper;
+import org.example.nareugobackend.domain.payment.OrderStatus;
 import org.example.nareugobackend.domain.payment.Payment;
 import org.example.nareugobackend.domain.payment.PaymentMapper;
+import org.example.nareugobackend.domain.payment.PaymentStatus;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -56,7 +58,7 @@ public class PaymentServiceImpl implements PaymentService {
         // --- 2. 결제 금액 위변조 검증 (매우 중요!) ---
         // 프론트엔드에서 보낸 결제 금액과 DB에 저장된 실제 주문 금액이 일치하는지 확인합니다.
         // 이 과정을 거치지 않으면 사용자가 브라우저에서 금액을 조작하여 결제할 수 있습니다.
-        if (!Objects.equals(order.getAmount(), requestDto.getAmount())) {
+        if (order.getAmount() == null || requestDto.getAmount() == null || order.getAmount().compareTo(requestDto.getAmount()) != 0) {
             throw new IllegalArgumentException("주문 금액이 일치하지 않습니다.");
         }
 
@@ -84,17 +86,16 @@ public class PaymentServiceImpl implements PaymentService {
         // API 호출이 성공적으로 완료되면, 우리 서비스의 DB 데이터를 최종 상태로 변경합니다.
 
         // 5-1. 주문(orders) 테이블의 상태를 'PAYMENT_COMPLETED'로 업데이트합니다.
-        order.setStatus("PAYMENT_COMPLETED");
-        orderMapper.updateStatus(order);
+        order.setStatus(OrderStatus.PAYMENT_COMPLETED);
+        orderMapper.updateStatus(order.getOrderId(), OrderStatus.PAYMENT_COMPLETED);
 
         // 5-2. 결제(payments) 테이블에 최종 결제 정보를 기록합니다.
-        Payment payment = Payment.builder()
-            .orderId(order.getOrderId())
-            .paymentKey(requestDto.getPaymentKey())
-            .amount(order.getAmount())
-            .status("DONE") // 결제 완료 상태
-            .approvedAt(LocalDateTime.now()) // 결제 승인 시각
-            .build();
+        Payment payment = new Payment();
+        payment.setOrderId(order.getOrderId());
+        payment.setPaymentKey(requestDto.getPaymentKey());
+        payment.setAmount(order.getAmount());
+        payment.setStatus(PaymentStatus.DONE);
+        payment.setApprovedAt(LocalDateTime.now());
         paymentMapper.save(payment); // MyBatis 매퍼를 통해 DB에 저장
     }
 }

@@ -6,5 +6,5 @@ import org.apache.ibatis.annotations.Param;
 @Mapper
 public interface PaymentMapper {
 
-    void save(@Param("order") Order order);
+    void save(@Param("payment") Payment payment);
 }
