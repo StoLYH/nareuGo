@@ -1,11 +1,14 @@
 package org.example.nareugobackend.api.controller.payment;
 
-import jakarta.validation.constraints.NotNull;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.Setter;
+import org.example.nareugobackend.api.controller.payment.request.CreateOrderRequestDto;
+import org.example.nareugobackend.api.controller.payment.response.CreateOrderResponseDto;
+import org.example.nareugobackend.api.controller.payment.response.OrderResponseDto;
 import org.example.nareugobackend.api.service.payment.OrderService;
+import org.example.nareugobackend.api.service.payment.response.OrderSummary;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,26 +22,23 @@ public class OrderController {
     private final OrderService orderService;
 
     @PostMapping
-    public ResponseEntity<CreateOrderResponse> createOrder(@RequestBody CreateOrderRequest request) {
+    public ResponseEntity<CreateOrderResponseDto> createOrder(@RequestBody CreateOrderRequestDto request) {
         Long orderId = orderService.createPendingOrder(request.getProductId(), request.getBuyerId());
-        CreateOrderResponse response = new CreateOrderResponse();
+        CreateOrderResponseDto response = new CreateOrderResponseDto();
         response.setOrderId(orderId);
         return ResponseEntity.ok(response);
     }
 
-    @Getter
-    @Setter
-    public static class CreateOrderRequest {
-        @NotNull
-        private Long productId;
-        @NotNull
-        private Long buyerId;
-    }
-
-    @Getter
-    @Setter
-    public static class CreateOrderResponse {
-        private Long orderId;
+    @GetMapping("/{orderId}")
+    public ResponseEntity<OrderResponseDto> getOrder(@PathVariable Long orderId) {
+        OrderSummary summary = orderService.getOrderAndAutoExpire(orderId);
+        OrderResponseDto res = new OrderResponseDto();
+        res.setOrderId(summary.getOrderId());
+        res.setProductId(summary.getProductId());
+        res.setBuyerId(summary.getBuyerId());
+        res.setStatus(summary.getStatus());
+        res.setAmount(summary.getAmount());
+        return ResponseEntity.ok(res);
     }
 }
 
