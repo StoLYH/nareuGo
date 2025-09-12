@@ -8,6 +8,7 @@ import org.example.nareugobackend.domain.payment.OrderStatus;
 import org.example.nareugobackend.domain.payment.Payment;
 import org.example.nareugobackend.domain.payment.PaymentMapper;
 import org.example.nareugobackend.domain.payment.PaymentStatus;
+import org.example.nareugobackend.api.service.payment.response.TossPaymentConfirmResponseDto;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -73,13 +74,31 @@ public class PaymentServiceImpl implements PaymentService {
 
         // --- 4. 토스페이먼츠 결제 승인 API 호출 ---
         // WebClient를 사용하여 비동기 POST 요청을 보냅니다.
-        webClient.post()
-            .header("Authorization", "Basic " + encodedSecretKey) // 인증 헤더 추가
-            .header("Content-Type", "application/json") // 컨텐츠 타입 헤더 추가
-            .bodyValue(requestDto) // 요청 본문에 DTO를 JSON 형태로 담아 보냅니다.
-            .retrieve() // API 응답을 받기 시작합니다.
-            .bodyToMono(String.class) // 응답 본문을 Mono<String> 형태로 변환합니다. (응답 본문이 필요 없다면 Void.class)
-            .block(); // 비동기 작업이 완료될 때까지 동기적으로 기다립니다.
+        TossPaymentConfirmResponseDto tossResponse = webClient.post()
+            .header("Authorization", "Basic " + encodedSecretKey)
+            .header("Content-Type", "application/json")
+            .bodyValue(requestDto) // paymentKey, orderId, amount
+            .retrieve()
+            .onStatus(
+                status -> status.isError(),
+                clientResponse -> clientResponse.bodyToMono(String.class)
+                    .map(body -> new IllegalStateException("Toss confirm failed: " + body))
+            )
+            .bodyToMono(TossPaymentConfirmResponseDto.class)
+            .block();
+
+        if (tossResponse == null) {
+            throw new IllegalStateException("Empty response from Toss Payments");
+        }
+
+        // 상태/금액 재검증
+        if (!"DONE".equalsIgnoreCase(tossResponse.getStatus())) {
+            throw new IllegalStateException("Payment not completed. status=" + tossResponse.getStatus());
+        }
+        if (tossResponse.getTotalAmount() == null ||
+            order.getAmount().compareTo(java.math.BigDecimal.valueOf(tossResponse.getTotalAmount().longValue())) != 0) {
+            throw new IllegalArgumentException("승인 응답 금액이 주문 금액과 일치하지 않습니다.");
+        }
         // 실제 프로덕션 환경에서는 비동기 로직을 그대로 활용하는 것이 성능에 더 좋습니다.
 
         // --- 5. DB 상태 업데이트 ---
@@ -95,7 +114,7 @@ public class PaymentServiceImpl implements PaymentService {
         payment.setPaymentKey(requestDto.getPaymentKey());
         payment.setAmount(order.getAmount());
         payment.setStatus(PaymentStatus.DONE);
-        payment.setApprovedAt(LocalDateTime.now());
+        payment.setApprovedAt(tossResponse.getApprovedAt() != null ? tossResponse.getApprovedAt().toLocalDateTime() : LocalDateTime.now());
         paymentMapper.save(payment); // MyBatis 매퍼를 통해 DB에 저장
     }
 }
