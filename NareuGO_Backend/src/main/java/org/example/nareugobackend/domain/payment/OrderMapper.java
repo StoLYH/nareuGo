@@ -7,7 +7,7 @@ import org.apache.ibatis.annotations.Param;
 @Mapper
 public interface OrderMapper {
 
-    Optional<Order> findById(Long orderId);
+    Optional<Order> findById(String orderId);
 
     void updateStatus(@Param("orderId") Long orderId, @Param("status") OrderStatus status);
 }
