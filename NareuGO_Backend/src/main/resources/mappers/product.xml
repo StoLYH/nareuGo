@@ -4,8 +4,8 @@
 <mapper namespace="org.example.nareugobackend.mapper.ProductMapper">
 
   <insert id="createProduct" parameterType="org.example.nareugobackend.api.controller.product.request.ProductControllerRequest" useGeneratedKeys="true" keyProperty="productId">
-    INSERT INTO products (seller_id, title, description, price, status)
-    VALUES (#{sellerId}, #{title}, #{description}, #{price}, 'FOR_SALE')
+    INSERT INTO products (seller_id, title, description, price, status, apartment_name, si_do, si_gun_gu, eup_myeon_dong)
+    VALUES (#{sellerId}, #{title}, #{description}, #{price}, 'FOR_SALE', #{apartmentName}, #{siDo}, #{siGunGu}, #{eupMyeonDong})
   </insert>
 
 </mapper>

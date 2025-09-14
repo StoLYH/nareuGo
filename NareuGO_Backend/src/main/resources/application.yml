@@ -1,6 +1,6 @@
 spring:
   application:
-    name: NareuGO_Backend # 프로젝트 이름 통일
+    name: NareuGO_Backend
 
   profiles:
     active: local

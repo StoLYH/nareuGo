@@ -8,6 +8,7 @@ import lombok.Setter;
 @Setter
 public class ProductControllerRequest {
 
+    private Long productId;        // product_id
     private Long sellerId;         // seller_id
     private String title;          // title
     private String description;    // description
