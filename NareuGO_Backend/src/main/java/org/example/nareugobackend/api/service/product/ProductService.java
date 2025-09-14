@@ -1,9 +1,11 @@
 package org.example.nareugobackend.api.service.product;
 
-import org.example.nareugobackend.api.controller.product.request.ProductControllerRequest;
-import org.example.nareugobackend.api.controller.product.response.ProductControllerResponse;
+import org.example.nareugobackend.api.controller.product.request.ProductCreateRequest;
+import org.example.nareugobackend.api.controller.product.response.ProductCreateResponse;
 
 public interface ProductService {
 
-    ProductControllerResponse createProduct(ProductControllerRequest productRequest);
+    ProductCreateResponse createProduct(ProductCreateRequest productRequest);
+
+    long
 }

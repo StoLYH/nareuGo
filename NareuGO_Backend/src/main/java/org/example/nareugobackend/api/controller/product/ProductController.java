@@ -1,10 +1,10 @@
 package org.example.nareugobackend.api.controller.product;
 
 import lombok.RequiredArgsConstructor;
-import org.example.nareugobackend.api.controller.product.request.ProductControllerRequest;
-import org.example.nareugobackend.api.controller.product.response.ProductControllerResponse;
+import org.example.nareugobackend.api.controller.product.request.ProductCreateRequest;
+import org.example.nareugobackend.api.controller.product.response.ProductDeleteResponse;
 import org.example.nareugobackend.api.service.product.ProductService;
-import org.springframework.http.HttpStatus;
+import org.example.nareugobackend.api.controller.product.response.ProductCreateResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -24,11 +24,11 @@ public class ProductController {
     /**
      * 상품 등록
      *
-     * @param productRequest  상품정보
-     * @return ProductControllerRequest 상품 ID
+     * @param productRequest
+     * @return ProductCreateResponse
      */
     @PostMapping()
-    public ResponseEntity<ProductControllerResponse> createProduct(@RequestBody ProductControllerRequest productRequest) {
+    public ResponseEntity<ProductCreateResponse> createProduct(@RequestBody ProductCreateRequest productRequest) {
         return ResponseEntity.ok(productService.createProduct(productRequest));
     }
 
@@ -36,12 +36,13 @@ public class ProductController {
     /**
      * 상품 삭제
      *
-     * @return
+     * @parm id
+     * @return ProductDeleteResponse
      */
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteProduct(@PathVariable Long id) {
-        // TODO: 상품 삭제 로직
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<ProductDeleteResponse> deleteProduct(@PathVariable Long id) {
+
+        return ResponseEntity.ok(new ProductDeleteResponse(true, "상품삭제 성공"));
     }
 
 

@@ -37,6 +37,18 @@ mybatis:
     map-underscore-to-camel-case: true
 
 # ===========================================
+# AWS S3 설정
+# ===========================================
+cloud:
+  aws:
+    credentials:
+      access-key: ${CLOUD_AWS_CREDENTIALS_ACCESS_KEY}
+      secret-key: ${CLOUD_AWS_CREDENTIALS_SECRET_KEY}
+    s3:
+      bucket: ${AWS_S3_BUCKET_NAME}  
+      region: ${AWS_S3_REGION}       
+
+# ===========================================
 # 토스페이먼츠 결제 API 설정
 # ===========================================
 # 토스페이먼츠 API 연동을 위한 설정값들

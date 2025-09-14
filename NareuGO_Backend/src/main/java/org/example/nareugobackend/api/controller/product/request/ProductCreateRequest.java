@@ -6,7 +6,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class ProductControllerRequest {
+public class ProductCreateRequest {
 
     private Long productId;        // product_id
     private Long sellerId;         // seller_id
@@ -18,4 +18,6 @@ public class ProductControllerRequest {
     private String siDo;           // si_do
     private String siGunGu;        // si_gun_gu
     private String eupMyeonDong;   // eup_myeon_dong
+
+    private String [] files;       // s3전용 파일
 }
