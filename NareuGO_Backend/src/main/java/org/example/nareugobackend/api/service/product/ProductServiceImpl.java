@@ -114,4 +114,15 @@ public class ProductServiceImpl implements ProductService {
         }
     }
 
+    @Transactional
+    @Override
+    public void deleteProduct(long productId) {
+        // TODO 사용자 검증
+        
+        productMapper.deleteProduct(productId);
+    }
+
+
+
+
 }

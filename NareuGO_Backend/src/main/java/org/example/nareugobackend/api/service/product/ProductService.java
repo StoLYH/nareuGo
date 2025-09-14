@@ -7,5 +7,5 @@ public interface ProductService {
 
     ProductCreateResponse createProduct(ProductCreateRequest productRequest);
 
-    long
+    void deleteProduct(long productId);
 }

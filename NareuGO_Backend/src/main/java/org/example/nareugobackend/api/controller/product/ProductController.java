@@ -41,15 +41,19 @@ public class ProductController {
      */
     @DeleteMapping("/{id}")
     public ResponseEntity<ProductDeleteResponse> deleteProduct(@PathVariable Long id) {
-
         return ResponseEntity.ok(new ProductDeleteResponse(true, "상품삭제 성공"));
     }
 
 
+    /**
+     * 상품 조회 (엘라스틱 서치 미사용)
+     *
+     * @return
+     */
 
 
     /**
-     * 상품 조회 (엘라스틱 서치)
+     * 상품 조회 (엘라스틱 서치용)
      *
      * @return
      */

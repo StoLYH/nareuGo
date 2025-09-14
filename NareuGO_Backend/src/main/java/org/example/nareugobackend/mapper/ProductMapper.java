@@ -6,9 +6,11 @@ import org.example.nareugobackend.api.controller.product.request.ProductCreateRe
 @Mapper
 public interface ProductMapper {
 
-    long createProduct(ProductCreateRequest productServiceRequest);
+    int createProduct(ProductCreateRequest productServiceRequest);
 
-    void insertImageKeys(@Param("productId") Long productId, 
+    int insertImageKeys(@Param("productId") Long productId,
                          @Param("imageUrls") String[] imageUrls);
+
+    int deleteProduct(@Param("productId") Long productId);
 
 }
