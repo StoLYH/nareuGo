@@ -174,7 +174,7 @@
 
             <div v-if="ocrLoading" class="loading-state">
               <div class="loading-spinner"></div>
-              <p>신분증을 분석하고 있습니다...</p>
+              <p>신분증을 인식하고 있습니다...</p>
             </div>
 
             <div v-if="ocrVerified" class="success-state">
@@ -185,7 +185,13 @@
                 </svg>
               </div>
               <h3>주소 인증 완료!</h3>
-              <p class="address-info">{{ verifiedAddress }}</p>
+              <div class="address-match-info">
+                <p class="extracted-address">추출된 주소: {{ ocrResult.extractedAddress }}</p>
+                <p class="match-score">일치도: {{ Math.round(ocrResult.matchScore * 100) }}%</p>
+                <p class="match-status" :class="{ success: ocrResult.addressMatched, warning: !ocrResult.addressMatched }">
+                  {{ ocrResult.addressMatched ? '✅ 주소가 일치합니다' : '⚠️ 주소 확인이 필요합니다' }}
+                </p>
+              </div>
             </div>
 
             <div v-if="ocrError" class="error-state">
@@ -305,6 +311,7 @@ export default {
       ocrError: null,
       verifiedAddress: '',
       capturedImage: null,
+      ocrResult: null,
       
       // 카메라 관련
       showCamera: false,
@@ -431,6 +438,10 @@ export default {
     
     retakePhoto() {
       this.capturedImage = null;
+      this.ocrError = null;
+      this.ocrVerified = false;
+      this.ocrResult = null;
+      this.capturePhoto();
     },
     
     async processOCR() {
@@ -438,53 +449,47 @@ export default {
       this.ocrError = null;
       
       try {
-        // OCR 처리 시뮬레이션
-        await this.simulateDelay(3000);
+        // 이미지를 Base64로 변환 (이미 Base64 형태)
+        const imageData = this.capturedImage;
+        const imageFormat = 'jpg'; // 카메라에서 촬영한 이미지는 보통 jpg
         
-        const ocrResult = await this.performOCR(this.capturedImage);
+        // 백엔드 OCR API 호출
+        const response = await fetch('/api/ocr/verify-address', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            imageData: imageData,
+            imageFormat: imageFormat,
+            latitude: this.currentLatitude,
+            longitude: this.currentLongitude,
+            gpsAddress: this.verifiedLocation
+          })
+        });
         
-        if (ocrResult.success) {
-          this.verifiedAddress = ocrResult.address;
-          this.ocrVerified = true;
+        const result = await response.json();
+        
+        if (result.success) {
+          this.ocrResult = result;
+          this.ocrVerified = result.addressMatched;
+          this.verifiedAddress = result.extractedAddress;
+          
+          console.log('OCR 처리 성공:', {
+            extractedAddress: result.extractedAddress,
+            matchScore: result.matchScore,
+            addressMatched: result.addressMatched
+          });
         } else {
-          throw new Error(ocrResult.error);
+          throw new Error(result.errorMessage || 'OCR 처리에 실패했습니다.');
         }
         
       } catch (error) {
         console.error('OCR 처리 오류:', error);
-        this.ocrError = error.message || 'OCR 처리 중 오류가 발생했습니다.';
+        this.ocrError = error.message || '신분증 인식에 실패했습니다. 다시 시도해주세요.';
       } finally {
         this.ocrLoading = false;
       }
-    },
-    
-    async performOCR(imageData) {
-      // 실제 OCR API 호출 로직이 들어갈 곳
-      const random = Math.random();
-      if (random > 0.2) { // 80% 성공률
-        return {
-          success: true,
-          address: '서울특별시 강남구 테헤란로 123'
-        };
-      } else {
-        return {
-          success: false,
-          error: '신분증을 인식할 수 없습니다. 더 선명하게 촬영해주세요.'
-        };
-      }
-    },
-    
-    retryOCR() {
-      this.ocrError = null;
-      this.capturedImage = null;
-    },
-    
-    completeVerification() {
-      this.currentStep = 3;
-    },
-    
-    goToHome() {
-      this.$router.push('/');
     },
     
     simulateDelay(ms) {
@@ -771,6 +776,48 @@ export default {
   padding: 1rem;
   border-radius: 8px;
   margin-top: 1rem;
+}
+
+/* OCR 결과 스타일링 */
+.address-match-info {
+  text-align: left;
+  background: #f8f9fa;
+  padding: 1.5rem;
+  border-radius: 12px;
+  margin-top: 1rem;
+}
+
+.extracted-address {
+  font-size: 0.95rem;
+  color: var(--deepgray);
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+}
+
+.match-score {
+  font-size: 0.9rem;
+  color: var(--deepgray);
+  margin-bottom: 0.75rem;
+}
+
+.match-status {
+  font-size: 1rem;
+  font-weight: 600;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.match-status.success {
+  background: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+}
+
+.match-status.warning {
+  background: #fff3cd;
+  color: #856404;
+  border: 1px solid #ffeaa7;
 }
 
 /* 에러 상태 */
