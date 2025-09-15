@@ -1,3 +1,4 @@
+
 package org.example.nareugobackend.api.controller.product.response;
 
 import lombok.Getter;
@@ -5,7 +6,8 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class ProductControllerResponse {
+public class ProductCreateResponse {
 
-    private Long productId;        // 상품 ID
+    String [] urls; // image 파일 url목록
+    
 }

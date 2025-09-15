@@ -11,4 +11,5 @@ public class NAREUGOException extends RuntimeException {
     super(errorCode.getCode());
     this.errorCode = errorCode;
   }
+
 }

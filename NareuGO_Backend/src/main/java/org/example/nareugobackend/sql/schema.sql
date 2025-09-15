@@ -32,20 +32,27 @@ CREATE TABLE IF NOT EXISTS `products` (
     `price` DECIMAL(10,0) NOT NULL COMMENT '가격',
     `status` ENUM('FOR_SALE','SOLD') NOT NULL DEFAULT 'FOR_SALE' COMMENT '판매 상태',
     `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '등록일시',
-    `updated_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    `updated_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '수정일시',
     `apartment_name` VARCHAR(100) NOT NULL COMMENT '아파트 이름',
     `si_do` VARCHAR(50) NOT NULL COMMENT '시/도',
     `si_gun_gu` VARCHAR(50) NOT NULL COMMENT '시/군/구',
     `eup_myeon_dong` VARCHAR(50) NOT NULL COMMENT '읍/면/동',
-    `apartment_key` VARCHAR(255) GENERATED ALWAYS AS (CONCAT(si_do, '_', si_gun_gu, '_', eup_myeon_dong, '_', apartment_name)) STORED,
     PRIMARY KEY (`product_id`),
+
+    -- 판매자 FK 인덱스
     INDEX `fk_products_users_idx` (`seller_id`),
+
+    -- 지역 기반 검색 최적화를 위한 복합 인덱스
+    INDEX `idx_region` (`si_do`, `si_gun_gu`, `eup_myeon_dong`, `apartment_name`),
+
     CONSTRAINT `fk_products_users`
     FOREIGN KEY (`seller_id`)
     REFERENCES `users` (`user_id`)
-                                                             ON DELETE CASCADE ON UPDATE CASCADE,
-    UNIQUE KEY `unique_product_apartment` (`apartment_key`)
+                                                             ON DELETE CASCADE
+                                                             ON UPDATE CASCADE
     ) ENGINE=InnoDB COMMENT='판매 상품 정보';
+
+
 
 
 CREATE TABLE IF NOT EXISTS `product_images` (
