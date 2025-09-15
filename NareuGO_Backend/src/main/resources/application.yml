@@ -32,7 +32,7 @@ cookie:
 host:
   frontend: ${HOST_FRONTEND}
   allowed-origins: ${HOST_ALLOWED_ORIGINS}
-  login-success-redirect-url: /home
+  login-success-redirect-url: /auth/success
 
   jpa:
     hibernate:
