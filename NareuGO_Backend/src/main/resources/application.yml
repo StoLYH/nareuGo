@@ -27,12 +27,12 @@ jwt:
 
 cookie:
   domain: ${COOKIE_DOMAIN}
-  secure-mode: ${COOKIE_SECURE_MODE}
+  secure-mode: true
 
 host:
-  frontend: ${HOST.FRONTEND}
-  allowed-origins: ${HOST.ALLOWED-ORIGINS}
-  login-success-redirect-url: ${HOST.LOGIN-SUCCESS-REDIRECT-URL}
+  frontend: ${HOST_FRONTEND}
+  allowed-origins: ${HOST_ALLOWED_ORIGINS}
+  login-success-redirect-url: /home
 
   jpa:
     hibernate:
@@ -52,7 +52,7 @@ host:
   data:
     redis:
       host: ${REDIS_HOST}
-      port: ${REDIS_PORT}
+      port: 6379
       password: ${REDIS_PASSWORD}
 
   security:
@@ -97,7 +97,7 @@ cloud:
       access-key: ${CLOUD_AWS_CREDENTIALS_ACCESS_KEY}
       secret-key: ${CLOUD_AWS_CREDENTIALS_SECRET_KEY}
     s3:
-      bucket: ${AWS_S3_BUCKET_NAME}  
+      bucket: "a501"
       region: ${AWS_S3_REGION}       
 
 # ===========================================
