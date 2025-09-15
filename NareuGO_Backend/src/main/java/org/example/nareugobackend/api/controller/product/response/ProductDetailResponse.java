@@ -13,7 +13,7 @@ import java.util.List;
 @Builder
 public class ProductDetailResponse {
     
-    // Product
+    // Product 테이블블
     private Long productId;
     private Long sellerId;
     private String title;
@@ -27,7 +27,7 @@ public class ProductDetailResponse {
     private String siGunGu;
     private String eupMyeonDong;
     
-    // productImage
+    // productImage 테이블 (productId이용)
     private List<String> imageUrls;
 
     // 사용자 동,호 (users)

@@ -66,6 +66,10 @@ payments:
     secret-key: ${TOSS_SECRET_KEY} # 환경 변수로 시크릿 키 주입
     confirm-url: https://api.tosspayments.com/v1/payments/confirm
 
+
+
+
+
 # Local 환경
 ---
 spring:

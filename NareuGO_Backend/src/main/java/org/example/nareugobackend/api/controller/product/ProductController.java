@@ -4,6 +4,7 @@ import java.util.List;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.example.nareugobackend.api.controller.product.request.ProductCreateRequest;
+import org.example.nareugobackend.api.controller.product.response.ProductDeleteResponse;
 import org.example.nareugobackend.api.controller.product.response.ProductDetailResponse;
 import org.example.nareugobackend.api.service.product.ProductService;
 import org.example.nareugobackend.api.controller.product.response.ProductCreateResponse;
@@ -63,7 +64,6 @@ public class ProductController {
     /**
      * 상품 개별 조회 (단일 조회)
      *
-     *
      * @return
      */
     @GetMapping("/{productId}")
@@ -73,14 +73,13 @@ public class ProductController {
         if (product == null) {
             return ResponseEntity.notFound().build();
         }
-        
         return ResponseEntity.ok(product);
     }
 
 
     /**
      * 상품 검색 (엘라스틱 서치용)
-     *
+     * // TODO 나중에하기
      * @return
      */
 
