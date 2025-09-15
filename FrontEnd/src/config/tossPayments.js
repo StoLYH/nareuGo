@@ -1,7 +1,10 @@
+// 환경변수에서 클라이언트 키 읽기
+const CLIENT_KEY = import.meta.env.VITE_TOSS_CLIENT_KEY;
+
 // 토스페이먼츠 결제 설정
 export const TOSS_PAYMENTS_CONFIG = {
   // 테스트 환경 설정
-  clientKey: "test_ck_AQ92ymxN34yKEb0kooGPVajRKXvd", // 테스트 키
+  clientKey: CLIENT_KEY,
   baseUrl: "https://api.tosspayments.com/v1",
 
   // 결제 성공/실패 URL
