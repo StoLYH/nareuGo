@@ -3,9 +3,9 @@ import { useAuthStore } from '@/stores/auth'
 import router from '@/router'                                                                                                                                                     
 
 const apiClient = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL,
+  baseURL: import.meta.env.VITE_API_BASE_URL || 'http://j13a501.p.ssafy.io',
   timeout: 10000,
-  withCredentials: true, // 쿠키 포함                                                                                                                                             
+  withCredentials: true, // 쿠키 포함
 })
 
 // 요청 인터셉터                                                                                                                                                                  
