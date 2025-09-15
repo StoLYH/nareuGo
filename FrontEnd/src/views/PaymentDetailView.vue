@@ -266,15 +266,22 @@ export default {
       this.isLoading = true;
 
       try {
-        // 1. 주문 생성 API 호출
-        const orderResponse = await this.createOrder();
-        const orderId = orderResponse.orderId;
+        // 백엔드가 실행 중이면 실제 주문 생성, 아니면 테스트용 주문 ID 사용
+        let orderId;
+        try {
+          const orderResponse = await this.createOrder();
+          orderId = orderResponse.orderId;
+        } catch (error) {
+          console.warn("백엔드 API 호출 실패, 테스트 모드로 진행:", error);
+          // 테스트용 주문 ID 생성 (타임스탬프 기반)
+          orderId = `test_${Date.now()}`;
+        }
 
-        // 2. 토스페이먼츠 결제위젯 초기화
+        // 토스페이먼츠 결제위젯 초기화
         await this.initializeTossWidget(orderId);
       } catch (error) {
         console.error("결제 처리 중 오류:", error);
-        alert("결제 처리 중 오류가 발생했습니다.");
+        alert("결제 처리 중 오류가 발생했습니다: " + error.message);
       } finally {
         this.isLoading = false;
       }
@@ -302,6 +309,13 @@ export default {
 
     async initializeTossWidget(orderId) {
       try {
+        console.log("토스페이먼츠 결제 요청 시작:", {
+          orderId,
+          amount: this.orderInfo.price,
+          orderName: this.orderInfo.productTitle,
+          customerName: this.buyerInfo.name,
+        });
+
         // 토스페이먼츠 결제 요청
         await requestPayment({
           amount: this.orderInfo.price,
@@ -310,6 +324,8 @@ export default {
           customerName: this.buyerInfo.name,
           customerEmail: "customer@example.com",
         });
+
+        console.log("토스페이먼츠 결제창 호출 완료");
       } catch (error) {
         console.error("토스페이먼츠 결제 요청 실패:", error);
         throw error;
