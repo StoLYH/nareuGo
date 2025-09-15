@@ -46,18 +46,22 @@
 
 <script setup>
 // 소셜 로그인 함수들
+const getApiBaseUrl = () => {
+  return import.meta.env.VITE_API_BASE_URL || 'http://j13a501.p.ssafy.io'
+}
+
 const loginWithKakao = () => {
-  const kakaoAuthUrl = `${import.meta.env.VITE_API_BASE_URL}/oauth2/authorization/kakao`
+  const kakaoAuthUrl = `${getApiBaseUrl()}/oauth2/authorization/kakao`
   window.location.href = kakaoAuthUrl
 }
 
 const loginWithGoogle = () => {
-  const googleAuthUrl = `${import.meta.env.VITE_API_BASE_URL}/oauth2/authorization/google`
+  const googleAuthUrl = `${getApiBaseUrl()}/oauth2/authorization/google`
   window.location.href = googleAuthUrl
 }
 
 const loginWithNaver = () => {
-  const naverAuthUrl = `${import.meta.env.VITE_API_BASE_URL}/oauth2/authorization/naver`
+  const naverAuthUrl = `${getApiBaseUrl()}/oauth2/authorization/naver`
   window.location.href = naverAuthUrl
 }
 </script>
