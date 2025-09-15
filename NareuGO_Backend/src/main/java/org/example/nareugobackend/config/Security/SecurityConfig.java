@@ -5,6 +5,7 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.example.nareugobackend.common.filter.JwtAuthenticationFilter;
 import org.example.nareugobackend.common.handler.OAuth2AuthenticationSuccessHandler;
+import org.example.nareugobackend.api.service.auth.CustomOAuth2UserService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -29,12 +30,13 @@ public class SecurityConfig {
 
   private final JwtAuthenticationFilter jwtAuthenticationFilter;
   private final OAuth2AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler;
+  private final CustomOAuth2UserService customOAuth2UserService;
 
   @Bean
-  public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+  public SecurityFilterChain securityFilterChain(HttpSecurity http, CorsConfigurationSource corsConfigurationSource) throws Exception {
     http
         .csrf(csrf -> csrf.disable())
-        .cors(c -> c.configurationSource(corsConfigurationSource()))
+        .cors(c -> c.configurationSource(corsConfigurationSource))
         .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
         .authorizeHttpRequests(auth -> auth
             .anyRequest().permitAll() // ✅ 모든 요청 허용
@@ -44,6 +46,7 @@ public class SecurityConfig {
         .oauth2Login(oauth2 -> oauth2
             .authorizationEndpoint(a -> a.baseUri("/oauth2/authorization"))
             .redirectionEndpoint(r -> r.baseUri("/login/oauth2/code/*"))
+            .userInfoEndpoint(u -> u.userService(customOAuth2UserService))
             .successHandler(oAuth2AuthenticationSuccessHandler)
         );
 
@@ -98,9 +101,11 @@ public class SecurityConfig {
   }
 
   @Bean
-  public CorsConfigurationSource corsConfigurationSource() {
+  public CorsConfigurationSource corsConfigurationSource(
+      @Value("${host.allowed-origins}") String allowedOrigins
+  ) {
     CorsConfiguration cfg = new CorsConfiguration();
-    cfg.setAllowedOrigins(List.of("http://localhost:5173", "http://127.0.0.1:5173"));
+    cfg.setAllowedOrigins(List.of(allowedOrigins.split(",")));
     cfg.setAllowedMethods(List.of("GET","POST","PUT","PATCH","DELETE","OPTIONS"));
     cfg.setAllowedHeaders(List.of("Authorization","Content-Type","X-Requested-With"));
     cfg.setExposedHeaders(List.of("Authorization","Set-Cookie"));
