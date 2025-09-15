@@ -38,7 +38,7 @@
   const authStore = useAuthStore()
 
   const getApiBaseUrl = () => {
-    return import.meta.env.VITE_API_BASE_URL || 'http://j13a501.p.ssafy.io'
+    return import.meta.env.VITE_BASE_URL || 'localhost:8080'
   }
 
   const loginWithKakao = () => {
