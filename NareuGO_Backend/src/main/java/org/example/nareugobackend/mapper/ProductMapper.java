@@ -1,7 +1,10 @@
 package org.example.nareugobackend.mapper;
+import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.example.nareugobackend.api.controller.product.request.ProductCreateRequest;
+import org.example.nareugobackend.api.controller.product.response.ProductDetailResponse;
+import org.example.nareugobackend.api.service.product.request.UserInfoRequest;
 
 @Mapper
 public interface ProductMapper {
@@ -13,6 +16,6 @@ public interface ProductMapper {
 
     int deleteProduct(@Param("productId") Long productId);
 
-
+    List<ProductDetailResponse> selectProduct (UserInfoRequest userInfoRequest);
 
 }

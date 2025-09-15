@@ -13,13 +13,11 @@ CREATE TABLE IF NOT EXISTS `users` (
     `si_do` VARCHAR(50) NOT NULL COMMENT '시/도',
     `si_gun_gu` VARCHAR(50) NOT NULL COMMENT '시/군/구',
     `eup_myeon_dong` VARCHAR(50) NOT NULL COMMENT '읍/면/동',
-    `apartment_key` VARCHAR(255) GENERATED ALWAYS AS (CONCAT(si_do, '_', si_gun_gu, '_', eup_myeon_dong, '_', apartment_name)) STORED,
+
     PRIMARY KEY (`user_id`),
     UNIQUE KEY `email_UNIQUE` (`email`),
-    UNIQUE KEY `nickname_UNIQUE` (`nickname`),
-    UNIQUE KEY `unique_apartment` (`apartment_key`)
+    UNIQUE KEY `nickname_UNIQUE` (`nickname`)
     ) ENGINE=InnoDB COMMENT='회원 정보';
-
 
 -- -----------------------------------------------------
 -- 2. 상품 관련 테이블

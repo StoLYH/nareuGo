@@ -21,4 +21,32 @@
     WHERE product_id = #{productId}
   </delete>
 
+  <select id="selectProduct" parameterType="long" resultType="org.example.nareugobackend.api.controller.product.response.ProductDetailResponse">
+    SELECT 
+        p.product_id as productId,
+        p.seller_id as sellerId,
+        p.title,
+        p.description,
+        p.price,
+        p.status,
+        p.created_at as createdAt,
+        p.updated_at as updatedAt,
+        p.apartment_name as apartmentName,
+        p.si_do as siDo,
+        p.si_gun_gu as siGunGu,
+        p.eup_myeon_dong as eupMyeonDong,
+        u.building_dong as buildingDong,
+        u.building_ho as buildingHo
+    FROM products p
+    LEFT JOIN users u ON p.seller_id = u.user_id
+    WHERE p.product_id = #{productId}
+  </select>
+
+  <select id="selectProductImages" parameterType="long" resultType="string">
+    SELECT image_url
+    FROM product_images
+    WHERE product_id = #{productId}
+    ORDER BY image_id
+  </select>
+
 </mapper>

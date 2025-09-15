@@ -1,5 +1,9 @@
 package org.example.nareugobackend.api.service.product;
 
+import java.util.ArrayList;
+import java.util.List;
+import org.example.nareugobackend.api.controller.product.response.ProductDetailResponse;
+import org.example.nareugobackend.api.service.product.request.UserInfoRequest;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.GetObjectRequest;
 import software.amazon.awssdk.services.s3.presigner.S3Presigner;
@@ -41,6 +45,13 @@ public class ProductServiceImpl implements ProductService {
     @Value("${cloud.aws.s3.region}")
     private String region;
 
+
+    /**
+     * 상품 등록
+     *
+     * @param productRequest
+     * @return ProductCreateResponse
+     */
     @Transactional
     @Override
     public ProductCreateResponse createProduct(ProductCreateRequest productRequest) {
@@ -114,22 +125,86 @@ public class ProductServiceImpl implements ProductService {
         }
     }
 
+
+    /**
+     * 상품 삭제
+     *
+     * @parm id
+     * @return ProductDeleteResponse
+     */
     @Transactional
     @Override
     public void deleteProduct(long productId) {
         // TODO 사용자 검증
-        
         productMapper.deleteProduct(productId);
     }
 
+    @Transactional
+    @Override
+    public List<ProductDetailResponse> selectProduct() {
+
+        // TODO 사용자 정보로 빼오기
+        UserInfoRequest userInfoRequest = new UserInfoRequest();
+        userInfoRequest.setSiDo("서울특별시");
+        userInfoRequest.setSiGunGu("강남구");
+        userInfoRequest.setEupMyeonDong("역삼동");
+        userInfoRequest.setApartmentName("래미안강남아파트");
+
+        List<ProductDetailResponse> result =  productMapper.selectProduct(userInfoRequest);
+
+        for (ProductDetailResponse productDetailResponse : result) {
+            // 해당 상품에 있는 이미지들
+            List<String> fileImageKEYS = productMapper.selectProductImages(productDetailResponse.getProductId());
+            
+            // KEYS 이용해서 S3 PRESIGNED DOWNLOAD URLS 발급
+            List<String> downloadUrls = new ArrayList<>();
+            for (String s3Key : fileImageKEYS) {
+                String downloadUrl = generatePresignedDownloadUrl(s3Key);
+                downloadUrls.add(downloadUrl);
+            }
+            
+            productDetailResponse.setImageUrls(downloadUrls);
+        }
 
 
 
+        return null;
+    }
 
 
+    /**
+     * Presigend download urls
+     *
+     */
+    private String generatePresignedDownloadUrl(String s3Key) {
+        try {
+            // S3Presigner를 리전과 함께 생성
+            S3Presigner presigner = S3Presigner.builder()
+                .region(software.amazon.awssdk.regions.Region.of(region))
+                .credentialsProvider(software.amazon.awssdk.auth.credentials.StaticCredentialsProvider.create(
+                    software.amazon.awssdk.auth.credentials.AwsBasicCredentials.create(accessKey, secretKey)
+                ))
+                .build();
 
+            GetObjectRequest getObjectRequest = GetObjectRequest.builder()
+                .bucket(bucketName)
+                .key(s3Key)
+                .build();
 
+            GetObjectPresignRequest presignRequest = GetObjectPresignRequest.builder()
+                .signatureDuration(Duration.ofHours(24)) // 24시간 후 만료
+                .getObjectRequest(getObjectRequest)
+                .build();
 
+            String presignedUrl = presigner.presignGetObject(presignRequest).url().toString();
+            presigner.close();
+
+            return presignedUrl;
+
+        } catch (Exception e) {
+            throw new RuntimeException("Presigned Download URL 생성 실패: " + e.getMessage(), e);
+        }
+    }
 
 
 }

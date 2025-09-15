@@ -1,5 +1,6 @@
 package org.example.nareugobackend.api.controller.product;
 
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.example.nareugobackend.api.controller.product.request.ProductCreateRequest;
 import org.example.nareugobackend.api.controller.product.response.ProductDeleteResponse;
@@ -7,6 +8,7 @@ import org.example.nareugobackend.api.service.product.ProductService;
 import org.example.nareugobackend.api.controller.product.response.ProductCreateResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -46,11 +48,30 @@ public class ProductController {
 
 
     /**
-     * 상품 조회 (사용자 위치기반)
-     * 인덱스 비트리
+     * 아파트 별 상품 전체 조회 (서울특별시 강남구 역삼동 래미안아파트)
+     * 하드코딩
      *
      * @return
      */
+    @GetMapping()
+    public ResponseEntity<?> selectProduct() {
+
+
+        return null;
+    }
+
+
+    /**
+     * 상품 개별 조회 (서울특별시 강남구 역삼동 래미안아파트)
+     *
+     *
+     * @return
+     */
+    @GetMapping()
+    public ResponseEntity<?> selectOneProduct() {
+
+        return null;
+    }
 
 
     /**
@@ -58,8 +79,6 @@ public class ProductController {
      *
      * @return
      */
-
-
 
 
 }
