@@ -1,7 +1,7 @@
 // 토스페이먼츠 결제 설정
 export const TOSS_PAYMENTS_CONFIG = {
   // 테스트 환경 설정
-  clientKey: "test_ck_D5GePWvyJnrK0W0k6q8gLzN97Eoq", // 테스트 키
+  clientKey: "test_ck_AQ92ymxN34yKEb0kooGPVajRKXvd", // 테스트 키
   baseUrl: "https://api.tosspayments.com/v1",
 
   // 결제 성공/실패 URL
@@ -40,8 +40,12 @@ export const loadTossPaymentsSDK = () => {
 // 결제 요청 함수
 export const requestPayment = async (orderData) => {
   try {
+    console.log("토스페이먼츠 SDK 로드 시작...");
     const TossPayments = await loadTossPaymentsSDK();
+    console.log("토스페이먼츠 SDK 로드 완료:", TossPayments);
+
     const tossPayments = TossPayments(TOSS_PAYMENTS_CONFIG.clientKey);
+    console.log("토스페이먼츠 인스턴스 생성 완료");
 
     const paymentData = {
       amount: orderData.amount,
@@ -53,7 +57,11 @@ export const requestPayment = async (orderData) => {
       failUrl: TOSS_PAYMENTS_CONFIG.failUrl,
     };
 
+    console.log("결제 데이터:", paymentData);
+    console.log("토스페이먼츠 결제창 호출 중...");
+
     await tossPayments.requestPayment("카드", paymentData);
+    console.log("토스페이먼츠 결제창 호출 성공");
   } catch (error) {
     console.error("결제 요청 실패:", error);
     throw error;
