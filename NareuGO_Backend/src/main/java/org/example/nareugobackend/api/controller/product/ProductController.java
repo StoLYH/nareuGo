@@ -1,9 +1,10 @@
 package org.example.nareugobackend.api.controller.product;
 
+import java.util.List;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.example.nareugobackend.api.controller.product.request.ProductCreateRequest;
-import org.example.nareugobackend.api.controller.product.response.ProductDeleteResponse;
+import org.example.nareugobackend.api.controller.product.response.ProductDetailResponse;
 import org.example.nareugobackend.api.service.product.ProductService;
 import org.example.nareugobackend.api.controller.product.response.ProductCreateResponse;
 import org.springframework.http.ResponseEntity;
@@ -48,29 +49,32 @@ public class ProductController {
 
 
     /**
-     * 아파트 별 상품 전체 조회 (서울특별시 강남구 역삼동 래미안아파트)
-     * 하드코딩
+     * 아파트 별 상품 전체 조회 (서울특별시 강남구 역삼동 래미안아파트) - 일단 고정
+     * TODO 추후 로그인 연동
      *
      * @return
      */
     @GetMapping()
-    public ResponseEntity<?> selectProduct() {
-
-
-        return null;
+    public ResponseEntity<List<ProductDetailResponse>> selectProduct() {
+        return ResponseEntity.ok(productService.selectProduct());
     }
 
 
     /**
-     * 상품 개별 조회 (서울특별시 강남구 역삼동 래미안아파트)
+     * 상품 개별 조회 (단일 조회)
      *
      *
      * @return
      */
-    @GetMapping()
-    public ResponseEntity<?> selectOneProduct() {
-
-        return null;
+    @GetMapping("/{productId}")
+    public ResponseEntity<ProductDetailResponse> selectOneProduct(@PathVariable Long productId) {
+        ProductDetailResponse product = productService.selectOneProduct(productId);
+        
+        if (product == null) {
+            return ResponseEntity.notFound().build();
+        }
+        
+        return ResponseEntity.ok(product);
     }
 
 

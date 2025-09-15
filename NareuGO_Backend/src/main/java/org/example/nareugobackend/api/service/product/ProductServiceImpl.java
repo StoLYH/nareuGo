@@ -10,9 +10,6 @@ import software.amazon.awssdk.services.s3.presigner.S3Presigner;
 import software.amazon.awssdk.services.s3.presigner.model.GetObjectPresignRequest;
 import software.amazon.awssdk.services.s3.presigner.model.PutObjectPresignRequest;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
-import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
-import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
-import software.amazon.awssdk.regions.Region;
 import lombok.RequiredArgsConstructor;
 import org.example.nareugobackend.api.controller.product.request.ProductCreateRequest;
 import org.example.nareugobackend.api.controller.product.response.ProductCreateResponse;
@@ -29,7 +26,7 @@ import java.time.Duration;
 public class ProductServiceImpl implements ProductService {
 
     private final ProductMapper productMapper;
-    
+
     @Autowired
     private S3Client s3Client;
     
@@ -139,11 +136,16 @@ public class ProductServiceImpl implements ProductService {
         productMapper.deleteProduct(productId);
     }
 
+
+    /**
+     * 메인페이지 상품 목록 조회
+     *
+     */
     @Transactional
     @Override
     public List<ProductDetailResponse> selectProduct() {
 
-        // TODO 사용자 정보로 빼오기
+        // TODO 사용자 정보로 가져올 영역
         UserInfoRequest userInfoRequest = new UserInfoRequest();
         userInfoRequest.setSiDo("서울특별시");
         userInfoRequest.setSiGunGu("강남구");
@@ -165,8 +167,6 @@ public class ProductServiceImpl implements ProductService {
             
             productDetailResponse.setImageUrls(downloadUrls);
         }
-
-
 
         return null;
     }
@@ -205,6 +205,38 @@ public class ProductServiceImpl implements ProductService {
             throw new RuntimeException("Presigned Download URL 생성 실패: " + e.getMessage(), e);
         }
     }
+
+
+    /**
+     * 단일 상품 조회
+     * ProductDetailResponse selectOneProduct (long productId);
+     *
+     */
+    @Override
+    public ProductDetailResponse selectOneProduct(long productId) {
+        // 상품 기본 정보 조회
+        ProductDetailResponse product = productMapper.selectOneProduct(productId);
+        
+        if (product == null) {
+            return null; // 상품이 존재하지 않음
+        }
+        
+        // 해당 상품의 이미지들 조회 (공통 메서드 사용)
+        List<String> imageKeys = productMapper.selectProductImages(productId);
+        
+        // S3 KEY들을 Presigned Download URL로 변환
+        List<String> downloadUrls = new ArrayList<>();
+        for (String s3Key : imageKeys) {
+            String downloadUrl = generatePresignedDownloadUrl(s3Key);
+            downloadUrls.add(downloadUrl);
+        }
+        
+        // 이미지 URL 설정
+        product.setImageUrls(downloadUrls);
+        
+        return product;
+    }
+
 
 
 }
