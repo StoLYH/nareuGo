@@ -46,7 +46,7 @@ public class SecurityConfig {
         .formLogin(f -> f.disable())
         .oauth2Login(oauth2 -> oauth2
             .authorizationEndpoint(a -> a.baseUri("/oauth2/authorization"))
-            .redirectionEndpoint(r -> r.baseUri("/login/oauth2/code/*"))
+            .redirectionEndpoint(r -> r.baseUri("/api/login/oauth2/code/*"))
             .userInfoEndpoint(u -> u.userService(customOAuth2UserService))
             .successHandler(oAuth2AuthenticationSuccessHandler)
         );
