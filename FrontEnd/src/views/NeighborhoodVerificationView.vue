@@ -77,14 +77,25 @@
             </div>
 
             <div v-if="gpsVerified" class="success-state">
-              <div class="success-icon">
-                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                  <polyline points="22 4 12 14.01 9 11.01" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
+              <!-- 지도 컴포넌트 -->
+              <KakaoMapComponent 
+                :latitude="currentLatitude"
+                :longitude="currentLongitude"
+                :address="verifiedLocation"
+                :accuracy="locationAccuracy"
+                height="250px"
+              />
+              
+              <div class="success-content">
+                <div class="success-icon">
+                  <svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <polyline points="22 4 12 14.01 9 11.01" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                </div>
+                <h3>위치 인증 완료!</h3>
+                <p class="location-info">{{ verifiedLocation }}</p>
               </div>
-              <h3>위치 인증 완료!</h3>
-              <p class="location-info">{{ verifiedLocation }}</p>
             </div>
 
             <div v-if="gpsError" class="error-state">
@@ -268,8 +279,13 @@
 </template>
 
 <script>
+import KakaoMapComponent from '../components/KakaoMapComponent.vue';
+
 export default {
   name: "NeighborhoodVerificationView",
+  components: {
+    KakaoMapComponent
+  },
   data() {
     return {
       currentStep: 1,
@@ -279,6 +295,9 @@ export default {
       gpsVerified: false,
       gpsError: null,
       verifiedLocation: '',
+      currentLatitude: null,
+      currentLongitude: null,
+      locationAccuracy: null,
       
       // OCR 관련
       ocrLoading: false,
@@ -306,32 +325,20 @@ export default {
       this.gpsError = null;
       
       try {
-        if (!navigator.geolocation) {
-          throw new Error('이 브라우저는 위치 서비스를 지원하지 않습니다.');
-        }
+        // 카카오맵 API를 사용하여 현재 위치와 주소 정보 가져오기
+        const locationData = await this.getCurrentLocationWithKakao();
         
-        const position = await new Promise((resolve, reject) => {
-          navigator.geolocation.getCurrentPosition(
-            resolve,
-            reject,
-            {
-              enableHighAccuracy: true,
-              timeout: 10000,
-              maximumAge: 0
-            }
-          );
-        });
-        
-        const { latitude, longitude } = position.coords;
-        
-        // 시뮬레이션을 위해 임시 지연
-        await this.simulateDelay(2000);
-        
-        // Reverse Geocoding 시뮬레이션
-        const address = await this.reverseGeocode(latitude, longitude);
-        
-        this.verifiedLocation = address;
+        this.verifiedLocation = locationData.fullAddress;
+        this.currentLatitude = locationData.latitude;
+        this.currentLongitude = locationData.longitude;
+        this.locationAccuracy = locationData.accuracy;
         this.gpsVerified = true;
+        
+        console.log('위치 인증 성공:', {
+          address: locationData.fullAddress,
+          coordinates: `${locationData.latitude}, ${locationData.longitude}`,
+          accuracy: `${Math.round(locationData.accuracy)}m`
+        });
         
       } catch (error) {
         console.error('GPS 인증 오류:', error);
@@ -341,22 +348,41 @@ export default {
       }
     },
     
-    async reverseGeocode(lat, lng) {
-      // 실제로는 카카오맵 API나 구글맵 API를 사용해야 합니다
-      return '서울특별시 강남구 테헤란로 123';
+    async getCurrentLocationWithKakao() {
+      // 카카오맵 API를 사용하여 현재 위치와 주소 가져오기
+      const { getCurrentLocationWithAddress } = await import('../config/kakaoMap.js');
+      return await getCurrentLocationWithAddress();
     },
     
     getGpsErrorMessage(error) {
-      switch (error.code) {
-        case error.PERMISSION_DENIED:
-          return '위치 권한이 거부되었습니다. 브라우저 설정에서 위치 권한을 허용해주세요.';
-        case error.POSITION_UNAVAILABLE:
-          return '위치 정보를 사용할 수 없습니다.';
-        case error.TIMEOUT:
-          return '위치 요청 시간이 초과되었습니다.';
-        default:
-          return '위치 인증 중 오류가 발생했습니다.';
+      // 카카오맵 API 오류 처리
+      if (error.message) {
+        if (error.message.includes('카카오맵 API 오류')) {
+          return '카카오맵 서비스에 일시적인 문제가 발생했습니다. 잠시 후 다시 시도해주세요.';
+        }
+        if (error.message.includes('주소 정보를 찾을 수 없습니다')) {
+          return '현재 위치의 주소 정보를 찾을 수 없습니다. 다른 장소에서 시도해주세요.';
+        }
+        if (error.message.includes('위치 서비스를 지원하지 않습니다')) {
+          return '이 브라우저는 위치 서비스를 지원하지 않습니다.';
+        }
       }
+      
+      // 브라우저 Geolocation API 오류 처리
+      if (error.code) {
+        switch (error.code) {
+          case error.PERMISSION_DENIED:
+            return '위치 권한이 거부되었습니다. 브라우저 설정에서 위치 권한을 허용해주세요.';
+          case error.POSITION_UNAVAILABLE:
+            return '위치 정보를 사용할 수 없습니다.';
+          case error.TIMEOUT:
+            return '위치 요청 시간이 초과되었습니다.';
+          default:
+            return '위치 인증 중 오류가 발생했습니다.';
+        }
+      }
+      
+      return error.message || '위치 인증 중 오류가 발생했습니다.';
     },
     
     retryGpsVerification() {
@@ -718,29 +744,33 @@ export default {
 /* 성공 상태 */
 .success-state {
   text-align: center;
-  padding: 40px 20px;
+  padding: 1rem;
+}
+
+.success-content {
+  padding: 1.5rem 0;
 }
 
 .success-icon {
-  color: #28a745;
-  margin-bottom: 16px;
+  color: var(--main);
+  margin-bottom: 1rem;
 }
 
-.success-state h3 {
-  font-size: 18px;
+.success-content h3 {
+  color: var(--main);
+  margin-bottom: 0.5rem;
+  font-size: 1.25rem;
   font-weight: 600;
-  color: #333;
-  margin: 0 0 8px 0;
 }
 
-.location-info, .address-info {
-  font-size: 14px;
-  color: #666;
-  margin: 0;
-  padding: 12px 16px;
-  background-color: #f8f9fa;
+.location-info {
+  color: var(--deepgray);
+  font-size: 0.95rem;
+  line-height: 1.4;
+  background: #f8f9fa;
+  padding: 1rem;
   border-radius: 8px;
-  margin-top: 16px;
+  margin-top: 1rem;
 }
 
 /* 에러 상태 */
