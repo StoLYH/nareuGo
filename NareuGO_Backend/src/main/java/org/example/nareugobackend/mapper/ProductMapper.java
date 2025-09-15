@@ -13,4 +13,6 @@ public interface ProductMapper {
 
     int deleteProduct(@Param("productId") Long productId);
 
+
+
 }

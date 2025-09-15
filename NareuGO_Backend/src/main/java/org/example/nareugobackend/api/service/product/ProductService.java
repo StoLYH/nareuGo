@@ -8,4 +8,8 @@ public interface ProductService {
     ProductCreateResponse createProduct(ProductCreateRequest productRequest);
 
     void deleteProduct(long productId);
+
+
+
+
 }
