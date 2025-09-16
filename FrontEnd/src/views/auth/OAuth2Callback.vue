@@ -45,8 +45,8 @@ try {
     // 사용자 정보 조회
     await authStore.getUserInfo()
 
-    // 메인 페이지로 리다이렉트
-    const redirectTo = route.query.redirect || '/'
+    // ItemList 페이지로 리다이렉트
+    const redirectTo = route.query.redirect || '/items'
     router.replace(redirectTo)
 
 } catch (err) {

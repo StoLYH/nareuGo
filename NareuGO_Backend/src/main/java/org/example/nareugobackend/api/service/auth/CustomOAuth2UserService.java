@@ -52,24 +52,69 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     };
   }
 
+//  private KakaoUserInfo createKakaoUserInfo(OAuth2User oAuth2User) {
+//    var attributes = oAuth2User.getAttributes();
+//    var kakaoAccount = getMapValue(attributes, "kakao_account");
+//
+//    String birthdate = formatBirthdate(
+//        getStringValue(kakaoAccount, "birthyear"),
+//        getStringValue(kakaoAccount, "birthday")
+//    );
+//
+//    return new KakaoUserInfo(
+//      getStringValue(attributes, "id"),                    // sub (provider ID)
+//      getStringValue(kakaoAccount, "name"),                // name (실제 사용자 이름)
+//      getStringValue(kakaoAccount, "gender"),              // gender (kakao_account 안에 있음)
+//      getStringValue(kakaoAccount, "email"),               // email
+//      birthdate,                                           // birthdate (년도+월일 조합)
+//      getStringValue(kakaoAccount, "phone_number")         // phone_number
+//    );
+//  }
+
   private KakaoUserInfo createKakaoUserInfo(OAuth2User oAuth2User) {
     var attributes = oAuth2User.getAttributes();
     var kakaoAccount = getMapValue(attributes, "kakao_account");
+    var profile = getMapValue(kakaoAccount, "profile");
 
+    // 사용자 ID
+    String id = getStringValue(attributes, "id");
+
+    // 사용자 이름 (nickname)
+    String name = getStringValue(profile, "nickname");
+    if (name == null) {
+      name = "알 수 없음"; // 기본값 설정
+      System.out.println("Kakao profile.nickname 정보가 없습니다.");
+    }
+
+    // 성별
+    String gender = getStringValue(kakaoAccount, "gender");
+    if (gender == null) {
+      gender = "unknown";
+    }
+
+    // 이메일
+    String email = getStringValue(kakaoAccount, "email");
+
+    // 전화번호
+    String phoneNumber = getStringValue(kakaoAccount, "phone_number");
+
+    // 생년월일
     String birthdate = formatBirthdate(
         getStringValue(kakaoAccount, "birthyear"),
         getStringValue(kakaoAccount, "birthday")
     );
 
     return new KakaoUserInfo(
-      getStringValue(attributes, "id"),                    // sub (provider ID)
-      getStringValue(kakaoAccount, "name"),                // name (실제 사용자 이름)
-      getStringValue(kakaoAccount, "gender"),              // gender (kakao_account 안에 있음)
-      getStringValue(kakaoAccount, "email"),               // email
-      birthdate,                                           // birthdate (년도+월일 조합)
-      getStringValue(kakaoAccount, "phone_number")         // phone_number
+        id,
+        name,
+        gender,
+        email,
+        birthdate,
+        phoneNumber
     );
   }
+
+  //////////////////
 
   @SuppressWarnings("unchecked")
   private Map<String, Object> getMapValue(Map<String, Object> map, String key) {

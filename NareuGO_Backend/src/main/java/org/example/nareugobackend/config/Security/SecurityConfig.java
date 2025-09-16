@@ -39,8 +39,7 @@ public class SecurityConfig {
         .cors(c -> c.configurationSource(corsConfigurationSource))
         .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
         .authorizeHttpRequests(auth -> auth
-            .requestMatchers("/auth/**", "/oauth2/**", "/login/**", "/api/v1/auth/**").permitAll()
-            .anyRequest().authenticated()
+            .anyRequest().permitAll() // ✅ 모든 요청 허용
         )
         .httpBasic(b -> b.disable())
         .formLogin(f -> f.disable())
@@ -54,6 +53,7 @@ public class SecurityConfig {
     http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
     return http.build();
   }
+
 
 
   @Bean

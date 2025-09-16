@@ -22,7 +22,7 @@
 
     <!-- 채팅 목록 -->
     <main class="chat-list">
-      <div class="chat-item" v-for="chat in chats" :key="chat.id">
+      <div class="chat-item" v-for="chat in chats" :key="chat.id" @click="handleChatClick(chat.id)">
         <div class="profile-image">
           <img :src="chat.profileImage" :alt="chat.name" />
         </div>
@@ -30,7 +30,7 @@
           <h3 class="chat-name">{{ chat.name }}</h3>
           <p class="chat-location">{{ chat.location }}</p>
         </div>
-        <button class="more-menu">
+        <button class="more-menu" @click.stop="handleMoreMenu(chat.id)">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
             <circle cx="12" cy="5" r="2" fill="currentColor"/>
             <circle cx="12" cy="12" r="2" fill="currentColor"/>
@@ -50,8 +50,11 @@
 
 <script setup>
 import { ref } from 'vue'
+import { useRouter } from 'vue-router'
 import AppHeader from '../components/AppHeader.vue'
 import BottomNavigation from '../components/BottomNavigation.vue'
+
+const router = useRouter()
 
 const chats = ref([
   {
@@ -114,19 +117,40 @@ const chats = ref([
 
 // 이벤트 핸들러들
 const handleEdit = () => {
-  console.log('편집 버튼 클릭')
+  router.push('/item/register')
 }
 
 const handleSearch = () => {
-  console.log('검색 버튼 클릭')
+  router.push('/search')
 }
 
 const handleNotification = () => {
-  console.log('알림 버튼 클릭')
+  router.push('/notifications')
+}
+
+const handleChatClick = (chatId) => {
+  router.push(`/chat/${chatId}`)
+}
+
+const handleMoreMenu = (chatId) => {
+  console.log('More menu clicked for chat:', chatId)
+  // TODO: 채팅 옵션 메뉴 구현
 }
 
 const handleNavigation = (tab) => {
-  console.log('네비게이션:', tab)
+  switch(tab) {
+    case 'home':
+      router.push('/items')
+      break
+    case 'chat':
+      router.push('/chat')
+      break
+    case 'profile':
+      router.push('/profile')
+      break
+    default:
+      console.log('Unknown navigation tab:', tab)
+  }
 }
 </script>
 
@@ -193,6 +217,12 @@ const handleNavigation = (tab) => {
   align-items: center;
   padding: 12px 0;
   gap: 12px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.chat-item:hover {
+  background-color: #f8f8f8;
 }
 
 .profile-image {
