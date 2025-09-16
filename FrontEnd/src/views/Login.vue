@@ -14,13 +14,31 @@
     <!-- 하단 흰색 카드 섹션 -->
     <div class="login-form-card">
       <div class="input-group">
-        <input type="text" placeholder="아이디" class="login-input" />
+        <input 
+          type="email" 
+          placeholder="이메일" 
+          class="login-input" 
+          v-model="loginForm.email"
+          @keyup.enter="handleLogin"
+        />
       </div>
       <div class="input-group">
-        <input type="password" placeholder="비밀번호" class="login-input" />
+        <input 
+          type="password" 
+          placeholder="비밀번호" 
+          class="login-input" 
+          v-model="loginForm.password"
+          @keyup.enter="handleLogin"
+        />
       </div>
       
-      <button class="login-btn">로그인</button>
+      <div v-if="errorMessage" class="error-message">
+        {{ errorMessage }}
+      </div>
+      
+      <button class="login-btn" @click="handleLogin" :disabled="isLoading">
+        {{ isLoading ? '로그인 중...' : '로그인' }}
+      </button>
       <button class="signup-btn">회원가입</button>
       
       <!-- 소셜 로그인 -->
@@ -45,25 +63,91 @@
 </template>
 
 <script setup>
-// 소셜 로그인 함수들
+import { ref } from 'vue'
+import { useRouter } from 'vue-router'
+import { useAuthStore } from '@/stores/auth'
+import axios from 'axios'
+
+const router = useRouter()
+const authStore = useAuthStore()
+
+// 로그인 폼 데이터
+const loginForm = ref({
+  email: '',
+  password: ''
+})
+
+// 상태 관리
+const isLoading = ref(false)
+const errorMessage = ref('')
+
+// API 기본 URL
 const getApiBaseUrl = () => {
-  return import.meta.env.VITE_BASE_URL || 'localhost:8080'
+  return import.meta.env.VITE_BASE_URL || 'http://localhost:8080'
 }
 
-const loginWithKakao = () => {
-  const kakaoAuthUrl = `${getApiBaseUrl()}/oauth2/authorization/kakao`
-  window.location.href = kakaoAuthUrl
+// 기본 로그인 함수
+const handleLogin = async () => {
+  if (!loginForm.value.email) {
+    errorMessage.value = '이메일을 입력해주세요.'
+    return
+  }
+
+  if (!loginForm.value.password) {
+    errorMessage.value = '비밀번호를 입력해주세요.'
+    return
+  }
+
+  isLoading.value = true
+  errorMessage.value = ''
+
+  try {
+    const response = await axios.post(`${getApiBaseUrl()}/general-login`, {
+      email: loginForm.value.email
+    })
+
+    if (response.data.success) {
+      // 로그인 성공
+      console.log('로그인 성공:', response.data)
+      
+      // authStore에 사용자 정보 저장 (토큰 없이)
+      authStore.setUser({
+        userId: response.data.userId,
+        email: response.data.email,
+        name: response.data.name
+      })
+      
+      // 더미 토큰 설정 (라우터 가드 통과용)
+      authStore.setTokens('basic-login-token')
+      
+      // localStorage에 사용자 정보도 별도 저장
+      localStorage.setItem('user', JSON.stringify({
+        userId: response.data.userId,
+        email: response.data.email,
+        name: response.data.name
+      }))
+      
+      console.log('localStorage 저장 확인:', localStorage.getItem('user'))
+      console.log('authStore 토큰 확인:', authStore.accessToken)
+      
+      // ItemList 페이지로 이동
+      router.push('/items')
+    } else {
+      errorMessage.value = response.data.message || '로그인에 실패했습니다.'
+    }
+  } catch (error) {
+    console.error('로그인 오류:', error)
+    if (error.response?.data?.message) {
+      errorMessage.value = error.response.data.message
+    } else {
+      errorMessage.value = '서버 연결에 실패했습니다.'
+    }
+  } finally {
+    isLoading.value = false
+  }
 }
 
-const loginWithGoogle = () => {
-  const googleAuthUrl = `${getApiBaseUrl()}/oauth2/authorization/google`
-  window.location.href = googleAuthUrl
-}
 
-const loginWithNaver = () => {
-  const naverAuthUrl = `${getApiBaseUrl()}/oauth2/authorization/naver`
-  window.location.href = naverAuthUrl
-}
 </script>
 
 <style scoped>
@@ -164,11 +248,27 @@ const loginWithNaver = () => {
   font-weight: 600;
   cursor: pointer;
   margin-bottom: 12px;
-  transition: background-color 0.2s;
+  transition: background-color 0.3s ease;
 }
 
 .login-btn:hover {
   background-color: #5A83B7;
+}
+
+.login-btn:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+.error-message {
+  color: #e74c3c;
+  font-size: 14px;
+  margin-bottom: 12px;
+  text-align: center;
+  padding: 8px;
+  background-color: #fdf2f2;
+  border: 1px solid #fecaca;
+  border-radius: 8px;
 }
 
 .signup-btn {
