@@ -1,5 +1,5 @@
 <template>
-  <div class="item-card">
+  <div class="item-card" @click="handleItemClick">
     <div class="item-image">
       <img :src="item.image" :alt="item.title" />
     </div>
@@ -12,12 +12,20 @@
 </template>
 
 <script setup>
-defineProps({
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
+
+const props = defineProps({
   item: {
     type: Object,
     required: true
   }
 })
+
+const handleItemClick = () => {
+  router.push(`/item/${props.item.id}`)
+}
 </script>
 
 <style scoped>
@@ -26,6 +34,12 @@ defineProps({
   padding: 16px 0;
   border-bottom: 1px solid #f0f0f0;
   gap: 12px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.item-card:hover {
+  background-color: #f8f8f8;
 }
 
 .item-image {
@@ -61,6 +75,7 @@ defineProps({
   letter-spacing: -0.01em;
   display: -webkit-box;
   -webkit-line-clamp: 2;
+  line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }

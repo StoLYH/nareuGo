@@ -5,13 +5,91 @@ const routes = [
 {
     path: '/',
     name: 'Home',
-    component: () => import('@/views/Home.vue'),
+    component: () => import('@/views/ItemList.vue'),
     meta: { requiresAuth: true }
 },
 {
     path: '/home',
     name: 'HomePage',
-    component: () => import('@/views/Home.vue'),
+    component: () => import('@/views/ItemList.vue'),
+    meta: { requiresAuth: true }
+},
+{
+    path: '/items',
+    name: 'ItemList',
+    component: () => import('@/views/ItemList.vue'),
+    meta: { requiresAuth: true }
+},
+{
+    path: '/item/:id',
+    name: 'ItemDetail',
+    component: () => import('@/views/ItemDetailView.vue'),
+    meta: { requiresAuth: true }
+},
+{
+    path: '/item/register',
+    name: 'ItemRegister',
+    component: () => import('@/views/ItemRegistView.vue'),
+    meta: { requiresAuth: true }
+},
+{
+    path: '/search',
+    name: 'Search',
+    component: () => import('@/views/search.vue'),
+    meta: { requiresAuth: true }
+},
+{
+    path: '/chat',
+    name: 'Chat',
+    component: () => import('@/views/chatting.vue'),
+    meta: { requiresAuth: true }
+},
+{
+    path: '/chat/:id',
+    name: 'ChatMessage',
+    component: () => import('@/views/chatMessage.vue'),
+    meta: { requiresAuth: true }
+},
+{
+    path: '/profile',
+    name: 'Profile',
+    component: () => import('@/views/MyPage.vue'),
+    meta: { requiresAuth: true }
+},
+{
+    path: '/notifications',
+    name: 'Notifications',
+    component: () => import('@/views/NotificationListView.vue'),
+    meta: { requiresAuth: true }
+},
+{
+    path: '/neighborhood-verification',
+    name: 'NeighborhoodVerification',
+    component: () => import('@/views/NeighborhoodVerificationView.vue'),
+    meta: { requiresAuth: true }
+},
+{
+    path: '/payment/:orderId',
+    name: 'PaymentDetail',
+    component: () => import('@/views/PaymentDetailView.vue'),
+    meta: { requiresAuth: true }
+},
+{
+    path: '/payment/success',
+    name: 'PaymentSuccess',
+    component: () => import('@/views/PaymentSuccessView.vue'),
+    meta: { requiresAuth: true }
+},
+{
+    path: '/payment/fail',
+    name: 'PaymentFail',
+    component: () => import('@/views/PaymentFailView.vue'),
+    meta: { requiresAuth: true }
+},
+{
+    path: '/delivery/:orderId',
+    name: 'DeliveryStatus',
+    component: () => import('@/views/DeliveryStatus.vue'),
     meta: { requiresAuth: true }
 },
 {

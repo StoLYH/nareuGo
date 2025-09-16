@@ -35,9 +35,12 @@
 
 <script setup>
 import { ref, onMounted, onUnmounted, nextTick, watch } from 'vue'
+import { useRouter } from 'vue-router'
 import AppHeader from '../components/AppHeader.vue'
 import BottomNavigation from '../components/BottomNavigation.vue'
 import ItemCard from '../components/ItemCard.vue'
+
+const router = useRouter()
 
 // 무한 스크롤 관련 상태
 const items = ref([])
@@ -169,20 +172,31 @@ const loadMoreData = async () => {
 
 // 이벤트 핸들러들
 const handleEdit = () => {
-  console.log('편집 버튼 클릭')
+  router.push('/item/register')
 }
 
 const handleSearch = () => {
-  // 검색 페이지로 이동 (간단한 라우팅 시뮬레이션)
-  window.location.href = '#search'
+  router.push('/search')
 }
 
 const handleNotification = () => {
-  console.log('알림 버튼 클릭')
+  router.push('/notifications')
 }
 
 const handleNavigation = (tab) => {
-  console.log('네비게이션:', tab)
+  switch(tab) {
+    case 'home':
+      router.push('/items')
+      break
+    case 'chat':
+      router.push('/chat')
+      break
+    case 'profile':
+      router.push('/profile')
+      break
+    default:
+      console.log('Unknown navigation tab:', tab)
+  }
 }
 
 // 스크롤 이벤트 핸들러
