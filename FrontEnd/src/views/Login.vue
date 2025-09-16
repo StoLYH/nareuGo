@@ -120,6 +120,16 @@ const handleLogin = async () => {
       // 더미 토큰 설정 (라우터 가드 통과용)
       authStore.setTokens('basic-login-token')
       
+      // localStorage에 사용자 정보도 별도 저장
+      localStorage.setItem('user', JSON.stringify({
+        userId: response.data.userId,
+        email: response.data.email,
+        name: response.data.name
+      }))
+      
+      console.log('localStorage 저장 확인:', localStorage.getItem('user'))
+      console.log('authStore 토큰 확인:', authStore.accessToken)
+      
       // ItemList 페이지로 이동
       router.push('/items')
     } else {
