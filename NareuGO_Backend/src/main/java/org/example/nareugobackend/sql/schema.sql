@@ -92,6 +92,17 @@ CREATE TABLE IF NOT EXISTS `orders` (
                                                              ON DELETE RESTRICT ON UPDATE CASCADE
     ) ENGINE = InnoDB COMMENT = '주문 및 거래 상태 정보';
 
+
+-- orders 테이블 수정 필요
+ALTER TABLE orders 
+ADD COLUMN amount DECIMAL(10,0) NOT NULL COMMENT '주문 금액';
+
+-- orders 테이블 status ENUM 수정 필요  
+ALTER TABLE orders 
+MODIFY COLUMN status ENUM('PAYMENT_PENDING', 'PAYMENT_COMPLETED', 'IN_DELIVERY', 'DELIVERY_COMPLETED', 'CANCELLED') NOT NULL;
+
+
+
 CREATE TABLE IF NOT EXISTS `payments` (
                                           `payment_id` BIGINT NOT NULL AUTO_INCREMENT COMMENT '결제 ID',
                                           `order_id` BIGINT NOT NULL COMMENT '주문 ID',

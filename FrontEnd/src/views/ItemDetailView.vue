@@ -158,7 +158,7 @@
       <div class="price-info">
         <span class="price">{{ formattedPrice }}원</span>
       </div>
-      <button class="chat-button">채팅하기</button>
+      <button class="chat-button" @click="goToPayment">결제하기</button>
     </footer>
   </div>
 </template>
@@ -223,8 +223,9 @@ export default {
     goToImage(index) {
       this.currentImageIndex = index;
     },
-    goBack() {
-      alert("뒤로가기 버튼 클릭!");
+    goToPayment() {
+      // 결제 페이지로 이동
+      this.$router.push("/payment");
     },
   },
 };

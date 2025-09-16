@@ -2,6 +2,8 @@ package org.example.nareugobackend.api.service.user;
 
 import lombok.RequiredArgsConstructor;
 import org.example.nareugobackend.api.service.auth.info.SocialUserInfo;
+import org.example.nareugobackend.api.service.user.request.LoginServiceRequest;
+import org.example.nareugobackend.api.service.user.response.LoginServiceResponse;
 import org.example.nareugobackend.domain.user.User;
 import org.example.nareugobackend.domain.user.UserRepository;
 import org.example.nareugobackend.common.exception.user.UserException;
@@ -28,5 +30,26 @@ public class UserService {
   public User findById(Long userId) {
     return userRepository.findById(userId)
         .orElseThrow(() -> new UserException(UserErrorCode.USER_NOT_FOUND));
+  }
+
+  @Transactional
+  public LoginServiceResponse loginByEmail(LoginServiceRequest request) {
+    try {
+      // 이메일로 사용자 조회
+      User user = userRepository.findByEmail(request.getEmail());
+      
+      if (user == null) {
+        return LoginServiceResponse.failure("등록되지 않은 이메일입니다.");
+      }
+
+      return LoginServiceResponse.success(
+          user.getId(),
+          user.getEmail(),
+          user.getName()
+      );
+
+    } catch (Exception e) {
+      return LoginServiceResponse.failure("로그인 처리 중 오류가 발생했습니다.");
+    }
   }
 }
