@@ -1,23 +1,28 @@
 -----------------------------------------------------
 -- 1. 회원 관련 테이블
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `users` (
-                                       `user_id` BIGINT NOT NULL AUTO_INCREMENT COMMENT '사용자 고유 ID',
-                                       `email` VARCHAR(100) NOT NULL COMMENT '로그인 이메일',
-    `nickname` VARCHAR(50) NOT NULL COMMENT '닉네임',
-    `provider` ENUM('LOCAL','KAKAO','NAVER') NOT NULL COMMENT '가입 경로',
-    `building_dong` VARCHAR(20) NOT NULL COMMENT '거주 동',
-    `building_ho` VARCHAR(20) NOT NULL COMMENT '거주 호',
-    `address_verified` TINYINT(1) NOT NULL DEFAULT 0 COMMENT 'GIS 인증 여부',
-    `apartment_name` VARCHAR(100) NOT NULL COMMENT '아파트 이름',
-    `si_do` VARCHAR(50) NOT NULL COMMENT '시/도',
-    `si_gun_gu` VARCHAR(50) NOT NULL COMMENT '시/군/구',
-    `eup_myeon_dong` VARCHAR(50) NOT NULL COMMENT '읍/면/동',
-
-    PRIMARY KEY (`user_id`),
-    UNIQUE KEY `email_UNIQUE` (`email`),
-    UNIQUE KEY `nickname_UNIQUE` (`nickname`)
-    ) ENGINE=InnoDB COMMENT='회원 정보';
+CREATE TABLE `user` (
+                        `id` bigint NOT NULL AUTO_INCREMENT,
+                        `birth` varchar(255) DEFAULT NULL,
+                        `deleted_at` datetime(6) DEFAULT NULL,
+                        `email` varchar(255) NOT NULL,
+                        `is_active` bit(1) DEFAULT NULL,
+                        `name` varchar(50) DEFAULT NULL,
+                        `phone_number` varchar(255) DEFAULT NULL,
+                        `provider_id` varchar(255) DEFAULT NULL,
+                        `provider_type` enum('KAKAO','NAVER') DEFAULT NULL,
+                        `role` enum('SELLER','USER') DEFAULT NULL,
+                        `sex` enum('MAN','WOMAN') DEFAULT NULL,
+                        `apartment_name` varchar(255) DEFAULT NULL,
+                        `building_dong` int DEFAULT NULL,
+                        `building_ho` int DEFAULT NULL,
+                        `eup_myeon_dong` varchar(255) DEFAULT NULL,
+                        `si_do` varchar(255) DEFAULT NULL,
+                        `si_gun_gu` varchar(255) DEFAULT NULL,
+                        `nickname` varchar(255) DEFAULT NULL,
+                        PRIMARY KEY (`id`),
+                        UNIQUE KEY `UKob8kqyqqgmefl0aco34akdtpe` (`email`)
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
 
 -- -----------------------------------------------------
 -- 2. 상품 관련 테이블

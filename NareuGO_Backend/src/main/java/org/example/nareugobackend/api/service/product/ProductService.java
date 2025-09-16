@@ -10,11 +10,11 @@ public interface ProductService {
 
     ProductCreateResponse createProduct(ProductCreateRequest productRequest);
 
-    void deleteProduct(long productId);
-
-    // 임시 하드 코딩
-    List<ProductDetailResponse> selectProduct ();
-
-    ProductDetailResponse selectOneProduct (long productId);
+//    void deleteProduct(long productId);
+//
+//    // 임시 하드 코딩
+//    List<ProductDetailResponse> selectProduct ();
+//
+//    ProductDetailResponse selectOneProduct (long productId);
 
 }
