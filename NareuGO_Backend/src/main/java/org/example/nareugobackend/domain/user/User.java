@@ -48,6 +48,20 @@ public class User {
   @Builder.Default
   private Boolean isActive = true;
 
+  private String nickname;
+
+  private Integer building_dong;
+
+  private Integer building_ho;
+
+  private String apartment_name;
+
+  private String si_do;
+
+  private String si_gun_gu;
+
+  private String eup_myeon_dong;
+
   private Instant deletedAt;
 
   @Enumerated(STRING)
@@ -56,7 +70,7 @@ public class User {
   public static User from(SocialUserInfo userInfo) {
     return User.builder()
         .email(userInfo.getEmail())
-        .name(userInfo.getName() != null ? userInfo.getName() : "사용자")
+        .name(userInfo.getName())
         .sex(userInfo.getGender())
         .birth(userInfo.getBirth())
         .phoneNumber(userInfo.getPhoneNumber())

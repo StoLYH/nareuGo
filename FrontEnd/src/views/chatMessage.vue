@@ -4,13 +4,43 @@
     <div class="chat-header">
       <button class="back-btn">
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-          <path d="M15 18L9 12L15 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <path
+            d="M15 18L9 12L15 6"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
         </svg>
       </button>
       <div class="header-info">
         <h2>Flipkart Health+</h2>
         <span>HEALTH ORGANIZATION</span>
       </div>
+      <!-- 결제 아이콘 버튼 -->
+      <button class="payment-btn" title="결제">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+          <rect
+            x="2"
+            y="5"
+            width="20"
+            height="14"
+            rx="2"
+            ry="2"
+            stroke="currentColor"
+            stroke-width="2"
+          />
+          <line
+            x1="2"
+            y1="10"
+            x2="22"
+            y2="10"
+            stroke="currentColor"
+            stroke-width="2"
+          />
+        </svg>
+        <span>결제</span>
+      </button>
     </div>
 
     <!-- 채팅 메시지 영역 -->
@@ -20,16 +50,24 @@
         <div class="loading-spinner"></div>
         <span>이전 메시지 로딩 중...</span>
       </div>
-      
+
       <!-- 메시지 목록 -->
-      <div v-for="message in messages" :key="message.id" class="message" :class="message.type">
+      <div
+        v-for="message in messages"
+        :key="message.id"
+        class="message"
+        :class="message.type"
+      >
         <div class="message-bubble">
           {{ message.text }}
         </div>
       </div>
-      
+
       <!-- 더 이상 메시지가 없을 때 -->
-      <div v-if="!hasMoreMessages && messages.length > 0" class="no-more-messages">
+      <div
+        v-if="!hasMoreMessages && messages.length > 0"
+        class="no-more-messages"
+      >
         <span>더 이상 메시지가 없습니다</span>
       </div>
     </div>
@@ -38,17 +76,50 @@
     <div class="message-input">
       <button class="emoji-btn">
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-          <path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" stroke="currentColor" stroke-width="2"/>
-          <path d="M8 14S9.5 16 12 16S16 14 16 14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-          <path d="M9 9H9.01" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-          <path d="M15 9H15.01" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <path
+            d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z"
+            stroke="currentColor"
+            stroke-width="2"
+          />
+          <path
+            d="M8 14S9.5 16 12 16S16 14 16 14"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+          />
+          <path
+            d="M9 9H9.01"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+          <path
+            d="M15 9H15.01"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
         </svg>
       </button>
       <input type="text" placeholder="Message" class="message-text" />
       <button class="camera-btn">
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-          <path d="M23 19C23 19.5304 22.7893 20.0391 22.4142 20.4142C22.0391 20.7893 21.5304 21 21 21H3C2.46957 21 1.96086 20.7893 1.58579 20.4142C1.21071 20.0391 1 19.5304 1 19V8C1 7.46957 1.21071 6.96086 1.58579 6.58579C1.96086 6.21071 2.46957 6 3 6H7L9 4H15L17 6H21C21.5304 6 22.0391 6.21071 22.4142 6.58579C22.7893 6.96086 23 7.46957 23 8V19Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-          <circle cx="12" cy="13" r="4" stroke="currentColor" stroke-width="2"/>
+          <path
+            d="M23 19C23 19.5304 22.7893 20.0391 22.4142 20.4142C22.0391 20.7893 21.5304 21 21 21H3C2.46957 21 1.96086 20.7893 1.58579 20.4142C1.21071 20.0391 1 19.5304 1 19V8C1 7.46957 1.21071 6.96086 1.58579 6.58579C1.96086 6.21071 2.46957 6 3 6H7L9 4H15L17 6H21C21.5304 6 22.0391 6.21071 22.4142 6.58579C22.7893 6.96086 23 7.46957 23 8V19Z"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+          <circle
+            cx="12"
+            cy="13"
+            r="4"
+            stroke="currentColor"
+            stroke-width="2"
+          />
         </svg>
       </button>
     </div>
@@ -56,17 +127,17 @@
 </template>
 
 <script setup>
-import { ref, onMounted, nextTick } from 'vue'
+import { ref, onMounted, nextTick } from "vue";
 
-const chatMessages = ref(null)
-const messages = ref([])
-const loading = ref(false)
-const hasMoreMessages = ref(true)
-const currentPage = ref(1)
+const chatMessages = ref(null);
+const messages = ref([]);
+const loading = ref(false);
+const hasMoreMessages = ref(true);
+const currentPage = ref(1);
 
 // 더미 메시지 데이터 생성
 const generateMessages = (page, count = 10) => {
-  const newMessages = []
+  const newMessages = [];
   const messageTexts = [
     "Hello,i'm fine,how can i help you?",
     "What is the best programming language?",
@@ -77,75 +148,76 @@ const generateMessages = (page, count = 10) => {
     "Let's schedule a meeting",
     "The weather is nice today",
     "I'm working on the new feature",
-    "Have you seen the latest update?"
-  ]
-  
+    "Have you seen the latest update?",
+  ];
+
   for (let i = 0; i < count; i++) {
-    const messageId = (page - 1) * count + i + 1
-    const randomText = messageTexts[Math.floor(Math.random() * messageTexts.length)]
-    const isReceived = Math.random() > 0.5
-    
+    const messageId = (page - 1) * count + i + 1;
+    const randomText =
+      messageTexts[Math.floor(Math.random() * messageTexts.length)];
+    const isReceived = Math.random() > 0.5;
+
     newMessages.push({
       id: messageId,
       text: randomText,
-      type: isReceived ? 'received' : 'sent'
-    })
+      type: isReceived ? "received" : "sent",
+    });
   }
-  
-  return newMessages
-}
+
+  return newMessages;
+};
 
 // 초기 메시지 로드
 const loadInitialMessages = () => {
-  messages.value = generateMessages(1, 5)
-  hasMoreMessages.value = true
-}
+  messages.value = generateMessages(1, 5);
+  hasMoreMessages.value = true;
+};
 
 // 이전 메시지 로드
 const loadMoreMessages = async () => {
-  if (loading.value || !hasMoreMessages.value) return
-  
-  loading.value = true
-  
+  if (loading.value || !hasMoreMessages.value) return;
+
+  loading.value = true;
+
   // 스크롤 위치 저장
-  const scrollHeight = chatMessages.value.scrollHeight
-  
+  const scrollHeight = chatMessages.value.scrollHeight;
+
   // 새로운 메시지 로드
-  await new Promise(resolve => setTimeout(resolve, 1000)) // 로딩 시뮬레이션
-  
-  const newMessages = generateMessages(currentPage.value + 1, 10)
-  
+  await new Promise((resolve) => setTimeout(resolve, 1000)); // 로딩 시뮬레이션
+
+  const newMessages = generateMessages(currentPage.value + 1, 10);
+
   if (newMessages.length === 0) {
-    hasMoreMessages.value = false
+    hasMoreMessages.value = false;
   } else {
-    messages.value = [...newMessages, ...messages.value]
-    currentPage.value++
+    messages.value = [...newMessages, ...messages.value];
+    currentPage.value++;
   }
-  
-  loading.value = false
-  
+
+  loading.value = false;
+
   // 스크롤 위치 복원
-  await nextTick()
-  chatMessages.value.scrollTop = chatMessages.value.scrollHeight - scrollHeight
-}
+  await nextTick();
+  chatMessages.value.scrollTop = chatMessages.value.scrollHeight - scrollHeight;
+};
 
 // 스크롤 이벤트 처리
 const handleScroll = () => {
   if (chatMessages.value.scrollTop <= 50) {
-    loadMoreMessages()
+    loadMoreMessages();
   }
-}
+};
 
 onMounted(() => {
-  loadInitialMessages()
-  
+  loadInitialMessages();
+
   // 채팅 메시지 영역을 맨 아래로 스크롤
   nextTick(() => {
     if (chatMessages.value) {
-      chatMessages.value.scrollTop = chatMessages.value.scrollHeight
+      chatMessages.value.scrollTop = chatMessages.value.scrollHeight;
     }
-  })
-})
+  });
+});
 </script>
 
 <style scoped>
@@ -277,8 +349,12 @@ onMounted(() => {
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 /* 더 이상 메시지가 없을 때 */
@@ -289,5 +365,26 @@ onMounted(() => {
   padding: 16px;
   color: #999;
   font-size: 12px;
+}
+
+.payment-btn {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border: none;
+  border-radius: 20px;
+  background-color: #28a745;
+  color: white;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s, transform 0.2s;
+}
+
+.payment-btn:hover {
+  background-color: #218838;
+  transform: scale(1.03);
 }
 </style>
