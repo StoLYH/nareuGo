@@ -9,13 +9,11 @@ import org.example.nareugobackend.api.service.product.request.UserInfoRequest;
 @Mapper
 public interface ProductMapper {
 
-//    int createProduct(ProductServiceRequest productServiceRequest);
-//
-//
-//
-//    int insertImageKeys(@Param("productId") Long productId,
-//                         @Param("imageUrls") String[] imageUrls);
-//
+    int createProduct(ProductServiceRequest productServiceRequest);
+
+    int insertImageKeys(@Param("productId") Long productId,
+                         @Param("imageUrls") String[] imageUrls);
+
 //    int deleteProduct(@Param("productId") Long productId);
 //
 //
@@ -29,6 +27,6 @@ public interface ProductMapper {
 //    List<String> selectProductImages(@Param("productId") Long productId);
 
     // 사용자 Id 이용하기
-    UserInfoRequest selectUserInfo77(@Param("userId") Long userId);
+    UserInfoRequest selectUserInfo(@Param("userId") Long userId);
 
 }

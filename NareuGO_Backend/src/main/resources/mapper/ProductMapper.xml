@@ -4,18 +4,18 @@
 
 <mapper namespace="org.example.nareugobackend.mapper.ProductMapper">
 
-<!--  <insert id="createProduct" parameterType="org.example.nareugobackend.api.controller.product.request.ProductCreateRequest" useGeneratedKeys="true" keyProperty="productId">-->
-<!--    INSERT INTO products (seller_id, title, description, price, status, apartment_name, si_do, si_gun_gu, eup_myeon_dong)-->
-<!--    VALUES (#{sellerId}, #{title}, #{description}, #{price}, 'FOR_SALE', #{apartmentName}, #{siDo}, #{siGunGu}, #{eupMyeonDong})-->
-<!--  </insert>-->
+  <insert id="createProduct" parameterType="org.example.nareugobackend.api.controller.product.request.ProductCreateRequest" useGeneratedKeys="true" keyProperty="productId">
+    INSERT INTO products (seller_id, title, description, price, status, si_do, si_gun_gu, eup_myeon_dong, apartment_name)
+    VALUES (#{sellerId}, #{title}, #{description}, #{price}, 'FOR_SALE', #{siDo}, #{siGunGu}, #{eupMyeonDong}, #{apartmentName})
+  </insert>
 
-<!--  <insert id="insertImageKeys" parameterType="map">-->
-<!--    INSERT INTO product_images (product_id, image_url)-->
-<!--    VALUES -->
-<!--    <foreach collection="imageUrls" item="key" separator=",">-->
-<!--        (#{productId}, #{key})-->
-<!--    </foreach>-->
-<!--  </insert>-->
+  <insert id="insertImageKeys" parameterType="map">
+    INSERT INTO product_images (product_id, image_url)
+    VALUES
+    <foreach collection="imageUrls" item="key" separator=",">
+        (#{productId}, #{key})
+    </foreach>
+  </insert>
 
 <!--  <delete id="deleteProduct" parameterType="long">-->
 <!--    DELETE FROM products-->
@@ -72,7 +72,7 @@
 
 
   <!-- 9/16 -->
-  <select id="selectUserInfo77"
+  <select id="selectUserInfo"
     parameterType="long"
     resultType="org.example.nareugobackend.api.service.product.request.UserInfoRequest">
     SELECT
@@ -80,8 +80,8 @@
     si_gun_gu AS siGunGu,
     eup_myeon_dong AS eupMyeonDong,
     apartment_name AS apartmentName
-    FROM users
-    WHERE user_id = #{userId}
+    FROM user
+    WHERE id = #{userId}
   </select>
 
 

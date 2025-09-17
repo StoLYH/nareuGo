@@ -24,23 +24,6 @@ import org.springframework.web.bind.annotation.RestController;
 public class ProductController {
 
     private final ProductService productService;
-    private final ProductMapper productMapper;
-
-
-    /**
-     * 임시 TEST
-     *
-     *
-     */
-//    @PostMapping()
-//    public ResponseEntity<?> TEST() {
-//        System.out.println("확인1");
-//
-//
-//        System.out.println("확인2");
-//        return null;
-//    }
-
 
 
     /**
@@ -51,7 +34,6 @@ public class ProductController {
      */
     @PostMapping()
     public ResponseEntity<ProductCreateResponse> createProduct(@RequestBody ProductCreateRequest productRequest) {
-        System.out.println(productRequest + "확인@@@~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
         return ResponseEntity.ok(productService.createProduct(productRequest));
     }
 

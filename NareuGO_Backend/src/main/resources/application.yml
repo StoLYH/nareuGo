@@ -22,7 +22,7 @@ spring:
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
 
-  jpa:   # ✅ spring 밑으로 옮김
+  jpa:
     hibernate:
       ddl-auto: update
     show-sql: true
@@ -30,11 +30,6 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.MySQLDialect
         format_sql: true
-
-  mybatis: # ✅ spring 밑으로 옮김
-    mapper-locations: classpath:/mapper/**/*.xml
-    type-aliases-package: org.example.nareugobackend
-
 
   data:
     redis:
@@ -87,6 +82,12 @@ host:
   frontend: ${HOST_FRONTEND}
   allowed-origins: ${HOST_ALLOWED_ORIGINS}
   login-success-redirect-url: /auth/success
+
+mybatis:   # 위치고정
+  mapper-locations: classpath*:mapper/**/*.xml
+  type-aliases-package: org.example.nareugobackend
+  configuration:
+    map-underscore-to-camel-case: true
 
 
 

@@ -48,7 +48,6 @@ CREATE TABLE `products` (
 
 
 
-
 CREATE TABLE IF NOT EXISTS `product_images` (
                                                 `image_id` BIGINT NOT NULL AUTO_INCREMENT COMMENT '이미지 ID',
                                                 `product_id` BIGINT NOT NULL COMMENT '상품 ID',
