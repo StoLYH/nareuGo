@@ -9,9 +9,9 @@
 -->
 <mapper namespace="org.example.nareugobackend.mapper.PaymentMapper">
   
-  <!-- 결제 정보 저장 (토스 승인 후 호출) -->
-  <insert id="save" parameterType="org.example.nareugobackend.common.model.Payment" useGeneratedKeys="true" keyProperty="paymentId">
-    INSERT INTO payments (order_id, payment_key, amount, status, approved_at)
-    VALUES (#{orderId}, #{paymentKey}, #{amount}, #{status}, #{approvedAt})
-  </insert>
+<!--  &lt;!&ndash; 결제 정보 저장 (토스 승인 후 호출) &ndash;&gt;-->
+<!--  <insert id="save" parameterType="org.example.nareugobackend.common.model.Payment" useGeneratedKeys="true" keyProperty="paymentId">-->
+<!--    INSERT INTO payments (order_id, payment_key, amount, status, approved_at)-->
+<!--    VALUES (#{orderId}, #{paymentKey}, #{amount}, #{status}, #{approvedAt})-->
+<!--  </insert>-->
 </mapper>
