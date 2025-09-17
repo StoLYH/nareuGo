@@ -31,8 +31,12 @@
 </template>
 
 <script setup>
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
+
 const openNeighborhoodAuth = () => {
-  console.log('동네 인증하기 열기');
+  router.push('/neighborhood-verification')
 };
 
 const openSalesHistory = () => {
