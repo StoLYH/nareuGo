@@ -48,20 +48,20 @@ public class ProductController {
 //    public ResponseEntity<ProductDeleteResponse> deleteProduct(@PathVariable Long id) {
 //        return ResponseEntity.ok(new ProductDeleteResponse(true, "상품삭제 성공"));
 //    }
-//
-//
-//    /**
-//     * 아파트 별 상품 전체 조회 (서울특별시 강남구 역삼동 래미안아파트) - 일단 고정
-//     * TODO 추후 로그인 연동
-//     *
-//     * @return
-//     */
-//    @GetMapping()
-//    public ResponseEntity<List<ProductDetailResponse>> selectProduct() {
-//        return ResponseEntity.ok(productService.selectProduct());
-//    }
-//
-//
+
+    /**
+     * 아파트 별 상품 전체 조회 (서울특별시 강남구 역삼동 래미안아파트) - 일단 고정
+     *
+     *
+     * @return
+     */
+    @GetMapping("/{userId}")
+    public ResponseEntity<List<ProductDetailResponse>> selectProduct(@PathVariable Long userId) {
+        return ResponseEntity.ok(productService.selectProduct(userId));
+    }
+
+
+
 //    /**
 //     * 상품 개별 조회 (단일 조회)
 //     *

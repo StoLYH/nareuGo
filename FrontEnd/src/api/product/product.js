@@ -41,10 +41,10 @@ export const uploadToS3 = async (presignedUrl, file) => {
   }
 }
 
-// 상품 목록 조회 API (추후 구현)
-export const getProducts = async () => {
+// 상품 목록 조회 API - 사용자 ID로 같은 위치의 상품들 조회
+export const getProducts = async (userId) => {
   try {
-    const response = await axios.get(`${BASE_URL}/products`, {
+    const response = await axios.get(`${BASE_URL}/products/${userId}`, {
       headers: {
         'Authorization': `Bearer ${localStorage.getItem('access_token')}`
       }

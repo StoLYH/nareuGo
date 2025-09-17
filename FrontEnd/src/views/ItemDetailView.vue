@@ -164,45 +164,46 @@
 </template>
 
 <script>
+import { getProducts } from '@/api/product/product.js'
+
 export default {
   name: "ItemDetailView",
   data() {
     return {
       currentImageIndex: 0,
       item: {
-        title: "소니 Wh-1000xm5 실버 팝니다.",
-        imageUrls: [
-          "https://placehold.co/600x600/333333/FFF?text=Image+1",
-          "https://placehold.co/600x600/555555/FFF?text=Image+2",
-          "https://placehold.co/600x600/777777/FFF?text=Image+3",
-          "https://placehold.co/600x600/999999/FFF?text=Image+4",
-        ],
+        id: null,
+        title: "",
+        imageUrls: [],
         category: "디지털기기",
-        postedAt: "10시간 전",
-        description:
-          "8/31일 해외직구한<br>한달도 안된제품 입니다.<br>박풀 S급입니다.",
-        likes: 15,
-        views: 311,
-        price: 360000,
+        postedAt: "",
+        description: "",
+        likes: 0,
+        views: 0,
+        price: 0,
+        location: "",
         seller: {
-          name: "감성탐방러",
-          location: "102동 501호",
-          avatarUrl: "https://placehold.co/100x100/EFEFEF/333?text=User",
+          name: "201동 행복주민",
+          location: "",
+          avatarUrl: "/images/social/사용자더미.png",
         },
       },
       otherItems: [
         {
           id: 1,
-          imageUrl: "https://placehold.co/300x300/CCCCCC/FFF?text=Item+1",
+          imageUrl: "/images/social/상품더미1.png",
           title: "다른 상품 1",
         },
         {
           id: 2,
-          imageUrl: "https://placehold.co/300x300/AAAAAA/FFF?text=Item+2",
+          imageUrl: "/images/social/상품더미2.png", 
           title: "다른 상품 2",
         },
       ],
     };
+  },
+  async mounted() {
+    await this.loadItemData();
   },
   computed: {
     formattedPrice() {
@@ -210,6 +211,146 @@ export default {
     },
   },
   methods: {
+    async loadItemData() {
+      try {
+        const productId = this.$route.params.id;
+        console.log('상품 ID:', productId);
+        
+        // 1. sessionStorage에서 상품 정보 확인
+        const storedItemData = sessionStorage.getItem(`item_${productId}`);
+        if (storedItemData) {
+          console.log('sessionStorage에서 상품 정보 가져옴');
+          const itemData = JSON.parse(storedItemData);
+          this.setItemData(itemData);
+          return;
+        }
+        
+        // 2. 라우터 state에서 전달받은 상품 정보 확인
+        const routerState = history.state;
+        if (routerState && routerState.itemData) {
+          console.log('라우터에서 전달받은 상품 정보:', routerState.itemData);
+          this.setItemData(routerState.itemData);
+          return;
+        }
+        
+        // 3. 위의 방법들이 모두 실패하면 API 호출
+        if (productId) {
+          console.log('API에서 상품 정보 가져오기');
+          await this.fetchItemFromAPI(productId);
+        }
+      } catch (error) {
+        console.error('상품 정보 로드 실패:', error);
+      }
+    },
+
+    setItemData(itemData) {
+      // 받은 데이터 전체를 콘솔에 출력
+      console.log('=== ItemDetail에서 받은 상품 데이터 전체 ===');
+      console.log('itemData:', itemData);
+      console.log('itemData.description:', itemData.description);
+      console.log('itemData.allImages:', itemData.allImages);
+      console.log('itemData.image:', itemData.image);
+      console.log('itemData 키들:', Object.keys(itemData));
+      console.log('=======================================');
+
+      // ItemList에서 받은 데이터를 ItemDetail 형식으로 변환
+      this.item = {
+        id: itemData.id,
+        title: itemData.title,
+        imageUrls: itemData.allImages || [itemData.image], // 모든 이미지 또는 첫 번째 이미지
+        category: "디지털기기", // 기본값
+        postedAt: itemData.time,
+        description: itemData.description || "상품 설명을 확인해보세요.", // 설명이 있으면 사용
+        likes: 0, // 기본값
+        views: 0, // 기본값
+        price: itemData.price,
+        location: itemData.location,
+        seller: {
+          name: "201동 행복주민", // 고정값
+          location: `${itemData.location} ${itemData.apartmentName || ''}`.trim(), // 구+동 + 아파트명
+          avatarUrl: "/images/social/사용자더미.png",
+        },
+      };
+
+      // 변환된 데이터도 출력
+      console.log('=== 변환된 this.item 데이터 ===');
+      console.log('this.item:', this.item);
+      console.log('this.item.description:', this.item.description);
+      console.log('this.item.imageUrls:', this.item.imageUrls);
+      console.log('============================');
+    },
+
+    async fetchItemFromAPI(productId) {
+      // 새로고침 등으로 state가 없을 때 API에서 데이터 가져오기
+      // 임시로 전체 목록에서 찾기 (실제로는 단일 상품 API 호출)
+      try {
+        const userInfo = JSON.parse(localStorage.getItem('user'));
+        if (userInfo && userInfo.userId) {
+          const productList = await getProducts(userInfo.userId);
+          const product = productList.find(p => p.productId == productId);
+          if (product) {
+            const itemData = {
+              id: product.productId,
+              title: product.title,
+              location: `${product.siGunGu} ${product.eupMyeonDong}`,
+              time: this.formatTimeAgo(product.createdAt),
+              price: product.price,
+              image: product.imageUrls && product.imageUrls.length > 0 ? product.imageUrls[0] : null,
+              // 추가 정보들
+              allImages: product.imageUrls || [],
+              description: product.description || "",
+              sellerId: product.sellerId,
+              siDo: product.siDo,
+              siGunGu: product.siGunGu,
+              eupMyeonDong: product.eupMyeonDong,
+              apartmentName: product.apartmentName, // 아파트명 포함
+              status: product.status,
+              createdAt: product.createdAt,
+              updatedAt: product.updatedAt
+            };
+            this.setItemData(itemData);
+          }
+        }
+      } catch (error) {
+        console.error('API에서 상품 정보 가져오기 실패:', error);
+      }
+    },
+
+    formatTimeAgo(dateString) {
+      const now = new Date();
+      
+      // 백엔드에서 받은 시간을 UTC로 파싱 후 로컬 시간대로 변환
+      let past;
+      if (dateString.includes('T') && dateString.includes('Z')) {
+        // 이미 UTC 형식인 경우 (예: 2025-09-17T04:49:39Z)
+        past = new Date(dateString);
+      } else if (dateString.includes('T')) {
+        // ISO 형식이지만 Z가 없는 경우 UTC로 가정
+        past = new Date(dateString + 'Z');
+      } else {
+        // 다른 형식인 경우 그대로 파싱
+        past = new Date(dateString);
+      }
+      
+      const diffInMinutes = Math.floor((now - past) / (1000 * 60));
+      
+      // 디버깅용 로그
+      console.log(`시간 계산: now=${now.toISOString()}, past=${past.toISOString()}, diff=${diffInMinutes}분`);
+      
+      if (diffInMinutes < 1) return '방금 전';
+      if (diffInMinutes < 60) return `${diffInMinutes}분 전`;
+      
+      const diffInHours = Math.floor(diffInMinutes / 60);
+      if (diffInHours < 24) return `${diffInHours}시간 전`;
+      
+      const diffInDays = Math.floor(diffInHours / 24);
+      return `${diffInDays}일 전`;
+    },
+
+    goBack() {
+      this.$router.go(-1);
+    },
+
     nextImage() {
       if (this.currentImageIndex < this.item.imageUrls.length - 1) {
         this.currentImageIndex++;
@@ -432,14 +573,16 @@ export default {
 .item-list {
   display: flex;
   gap: 12px;
+  width: 100%;
 }
 .other-item-card {
-  width: 40%;
+  flex: 1; /* 동일한 크기로 분할 */
   aspect-ratio: 1 / 1;
   background-color: #eee;
   border-radius: 8px;
   overflow: hidden;
   cursor: pointer;
+  max-width: calc(50% - 6px); /* 50%에서 gap의 절반을 뺀 크기 */
 }
 .other-item-card img {
   width: 100%;
