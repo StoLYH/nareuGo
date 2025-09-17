@@ -15,16 +15,19 @@ public interface ProductMapper {
                          @Param("imageUrls") String[] imageUrls);
 
 //    int deleteProduct(@Param("productId") Long productId);
-//
-//
-//    // 전체 (읍,면,동 기준)
-//    List<ProductDetailResponse> selectProduct(UserInfoRequest userInfoRequest);
-//
+
+
+    // 전체 (읍,면,동 기준)
+    List<ProductDetailResponse> selectProduct(UserInfoRequest userInfoRequest);
+
+
 //    // 개별 단위
 //    ProductDetailResponse selectOneProduct(@Param("productId") Long productId);
-//
-//    // 공통 이미지 조회 (단일/전체 모두 사용)
-//    List<String> selectProductImages(@Param("productId") Long productId);
+
+
+
+    // 이미지 조회 (단일/전체 모두 사용)
+    List<String> selectProductImages(@Param("productId") Long productId);
 
     // 사용자 Id 이용하기
     UserInfoRequest selectUserInfo(@Param("userId") Long userId);

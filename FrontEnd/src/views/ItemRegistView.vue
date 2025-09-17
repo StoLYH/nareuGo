@@ -234,10 +234,21 @@ export default {
 
         // 2단계: S3에 직접 파일 업로드
         if (response.urls && response.urls.length > 0) {
+          console.log('받은 Presigned URLs:', response.urls);
+          
           const uploadPromises = response.urls.map(async (presignedUrl, index) => {
             if (this.uploadedImages[index]) {
               console.log(`파일 ${index + 1} S3 업로드 시작:`, this.uploadedImages[index].name);
-              return await uploadToS3(presignedUrl, this.uploadedImages[index].file);
+              console.log(`Presigned URL:`, presignedUrl);
+              
+              try {
+                const uploadResult = await uploadToS3(presignedUrl, this.uploadedImages[index].file);
+                console.log(`파일 ${index + 1} 업로드 성공:`, uploadResult);
+                return uploadResult;
+              } catch (uploadError) {
+                console.error(`파일 ${index + 1} 업로드 실패:`, uploadError);
+                throw uploadError;
+              }
             }
           });
 
@@ -248,8 +259,8 @@ export default {
 
         alert('상품이 성공적으로 등록되었습니다!');
         
-        // 성공 후 폼 초기화 또는 페이지 이동
-        this.resetForm();
+        // 성공 후 상품 목록 페이지로 이동
+        this.$router.push('/items');
         
       } catch (error) {
         console.error('상품 등록 실패:', error);

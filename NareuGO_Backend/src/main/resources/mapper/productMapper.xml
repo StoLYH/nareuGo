@@ -5,15 +5,15 @@
 
 
   <insert id="createProduct" parameterType="org.example.nareugobackend.api.controller.product.request.ProductCreateRequest" useGeneratedKeys="true" keyProperty="productId">
-    INSERT INTO products (seller_id, title, description, price, status, apartment_name, si_do, si_gun_gu, eup_myeon_dong)
-    VALUES (#{sellerId}, #{title}, #{description}, #{price}, 'FOR_SALE', #{apartmentName}, #{siDo}, #{siGunGu}, #{eupMyeonDong})
+    INSERT INTO products (seller_id, title, description, price, status, si_do, si_gun_gu, eup_myeon_dong, apartment_name)
+    VALUES (#{sellerId}, #{title}, #{description}, #{price}, 'FOR_SALE', #{siDo}, #{siGunGu}, #{eupMyeonDong}, #{apartmentName})
   </insert>
 
   <insert id="insertImageKeys" parameterType="map">
     INSERT INTO product_images (product_id, image_url)
-    VALUES 
+    VALUES
     <foreach collection="imageUrls" item="key" separator=",">
-        (#{productId}, #{key})
+      (#{productId}, #{key})
     </foreach>
   </insert>
 
@@ -23,13 +23,44 @@
   </delete>
 
   <select id="selectUserInfo" parameterType="long" resultType="org.example.nareugobackend.api.service.product.request.UserInfoRequest">
-    SELECT 
-        apartment_name,
-        si_do,
-        si_gun_gu,
-        eup_myeon_dong
+    SELECT
+    si_do,
+    si_gun_gu,
+    eup_myeon_dong,
+    apartment_name
     FROM users
     WHERE user_id = #{userId}
   </select>
+
+  <select id="selectProduct" parameterType="org.example.nareugobackend.api.service.product.request.UserInfoRequest" resultType="org.example.nareugobackend.api.controller.product.response.ProductDetailResponse">
+    SELECT
+    p.product_id,
+    p.seller_id,
+    p.title,
+    p.description,
+    p.price,
+    p.status,
+    p.created_at,
+    p.updated_at,
+    p.si_do,
+    p.si_gun_gu,
+    p.eup_myeon_dong,
+    p.apartment_name
+    FROM products p
+    WHERE p.si_do = #{siDo}
+    AND p.si_gun_gu = #{siGunGu}
+    AND p.eup_myeon_dong = #{eupMyeonDong}
+    AND p.apartment_name = #{apartmentName}
+    AND p.status = 'FOR_SALE'
+    ORDER BY p.created_at DESC
+  </select>
+
+  <select id="selectProductImages" parameterType="long" resultType="string">
+    SELECT image_url
+    FROM product_images
+    WHERE product_id = #{productId}
+    ORDER BY image_id ASC
+  </select>
+
 
 </mapper>
