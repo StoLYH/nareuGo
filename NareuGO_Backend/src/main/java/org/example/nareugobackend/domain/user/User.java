@@ -67,6 +67,7 @@ public class User {
   @Enumerated(STRING)
   private Role role;
 
+
   public static User from(SocialUserInfo userInfo) {
     return User.builder()
         .email(userInfo.getEmail())
@@ -80,4 +81,5 @@ public class User {
         .role(Role.USER)
         .build();
   }
+  
 }

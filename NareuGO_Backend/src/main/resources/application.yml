@@ -22,18 +22,6 @@ spring:
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
 
-jwt:
-  secret: ${JWT_SECRET}
-
-cookie:
-  domain: ${COOKIE_DOMAIN}
-  secure-mode: true
-
-host:
-  frontend: ${HOST_FRONTEND}
-  allowed-origins: ${HOST_ALLOWED_ORIGINS}
-  login-success-redirect-url: /auth/success
-
   jpa:
     hibernate:
       ddl-auto: update
@@ -42,12 +30,6 @@ host:
       hibernate:
         dialect: org.hibernate.dialect.MySQLDialect
         format_sql: true
-
-  mybatis:
-    mapper-locations: classpath*:mappers/**/*.xml
-    type-aliases-package: org.example.nareugobackend
-    configuration:
-      map-underscore-to-camel-case: true
 
   data:
     redis:
@@ -88,6 +70,26 @@ host:
             user-info-uri: ${OAUTH2_NAVER_USER_INFO_URI}
             user-name-attribute: response
 
+
+jwt:
+  secret: ${JWT_SECRET}
+
+cookie:
+  domain: ${COOKIE_DOMAIN}
+  secure-mode: true
+
+host:
+  frontend: ${HOST_FRONTEND}
+  allowed-origins: ${HOST_ALLOWED_ORIGINS}
+  login-success-redirect-url: /auth/success
+
+mybatis:   # 위치고정
+  mapper-locations: classpath*:mapper/**/*.xml
+  type-aliases-package: org.example.nareugobackend
+  configuration:
+    map-underscore-to-camel-case: true
+
+
 # ===========================================
 # AWS S3 설정
 # ===========================================
@@ -98,29 +100,23 @@ cloud:
       secret-key: ${CLOUD_AWS_CREDENTIALS_SECRET_KEY}
     s3:
       bucket: "a501"
-      region: ${AWS_S3_REGION}       
+      region: ${AWS_S3_REGION}
 
 # ===========================================
 # 토스페이먼츠 결제 API 설정
 # ===========================================
-# 토스페이먼츠 API 연동을 위한 설정값들
-# - secret-key: 토스페이먼츠에서 발급받은 시크릿 키 (환경 변수로 주입)
-# - confirm-url: 토스페이먼츠 결제 승인 API 엔드포인트
 payments:
   toss:
-    secret-key: ${TOSS_SECRET_KEY} # 환경 변수로 시크릿 키 주입
+    secret-key: ${TOSS_SECRET_KEY}
     confirm-url: https://api.tosspayments.com/v1/payments/confirm
 
 # ===========================================
 # Clova OCR API 설정
 # ===========================================
-# 네이버 클라우드 플랫폼 Clova OCR API 연동 설정
-# - api-url: Clova OCR API 엔드포인트
-# - secret-key: Clova OCR에서 발급받은 시크릿 키 (환경 변수로 주입)
 clova:
   ocr:
-    api-url: ${CLOVA_OCR_API_URL} # Clova OCR API URL
-    secret-key: ${CLOVA_OCR_SECRET_KEY} # 환경 변수로 시크릿 키 주입
+    api-url: ${CLOVA_OCR_API_URL}
+    secret-key: ${CLOVA_OCR_SECRET_KEY}
 
 # Local 환경
 ---
