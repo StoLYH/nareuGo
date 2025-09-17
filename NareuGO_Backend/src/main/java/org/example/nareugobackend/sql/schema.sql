@@ -141,44 +141,38 @@ CREATE TABLE IF NOT EXISTS `deliveries` (
     ) ENGINE = InnoDB COMMENT = '로봇 배송 정보';
 
 -- -----------------------------------------------------
--- 4. 커뮤니케이션 관련 테이블
+-- 4. 커뮤니케이션 관련 테이블 (WebSocket 채팅용)
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `chat_rooms` (
                                             `room_id` BIGINT NOT NULL AUTO_INCREMENT COMMENT '채팅방 ID',
-                                            `product_id` BIGINT NOT NULL COMMENT '관련 상품 ID',
-                                            `buyer_id` BIGINT NOT NULL COMMENT '구매 희망자 ID',
-                                            `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                                            `user1_id` VARCHAR(50) NOT NULL COMMENT '사용자1 ID',
+                                            `user2_id` VARCHAR(50) NOT NULL COMMENT '사용자2 ID',
+                                            `created_at` VARCHAR(255) NOT NULL COMMENT '생성 시간',
+                                            `last_message_at` VARCHAR(255) NULL COMMENT '마지막 메시지 시간',
+                                            `last_message` TEXT NULL COMMENT '마지막 메시지 내용',
                                             PRIMARY KEY (`room_id`),
-    INDEX `fk_chat_rooms_products_idx` (`product_id` ASC),
-    INDEX `fk_chat_rooms_users_idx` (`buyer_id` ASC),
-    CONSTRAINT `fk_chat_rooms_products`
-    FOREIGN KEY (`product_id`)
-    REFERENCES `products` (`product_id`)
-    ON DELETE CASCADE ON UPDATE CASCADE,
-    CONSTRAINT `fk_chat_rooms_users`
-    FOREIGN KEY (`buyer_id`)
-    REFERENCES `users` (`user_id`)
-    ON DELETE CASCADE ON UPDATE CASCADE
-    ) ENGINE = InnoDB COMMENT = '채팅방 정보';
+    UNIQUE INDEX `unique_users` (`user1_id`, `user2_id`),
+    INDEX `idx_user1` (`user1_id`),
+    INDEX `idx_user2` (`user2_id`)
+    ) ENGINE = InnoDB COMMENT = 'WebSocket 채팅방 정보';
 
 CREATE TABLE IF NOT EXISTS `chat_messages` (
                                                `message_id` BIGINT NOT NULL AUTO_INCREMENT COMMENT '메시지 ID',
-                                               `room_id` BIGINT NOT NULL COMMENT 'c채팅방 ID',
-                                               `sender_id` BIGINT NOT NULL COMMENT '발신자 ID',
-                                               `message` TEXT NOT NULL COMMENT '메시지 내용',
-                                               `sent_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '전송 시간',
+                                               `room_id` BIGINT NOT NULL COMMENT '채팅방 ID',
+                                               `sender_id` VARCHAR(50) NOT NULL COMMENT '발신자 ID',
+                                               `receiver_id` VARCHAR(50) NOT NULL COMMENT '수신자 ID',
+                                               `content` TEXT NOT NULL COMMENT '메시지 내용',
+                                               `timestamp` VARCHAR(255) NOT NULL COMMENT '전송 시간',
                                                PRIMARY KEY (`message_id`),
     INDEX `fk_chat_messages_rooms_idx` (`room_id` ASC),
-    INDEX `fk_chat_messages_users_idx` (`sender_id` ASC),
+    INDEX `idx_sender` (`sender_id`),
+    INDEX `idx_receiver` (`receiver_id`),
+    INDEX `idx_timestamp` (`timestamp`),
     CONSTRAINT `fk_chat_messages_rooms`
     FOREIGN KEY (`room_id`)
     REFERENCES `chat_rooms` (`room_id`)
-    ON DELETE CASCADE ON UPDATE CASCADE,
-    CONSTRAINT `fk_chat_messages_users`
-    FOREIGN KEY (`sender_id`)
-    REFERENCES `users` (`user_id`)
     ON DELETE CASCADE ON UPDATE CASCADE
-    ) ENGINE = InnoDB COMMENT = '채팅 메시지';
+    ) ENGINE = InnoDB COMMENT = 'WebSocket 채팅 메시지';
 
 CREATE TABLE IF NOT EXISTS `notifications` (
                                                `notification_id` BIGINT NOT NULL AUTO_INCREMENT COMMENT '알림 고유 ID',
