@@ -80,8 +80,8 @@
     si_gun_gu AS siGunGu,
     eup_myeon_dong AS eupMyeonDong,
     apartment_name AS apartmentName
-    FROM user
-    WHERE id = #{userId}
+    FROM users
+    WHERE user_id = #{userId}
   </select>
 
 
