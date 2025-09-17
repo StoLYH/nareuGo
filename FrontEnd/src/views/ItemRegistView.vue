@@ -126,7 +126,7 @@
 </template>
 
 <script>
-import { createProduct, uploadToS3 } from '@/api/product.js'
+import { createProduct, uploadToS3 } from '@/api/product/product.js'
 
 export default {
   name: "ItemRegistView",
