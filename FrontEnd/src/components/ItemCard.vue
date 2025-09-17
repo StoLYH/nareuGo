@@ -1,7 +1,16 @@
 <template>
   <div class="item-card" @click="handleItemClick">
     <div class="item-image">
-      <img :src="item.image" :alt="item.title" />
+      <img 
+        v-if="item.image" 
+        :src="item.image" 
+        :alt="item.title" 
+        @error="handleImageError"
+        @load="handleImageLoad"
+      />
+      <div v-else class="no-image">
+        <span>이미지 없음</span>
+      </div>
     </div>
     <div class="item-info">
       <h3 class="item-title">{{ item.title }}</h3>
@@ -24,7 +33,25 @@ const props = defineProps({
 })
 
 const handleItemClick = () => {
+  // 상품 상세 페이지로 이동하면서 상품 정보를 query로 전달
+  console.log('ItemCard에서 전달할 상품 정보:', props.item)
+  
+  // sessionStorage를 사용해서 데이터 전달 (더 안정적)
+  sessionStorage.setItem(`item_${props.item.id}`, JSON.stringify(props.item))
+  
   router.push(`/item/${props.item.id}`)
+}
+
+const handleImageError = (event) => {
+  console.error('이미지 로드 실패:', props.item.image, event)
+  console.error('에러 상세:', event.target.src, event.target.naturalWidth, event.target.naturalHeight)
+  
+  // 이미지 URL을 새 탭에서 직접 열어보기 (디버깅용)
+  console.log('이미지 URL 직접 테스트:', props.item.image)
+}
+
+const handleImageLoad = () => {
+  console.log('이미지 로드 성공:', props.item.image)
 }
 </script>
 
@@ -95,5 +122,16 @@ const handleItemClick = () => {
   color: #000;
   margin: 0;
   letter-spacing: -0.01em;
+}
+
+.no-image {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f0f0f0;
+  color: #999;
+  font-size: 12px;
 }
 </style>

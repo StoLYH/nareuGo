@@ -61,8 +61,8 @@ public class ProductServiceImpl implements ProductService {
         ProductServiceRequest productServiceRequest = new ProductServiceRequest(
             productRequest.getProductId(), productRequest.getSellerId(), productRequest.getTitle(),
             productRequest.getDescription(), productRequest.getPrice(),
-            userInfoRequest.getApartmentName(), userInfoRequest.getSiDo(),
-            userInfoRequest.getSiGunGu(), userInfoRequest.getEupMyeonDong());
+            userInfoRequest.getSiDo(), userInfoRequest.getSiGunGu(),
+            userInfoRequest.getEupMyeonDong(), userInfoRequest.getApartmentName());
 
 
         // 상품 등록
@@ -70,7 +70,6 @@ public class ProductServiceImpl implements ProductService {
 
         // 상품 Id
         long productId = productServiceRequest.getProductId();
-        System.out.println("상품 id 확인: " + productId);
 
         // S3 이미지 처리
         if (productRequest.getFiles() != null && productRequest.getFiles().length > 0) {
@@ -147,78 +146,74 @@ public class ProductServiceImpl implements ProductService {
 //        // TODO 사용자 검증
 //        productMapper.deleteProduct(productId);
 //    }
-//
-//
-//    /**
-//     * 메인페이지 상품 목록 조회
-//     *
-//     */
-//    @Transactional
-//    @Override
-//    public List<ProductDetailResponse> selectProduct() {
-//
-//        // TODO 사용자 정보로 가져올 영역
-//        UserInfoRequest userInfoRequest = new UserInfoRequest();
-//        userInfoRequest.setSiDo("서울특별시");
-//        userInfoRequest.setSiGunGu("강남구");
-//        userInfoRequest.setEupMyeonDong("역삼동");
-//        userInfoRequest.setApartmentName("래미안강남아파트");
-//
-//        List<ProductDetailResponse> result =  productMapper.selectProduct(userInfoRequest);
-//
-//        for (ProductDetailResponse productDetailResponse : result) {
-//            // 해당 상품에 있는 이미지들
-//            List<String> fileImageKEYS = productMapper.selectProductImages(productDetailResponse.getProductId());
-//
-//            // KEYS 이용해서 S3 PRESIGNED DOWNLOAD URLS 발급
-//            List<String> downloadUrls = new ArrayList<>();
-//            for (String s3Key : fileImageKEYS) {
-//                String downloadUrl = generatePresignedDownloadUrl(s3Key);
-//                downloadUrls.add(downloadUrl);
-//            }
-//
-//            productDetailResponse.setImageUrls(downloadUrls);
-//        }
-//
-//        return null;
-//    }
-//
-//
-//    /**
-//     * Presigend download urls
-//     *
-//     */
-//    private String generatePresignedDownloadUrl(String s3Key) {
-//        try {
-//            // S3Presigner를 리전과 함께 생성
-//            S3Presigner presigner = S3Presigner.builder()
-//                .region(software.amazon.awssdk.regions.Region.of(region))
-//                .credentialsProvider(software.amazon.awssdk.auth.credentials.StaticCredentialsProvider.create(
-//                    software.amazon.awssdk.auth.credentials.AwsBasicCredentials.create(accessKey, secretKey)
-//                ))
-//                .build();
-//
-//            GetObjectRequest getObjectRequest = GetObjectRequest.builder()
-//                .bucket(bucketName)
-//                .key(s3Key)
-//                .build();
-//
-//            GetObjectPresignRequest presignRequest = GetObjectPresignRequest.builder()
-//                .signatureDuration(Duration.ofHours(24)) // 24시간 후 만료
-//                .getObjectRequest(getObjectRequest)
-//                .build();
-//
-//            String presignedUrl = presigner.presignGetObject(presignRequest).url().toString();
-//            presigner.close();
-//
-//            return presignedUrl;
-//
-//        } catch (Exception e) {
-//            throw new RuntimeException("Presigned Download URL 생성 실패: " + e.getMessage(), e);
-//        }
-//    }
-//
-//
+
+
+    /**
+     * 메인페이지 상품 목록 조회
+     *
+     */
+    @Transactional
+    @Override
+    public List<ProductDetailResponse> selectProduct(long userId) {
+
+        UserInfoRequest userInfoRequest = productMapper.selectUserInfo(userId);
+
+        List<ProductDetailResponse> result =  productMapper.selectProduct(userInfoRequest);
+
+        for (ProductDetailResponse productDetailResponse : result) {
+            // 해당 상품에 있는 이미지들
+            List<String> fileImageKEYS = productMapper.selectProductImages(productDetailResponse.getProductId());
+
+            // KEYS 이용해서 S3 PRESIGNED DOWNLOAD URLS 발급
+            List<String> downloadUrls = new ArrayList<>();
+            for (String s3Key : fileImageKEYS) {
+                // 직접 S3 URL 사용
+                String directUrl = "https://" + bucketName + ".s3." + region + ".amazonaws.com/" + s3Key;
+                downloadUrls.add(directUrl);
+            }
+
+            productDetailResponse.setImageUrls(downloadUrls);
+        }
+
+        return result;
+    }
+
+
+    /**
+     * Presigend download urls
+     *
+     */
+    private String generatePresignedDownloadUrl(String s3Key) {
+        try {
+            // S3Presigner를 리전과 함께 생성
+            S3Presigner presigner = S3Presigner.builder()
+                .region(software.amazon.awssdk.regions.Region.of(region))
+                .credentialsProvider(software.amazon.awssdk.auth.credentials.StaticCredentialsProvider.create(
+                    software.amazon.awssdk.auth.credentials.AwsBasicCredentials.create(accessKey, secretKey)
+                ))
+                .build();
+
+            GetObjectRequest getObjectRequest = GetObjectRequest.builder()
+                .bucket(bucketName)
+                .key(s3Key)
+                .build();
+
+            GetObjectPresignRequest presignRequest = GetObjectPresignRequest.builder()
+                .signatureDuration(Duration.ofHours(24)) // 24시간 후 만료
+                .getObjectRequest(getObjectRequest)
+                .build();
+
+            String presignedUrl = presigner.presignGetObject(presignRequest).url().toString();
+            presigner.close();
+
+            return presignedUrl;
+
+        } catch (Exception e) {
+            throw new RuntimeException("Presigned Download URL 생성 실패: " + e.getMessage(), e);
+        }
+    }
+
+
 //    /**
 //     * 단일 상품 조회
 //     * ProductDetailResponse selectOneProduct (long productId);
