@@ -26,7 +26,15 @@
     <main class="form-content">
       <!-- 이미지 등록 섹션 -->
       <section class="image-upload-section">
-        <div class="image-uploader">
+        <div class="image-uploader" @click="selectFiles">
+          <input 
+            ref="fileInput" 
+            type="file" 
+            multiple 
+            accept="image/*" 
+            @change="handleFileSelect"
+            style="display: none"
+          />
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="24"
@@ -48,7 +56,7 @@
           :key="index"
           class="thumbnail"
         >
-          <img :src="image.url" :alt="`uploaded image ${index + 1}`" />
+          <img :src="image.preview" :alt="`uploaded image ${index + 1}`" />
           <button @click="removeImage(index)" class="remove-btn">×</button>
         </div>
       </section>
@@ -110,34 +118,29 @@
 
     <!-- 하단 작성 완료 버튼 -->
     <footer class="regist-footer">
-      <button :disabled="!isFormValid" @click="submitForm">작성 완료</button>
+      <button :disabled="!isFormValid || isLoading" @click="submitForm">
+        {{ isLoading ? '등록 중...' : '작성 완료' }}
+      </button>
     </footer>
   </div>
 </template>
 
 <script>
+import { createProduct, uploadToS3 } from '@/api/product.js'
+
 export default {
   name: "ItemRegistView",
   data() {
     return {
-      uploadedImages: [
-        { id: 1, url: "https://placehold.co/200x200/EFEFEF/333?text=Img+1" },
-        { id: 2, url: "https://placehold.co/200x200/E0E0E0/555?text=Img+2" },
-        { id: 3, url: "https://placehold.co/200x200/D0D0D0/555?text=Img+3" },
-        { id: 4, url: "https://placehold.co/200x200/C0C0C0/555?text=Img+4" },
-        { id: 5, url: "https://placehold.co/200x200/B0B0B0/555?text=Img+5" },
-        { id: 6, url: "https://placehold.co/200x200/A0A0A0/555?text=Img+6" },
-        { id: 7, url: "https://placehold.co/200x200/909090/555?text=Img+7" },
-        { id: 8, url: "https://placehold.co/200x200/808080/FFF?text=Img+8" },
-        { id: 9, url: "https://placehold.co/200x200/707070/FFF?text=Img+9" },
-        { id: 10, url: "https://placehold.co/200x200/606060/FFF?text=Img+10" },
-      ],
+      uploadedImages: [], // 실제 파일 객체들
+      selectedFiles: [], // 선택된 파일들
       item: {
         title: "",
         content: "",
         tradeType: "sell",
         price: null,
       },
+      isLoading: false,
     };
   },
   computed: {
@@ -159,19 +162,121 @@ export default {
     closePage() {
       alert("페이지 닫기");
     },
+    
+    // 파일 선택
+    selectFiles() {
+      this.$refs.fileInput.click();
+    },
+    
+    // 파일 선택 처리
+    handleFileSelect(event) {
+      const files = Array.from(event.target.files);
+      const remainingSlots = 10 - this.uploadedImages.length;
+      const filesToAdd = files.slice(0, remainingSlots);
+      
+      filesToAdd.forEach(file => {
+        if (file.type.startsWith('image/')) {
+          const reader = new FileReader();
+          reader.onload = (e) => {
+            this.uploadedImages.push({
+              file: file,
+              preview: e.target.result,
+              name: file.name
+            });
+          };
+          reader.readAsDataURL(file);
+        }
+      });
+      
+      // 입력 초기화
+      event.target.value = '';
+    },
+    
     removeImage(index) {
       this.uploadedImages.splice(index, 1);
     },
+    
     selectTradeType(type) {
       this.item.tradeType = type;
       if (type === "share") {
         this.item.price = null;
       }
     },
-    submitForm() {
-      if (this.isFormValid) {
-        alert("폼 데이터 전송:\n" + JSON.stringify(this.item, null, 2));
+    async submitForm() {
+      if (!this.isFormValid || this.isLoading) {
+        return;
       }
+
+      this.isLoading = true;
+
+      try {
+        // 로컬 스토리지에서 사용자 정보 가져오기
+        const userInfo = JSON.parse(localStorage.getItem('user'));
+        if (!userInfo || !userInfo.userId) {
+          alert('로그인이 필요합니다.');
+          return;
+        }
+
+        // 1단계: 상품 정보만 먼저 등록 (파일명 배열 전송)
+        const productData = {
+          sellerId: userInfo.userId,
+          title: this.item.title,
+          description: this.item.content,
+          price: this.item.tradeType === 'sell' ? this.item.price : 0,
+          files: this.uploadedImages.map(img => img.name) // 파일명 배열
+        };
+
+        console.log('상품 등록 요청 데이터:', productData);
+
+        // API 호출하여 S3 presigned URL 받기
+        const response = await createProduct(productData);
+        console.log('상품 등록 성공, S3 URLs 받음:', response);
+
+        // 2단계: S3에 직접 파일 업로드
+        if (response.urls && response.urls.length > 0) {
+          const uploadPromises = response.urls.map(async (presignedUrl, index) => {
+            if (this.uploadedImages[index]) {
+              console.log(`파일 ${index + 1} S3 업로드 시작:`, this.uploadedImages[index].name);
+              return await uploadToS3(presignedUrl, this.uploadedImages[index].file);
+            }
+          });
+
+          // 모든 파일 업로드 완료 대기
+          await Promise.all(uploadPromises);
+          console.log('모든 파일 S3 업로드 완료');
+        }
+
+        alert('상품이 성공적으로 등록되었습니다!');
+        
+        // 성공 후 폼 초기화 또는 페이지 이동
+        this.resetForm();
+        
+      } catch (error) {
+        console.error('상품 등록 실패:', error);
+        
+        // 에러 메시지 처리
+        let errorMessage = '상품 등록에 실패했습니다.';
+        if (error.response?.data?.message) {
+          errorMessage = error.response.data.message;
+        } else if (error.message) {
+          errorMessage = error.message;
+        }
+        
+        alert(errorMessage);
+      } finally {
+        this.isLoading = false;
+      }
+    },
+
+    resetForm() {
+      this.item = {
+        title: "",
+        content: "",
+        tradeType: "sell",
+        price: null,
+      };
+      this.uploadedImages = [];
+      this.selectedFiles = [];
     },
   },
 };

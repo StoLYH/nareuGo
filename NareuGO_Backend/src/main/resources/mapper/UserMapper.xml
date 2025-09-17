@@ -30,29 +30,26 @@
 
     <select id="findByEmail" parameterType="String" resultMap="UserResultMap">
         SELECT
-        user_id, email, name, sex, birth, phone_number, provider_type, provider_id,
-        is_active, nickname, building_dong, building_ho, apartment_name,
-        si_do, si_gun_gu, eup_myeon_dong, role,
-        COALESCE(address_verified, 0) as address_verified,
-        verification_date, deleted_at
+            user_id, email, name, sex, birth, phone_number, provider_type, provider_id,
+            is_active, nickname, building_dong, building_ho, apartment_name,
+            si_do, si_gun_gu, eup_myeon_dong, role,
+            COALESCE(address_verified, 0) as address_verified,
+            verification_date, deleted_at
         FROM users
         WHERE email = #{email}
     </select>
 
-<<<<<<< HEAD
-=======
     <select id="findById" parameterType="Long" resultMap="UserResultMap">
         SELECT
-        user_id, email, name, sex, birth, phone_number, provider_type, provider_id,
-        is_active, nickname, building_dong, building_ho, apartment_name,
-        si_do, si_gun_gu, eup_myeon_dong, role,
-        COALESCE(address_verified, 0) as address_verified,
-        verification_date, deleted_at
+            user_id, email, name, sex, birth, phone_number, provider_type, provider_id,
+            is_active, nickname, building_dong, building_ho, apartment_name,
+            si_do, si_gun_gu, eup_myeon_dong, role,
+            COALESCE(address_verified, 0) as address_verified,
+            verification_date, deleted_at
         FROM users
         WHERE user_id = #{id}
     </select>
 
->>>>>>> origin/master
     <select id="existsByEmail" parameterType="string" resultType="boolean">
         SELECT COUNT(*) > 0
         FROM users
@@ -62,13 +59,14 @@
     <update id="updateNeighborhoodVerification" parameterType="org.example.nareugobackend.common.model.UserEntity">
         UPDATE users
         SET
-        address_verified = #{addressVerified},
-        apartment_name = #{apartmentName},
-        si_do = #{siDo},
-        si_gun_gu = #{siGunGu},
-        eup_myeon_dong = #{eupMyeonDong},
-        verification_date = #{verificationDate}
+            address_verified = #{addressVerified},
+            apartment_name = #{apartmentName},
+            si_do = #{siDo},
+            si_gun_gu = #{siGunGu},
+            eup_myeon_dong = #{eupMyeonDong},
+            verification_date = #{verificationDate}
         WHERE user_id = #{id}
     </update>
 
 </mapper>
+

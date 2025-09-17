@@ -22,4 +22,14 @@
     WHERE product_id = #{productId}
   </delete>
 
+  <select id="selectUserInfo" parameterType="long" resultType="org.example.nareugobackend.api.service.product.request.UserInfoRequest">
+    SELECT 
+        apartment_name,
+        si_do,
+        si_gun_gu,
+        eup_myeon_dong
+    FROM users
+    WHERE user_id = #{userId}
+  </select>
+
 </mapper>
