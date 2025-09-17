@@ -7,7 +7,7 @@
   중고거래 플랫폼의 주문 생성, 조회, 상태 변경, 자동 만료 등의 
   데이터베이스 작업을 처리합니다.
 -->
-<mapper namespace="org.example.nareugobackend.mapper.OrderMapper"></mapper>
+<mapper namespace="org.example.nareugobackend.mapper.OrderMapper">
   
   <!-- 주문 ID로 주문 정보 조회 -->
   <select id="findById" resultType="org.example.nareugobackend.common.model.Order">

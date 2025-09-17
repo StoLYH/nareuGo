@@ -36,6 +36,16 @@
               </div>
               <span class="step-label">주소 인증</span>
             </div>
+            <div class="progress-line" :class="{ active: currentStep >= 3 }"></div>
+            <div class="progress-step" :class="{ active: currentStep >= 3, completed: apartmentVerified }">
+              <div class="step-circle">
+                <svg v-if="apartmentVerified" width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <polyline points="20 6 9 17 4 12" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                <span v-else>3</span>
+              </div>
+              <span class="step-label">아파트 정보</span>
+            </div>
           </div>
         </section>
 
@@ -164,30 +174,34 @@
               </div>
             </div>
 
-            <div v-if="capturedImage && !ocrLoading && !ocrVerified" class="image-preview">
-              <img :src="capturedImage" alt="촬영된 신분증" />
-              <div class="image-actions">
+            <div v-if="capturedImage" class="image-preview">
+              <div class="image-container">
+                <img :src="capturedImage" alt="촬영된 신분증" />
+                
+                <!-- 로딩 오버레이 -->
+                <div v-if="ocrLoading" class="image-overlay loading-overlay">
+                  <div class="loading-spinner"></div>
+                  <p>신분증을 인식하고 있습니다...</p>
+                </div>
+                
+                <!-- 성공 오버레이 -->
+                <div v-if="ocrVerified" class="image-overlay success-overlay">
+                  <div class="success-icon">
+                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                      <polyline points="22 4 12 14.01 9 11.01" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                  </div>
+                  <h3>주소 인증 완료!</h3>
+                </div>
+              </div>
+              
+              <div v-if="!ocrLoading && !ocrVerified" class="image-actions">
                 <button @click="retakePhoto" class="secondary-button">다시 촬영</button>
                 <button @click="processOCR" class="primary-button">주소 확인</button>
               </div>
-            </div>
-
-            <div v-if="ocrLoading" class="loading-state">
-              <div class="loading-spinner"></div>
-              <p>신분증을 인식하고 있습니다...</p>
-            </div>
-
-            <div v-if="ocrVerified" class="success-state">
-              <div class="success-icon">
-                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                  <polyline points="22 4 12 14.01 9 11.01" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
-              </div>
-              <h3>주소 인증 완료!</h3>
-              <div class="address-match-info">
-                <p class="extracted-address">추출된 주소: {{ ocrResult.extractedAddress }}</p>
-                <p class="match-score">일치도: {{ Math.round(ocrResult.matchScore * 100) }}%</p>
+              
+              <div v-if="ocrVerified" class="address-match-info">
                 <p class="match-status" :class="{ success: ocrResult.addressMatched, warning: !ocrResult.addressMatched }">
                   {{ ocrResult.addressMatched ? '✅ 주소가 일치합니다' : '⚠️ 주소 확인이 필요합니다' }}
                 </p>
@@ -215,34 +229,146 @@
               </svg>
               신분증 촬영하기
             </button>
-            <button v-if="ocrVerified" @click="completeVerification" class="primary-button">인증 완료</button>
+            <button v-if="ocrVerified" @click="goToApartmentInfo" class="primary-button">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <polyline points="9 18 15 12 9 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+              다음
+            </button>
             <button v-if="ocrError" @click="retryOCR" class="secondary-button">다시 시도</button>
           </div>
         </section>
 
-        <!-- 완료 섹션 -->
-        <section class="completion-card" v-if="currentStep === 3">
-          <div class="completion-icon">
-            <svg width="80" height="80" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-              <polyline points="22 4 12 14.01 9 11.01" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-          </div>
-          <h2>동네 인증 완료!</h2>
-          <p>이제 우리 동네에서 안전하게 거래할 수 있습니다.</p>
-          
-          <div class="completion-info">
-            <div class="info-row">
-              <span class="label">인증된 위치</span>
-              <span class="value">{{ verifiedLocation }}</span>
+        <!-- 아파트 정보 입력 섹션 -->
+        <section class="verification-card" v-if="currentStep === 3">
+          <div class="card-header">
+            <div class="card-icon">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M3 21H21V9L12 2L3 9V21Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <polyline points="9 21 9 12 15 12 15 21" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
             </div>
-            <div class="info-row">
-              <span class="label">인증된 주소</span>
-              <span class="value">{{ verifiedAddress }}</span>
+            <h2>아파트 정보 입력</h2>
+            <p>거주하시는 아파트의 상세 정보를 입력해주세요.</p>
+          </div>
+
+          <div class="apartment-form">
+            <div class="form-section">
+              <!-- <h3 class="section-title">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M3 21H21V9L12 2L3 9V21Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                거주지 정보
+              </h3>
+               -->
+              <div class="input-group">
+                <label for="apartmentName" class="input-label">
+                  <span class="label-text">아파트 이름</span>
+                  <span class="label-required">*</span>
+                </label>
+                <div class="input-wrapper">
+                  <input 
+                    type="text" 
+                    id="apartmentName" 
+                    v-model="apartmentName" 
+                    placeholder="예: 청솔마을아파트"
+                    :disabled="isApartmentLoading"
+                    class="form-input"
+                  />
+                  <div class="input-icon">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M3 21H21V9L12 2L3 9V21Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="form-row">
+                <div class="input-group">
+                  <label for="buildingDong" class="input-label">
+                    <span class="label-text">동</span>
+                  </label>
+                  <div class="input-wrapper">
+                    <input 
+                      type="number" 
+                      id="buildingDong" 
+                      v-model="buildingDong" 
+                      placeholder="111"
+                      :disabled="true"
+                      class="form-input"
+                    />
+                    <div class="input-icon">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect x="3" y="3" width="18" height="18" rx="2" ry="2" stroke="currentColor" stroke-width="2" fill="none"/>
+                        <line x1="9" y1="9" x2="9" y2="15" stroke="currentColor" stroke-width="2"/>
+                        <line x1="15" y1="9" x2="15" y2="15" stroke="currentColor" stroke-width="2"/>
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+                
+                <div class="input-group">
+                  <label for="buildingHo" class="input-label">
+                    <span class="label-text">호</span>
+                  </label>
+                  <div class="input-wrapper">
+                    <input 
+                      type="number" 
+                      id="buildingHo" 
+                      v-model="buildingHo" 
+                      placeholder="901"
+                      :disabled="true"
+                      class="form-input"
+                    />
+                    <div class="input-icon">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M7 21H17C18.1 21 19 20.1 19 19V5C19 3.9 18.1 3 17 3H7C5.9 3 5 3.9 5 5V19C5 20.1 5.9 21 7 21Z" stroke="currentColor" stroke-width="2" fill="none"/>
+                        <line x1="9" y1="7" x2="15" y2="7" stroke="currentColor" stroke-width="2"/>
+                        <line x1="9" y1="11" x2="15" y2="11" stroke="currentColor" stroke-width="2"/>
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+            </div>
+
+            <!-- 로딩 상태 -->
+            <div v-if="isApartmentLoading" class="loading-state">
+              <div class="loading-spinner"></div>
+              <p>인증 정보를 저장하고 있습니다...</p>
+            </div>
+
+            <!-- 완료 상태 -->
+            <div v-if="apartmentVerified" class="success-state">
+              <div class="success-icon">
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  <polyline points="22 4 12 14.01 9 11.01" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </div>
+              <h3>인증이 완료되었습니다!</h3>
+              <p>이제 우리 동네에서 안전하게 거래할 수 있습니다.</p>
             </div>
           </div>
 
-          <button @click="goToHome" class="primary-button">홈으로 가기</button>
+          <div class="verification-actions">
+            <button 
+              v-if="!apartmentVerified && !isApartmentLoading" 
+              @click="submitApartmentInfo" 
+              class="primary-button"
+              :disabled="!apartmentName"
+            >
+              인증 완료
+            </button>
+            <button 
+              v-if="apartmentVerified" 
+              @click="goToItemList" 
+              class="primary-button"
+            >
+              확인
+            </button>
+          </div>
         </section>
       </main>
 
@@ -295,30 +421,38 @@ export default {
   data() {
     return {
       currentStep: 1,
-      
-      // GPS 관련
-      gpsLoading: false,
-      gpsVerified: false,
-      gpsError: null,
-      verifiedLocation: '',
+      testMode: true, // 테스트 모드 활성화
       currentLatitude: null,
       currentLongitude: null,
-      locationAccuracy: null,
-      
-      // OCR 관련
-      ocrLoading: false,
-      ocrVerified: false,
-      ocrError: null,
-      verifiedAddress: '',
+      verifiedLocation: null,
+      verifiedAddress: null,
+      isLocationVerified: false,
+      isPhotoTaken: false,
       capturedImage: null,
-      ocrResult: null,
-      
-      // 카메라 관련
       showCamera: false,
       stream: null,
+      isProcessing: false,
+      verificationResult: null,
+      gpsVerified: false,
+      ocrVerified: false,
+      apartmentVerified: false,
+      apartmentName: '',
+      buildingDong: '',
+      buildingHo: '',
+      isApartmentLoading: false
     };
   },
   methods: {
+    // 로컬스토리지에서 사용자 정보 가져오기
+    getUserInfo() {
+      try {
+        const userInfo = localStorage.getItem('user');
+        return userInfo ? JSON.parse(userInfo) : null;
+      } catch (error) {
+        console.error('사용자 정보 파싱 오류:', error);
+        return null;
+      }
+    },
     goBack() {
       this.$router.go(-1);
     },
@@ -327,31 +461,114 @@ export default {
       this.currentStep = 2;
     },
     
-    async startGpsVerification() {
-      this.gpsLoading = true;
-      this.gpsError = null;
+    // 아파트 정보 제출
+    async submitApartmentInfo() {
+      if (!this.apartmentName) {
+        alert('아파트 이름을 입력해주세요.');
+        return;
+      }
+      
+      // OCR에서 추출한 동/호수 정보가 없으면 기본값 설정
+      if (!this.buildingDong) {
+        this.buildingDong = '0';
+      }
+      if (!this.buildingHo) {
+        this.buildingHo = '0';
+      }
+      
+      this.isApartmentLoading = true;
       
       try {
-        // 카카오맵 API를 사용하여 현재 위치와 주소 정보 가져오기
-        const locationData = await this.getCurrentLocationWithKakao();
+        // 몇 초간 로딩 시뮬레이션
+        await new Promise(resolve => setTimeout(resolve, 2000));
         
-        this.verifiedLocation = locationData.fullAddress;
-        this.currentLatitude = locationData.latitude;
-        this.currentLongitude = locationData.longitude;
-        this.locationAccuracy = locationData.accuracy;
+        // 아파트 정보를 포함한 최종 인증 완료 처리
+        const userInfo = this.getUserInfo();
+        if (!userInfo) {
+          throw new Error('사용자 정보를 찾을 수 없습니다.');
+        }
+        
+        // 백엔드에 최종 아파트 정보 저장
+        const response = await fetch(`${import.meta.env.VITE_BASE_URL}/neighborhood/save-verification`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            userEmail: userInfo.email,
+            ocrAddress: this.verifiedAddress,
+            gpsAddress: this.verifiedLocation,
+            apartmentName: this.apartmentName,
+            buildingDong: parseInt(this.buildingDong),
+            buildingHo: parseInt(this.buildingHo)
+          })
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+          this.apartmentVerified = true;
+          console.log('아파트 정보 저장 완료:', result);
+        } else {
+          throw new Error(result.message || '아파트 정보 저장에 실패했습니다.');
+        }
+        
+      } catch (error) {
+        console.error('아파트 정보 저장 오류:', error);
+        alert('아파트 정보 저장 중 오류가 발생했습니다. 다시 시도해주세요.');
+      } finally {
+        this.isApartmentLoading = false;
+      }
+    },
+    
+    // ItemListView로 이동
+    goToItemList() {
+      this.$router.push('/items');
+    },
+    
+    async startGpsVerification() {
+      this.locationLoading = true;
+      this.locationError = null;
+      
+      try {
+        if (this.testMode) {
+          // 테스트 모드: 하드코딩된 위치 정보 사용
+          this.currentLatitude = 37.3595; // 경기도 성남시 분당구 좌표
+          this.currentLongitude = 127.1052;
+          this.locationAccuracy = 10;
+          this.verifiedLocation = "경기도 성남시 분당구"; // 테스트용 주소
+          
+          console.log('🧪 테스트 모드: 하드코딩된 위치 사용');
+          
+        } else {
+          // 실제 모드: GPS 사용
+          const position = await this.getCurrentPosition();
+          this.currentLatitude = position.coords.latitude;
+          this.currentLongitude = position.coords.longitude;
+          this.locationAccuracy = position.coords.accuracy;
+          
+          // 좌표를 주소로 변환
+          const address = await this.reverseGeocode(this.currentLatitude, this.currentLongitude);
+          this.verifiedLocation = address;
+        }
+        
+        this.isLocationVerified = true;
         this.gpsVerified = true;
+        this.currentStep = 2;
         
         console.log('위치 인증 성공:', {
-          address: locationData.fullAddress,
-          coordinates: `${locationData.latitude}, ${locationData.longitude}`,
-          accuracy: `${Math.round(locationData.accuracy)}m`
+          latitude: this.currentLatitude,
+          longitude: this.currentLongitude,
+          address: this.verifiedLocation,
+          accuracy: this.locationAccuracy,
+          testMode: this.testMode
         });
         
       } catch (error) {
-        console.error('GPS 인증 오류:', error);
-        this.gpsError = this.getGpsErrorMessage(error);
+        console.error('위치 인증 오류:', error);
+        this.locationError = error.message || '위치 정보를 가져올 수 없습니다. GPS가 활성화되어 있는지 확인해주세요.';
       } finally {
-        this.gpsLoading = false;
+        this.locationLoading = false;
       }
     },
     
@@ -454,17 +671,18 @@ export default {
         const imageFormat = 'jpg'; // 카메라에서 촬영한 이미지는 보통 jpg
         
         // 백엔드 OCR API 호출
-        const response = await fetch('/api/ocr/verify-address', {
+        const response = await fetch(`${import.meta.env.VITE_BASE_URL}/ocr/verify-address`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
+            userId: this.getUserInfo()?.userId || null,
             imageData: imageData,
             imageFormat: imageFormat,
             latitude: this.currentLatitude,
             longitude: this.currentLongitude,
-            gpsAddress: this.verifiedLocation
+            gpsAddress: this.testMode ? "경기도 성남시 분당구" : this.verifiedLocation
           })
         });
         
@@ -480,6 +698,22 @@ export default {
             matchScore: result.matchScore,
             addressMatched: result.addressMatched
           });
+          
+          // OCR 처리 완료 후 상태만 업데이트 (자동 완료 처리 제거)
+          if (result.addressMatched) {
+            // 주소 인증 성공 시 OCR 결과 저장
+            // OCR에서 추출한 동, 호수 정보를 자동으로 입력
+            if (result.addressComponents) {
+              this.apartmentName = result.addressComponents.apartmentName || '';
+              this.buildingDong = result.addressComponents.buildingDong || '';
+              this.buildingHo = result.addressComponents.buildingHo || '';
+            }
+            // 인증 완료 상태로 설정하지만 3단계로 이동하지 않음
+          } else {
+            // 주소 인증 실패 시 오류 메시지 표시
+            this.ocrError = '주소 인증에 실패했습니다. 위치와 신분증 주소가 일치하지 않습니다.';
+          }
+          
         } else {
           throw new Error(result.errorMessage || 'OCR 처리에 실패했습니다.');
         }
@@ -494,6 +728,133 @@ export default {
     
     simulateDelay(ms) {
       return new Promise(resolve => setTimeout(resolve, ms));
+    },
+    
+    async completeVerification() {
+      try {
+        // 동네 인증 정보를 백엔드에 저장
+        const response = await fetch(`${import.meta.env.VITE_BASE_URL}/neighborhood/verify`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${this.$store.state.auth.token || localStorage.getItem('token')}`
+          },
+          body: JSON.stringify({
+            latitude: this.currentLatitude,
+            longitude: this.currentLongitude,
+            gpsAddress: this.verifiedLocation,
+            ocrAddress: this.verifiedAddress,
+            matchScore: this.ocrResult.matchScore,
+            addressMatched: this.ocrResult.addressMatched
+          })
+        });
+
+        const result = await response.json();
+        
+        if (result.success || response.ok) {
+          // 인증 상태를 전역 상태에 저장
+          const authStore = this.$store || (await import('@/stores/auth')).useAuthStore();
+          if (authStore && authStore.updateNeighborhoodVerification) {
+            await authStore.updateNeighborhoodVerification({
+              verified: true,
+              location: this.verifiedLocation,
+              address: this.verifiedAddress
+            });
+          }
+          
+          // 로컬 스토리지에도 저장
+          const userInfo = JSON.parse(localStorage.getItem('userInfo') || '{}');
+          userInfo.neighborhoodVerified = true;
+          userInfo.verifiedLocation = this.verifiedLocation;
+          userInfo.verifiedAddress = this.verifiedAddress;
+          localStorage.setItem('userInfo', JSON.stringify(userInfo));
+          
+          // 3단계(아파트 정보 입력)로 이동
+          this.ocrVerified = true;
+          this.currentStep = 3;
+          
+          console.log('동네 인증 완료 및 DB 저장 성공');
+        } else {
+          throw new Error(result.message || '인증 정보 저장에 실패했습니다.');
+        }
+      } catch (error) {
+        console.error('동네 인증 완료 처리 오류:', error);
+        alert('인증 정보 저장 중 오류가 발생했습니다. 다시 시도해주세요.');
+      }
+    },
+    
+    goToHome() {
+      this.$router.push('/items');
+    },
+    
+    async handleVerificationComplete() {
+      try {
+        // 위치 인증과 주소 인증 모두 완료되었는지 확인
+        const locationVerified = this.locationVerified;
+        let addressVerified = this.ocrVerified;
+        
+        // 테스트 모드에서는 강제로 인증 성공 처리
+        if (this.testMode) {
+          addressVerified = true;
+          console.log('🧪 테스트 모드: 주소 인증 강제 성공');
+        }
+        
+        console.log('인증 상태 확인:', {
+          locationVerified,
+          addressVerified,
+          matchScore: this.ocrResult?.matchScore,
+          testMode: this.testMode
+        });
+        
+        if (locationVerified && addressVerified) {
+          // 인증 성공
+          this.showSuccessMessage();
+          
+          // 3초 후 아이템 리스트로 이동
+          setTimeout(() => {
+            this.$router.push('/items');
+          }, 3000);
+          
+        } else {
+          // 인증 실패
+          this.showFailureMessage();
+        }
+        
+      } catch (error) {
+        console.error('인증 완료 처리 오류:', error);
+        this.showFailureMessage();
+      }
+    },
+    
+    showSuccessMessage() {
+      // 성공 메시지 표시 (기존 ocrVerified 상태 활용)
+      this.currentStep = 3; // 완료 단계로 이동
+      console.log('✅ 인증 완료! 아이템 리스트로 이동합니다...');
+    },
+    
+    showFailureMessage() {
+      // 실패 메시지 표시
+      this.ocrError = '주소 인증에 실패했습니다. 위치와 신분증 주소가 일치하지 않습니다.';
+      console.log('❌ 인증 실패: 주소가 일치하지 않습니다.');
+    },
+    
+    retryOCR() {
+      this.ocrError = null;
+      this.ocrVerified = false;
+      this.ocrResult = null;
+      this.capturedImage = null;
+    },
+    
+    goToApartmentInfo() {
+      // OCR에서 추출한 동, 호수 정보를 자동으로 입력
+      if (this.ocrResult && this.ocrResult.addressComponents) {
+        this.apartmentName = this.ocrResult.addressComponents.apartmentName || '';
+        this.buildingDong = this.ocrResult.addressComponents.buildingDong || '';
+        this.buildingHo = this.ocrResult.addressComponents.buildingHo || '';
+      }
+      
+      // 3단계로 이동
+      this.currentStep = 3;
     }
   },
   
@@ -820,6 +1181,169 @@ export default {
   border: 1px solid #ffeaa7;
 }
 
+/* 이미지 컨테이너 및 오버레이 스타일 */
+.image-container {
+  position: relative;
+  display: inline-block;
+  width: 100%;
+}
+
+.image-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  backdrop-filter: blur(2px);
+}
+
+.loading-overlay {
+  background: rgba(255, 255, 255, 0.9);
+}
+
+.success-overlay {
+  background: rgba(76, 175, 80, 0.9);
+  color: white;
+}
+
+.success-overlay .success-icon {
+  color: white;
+  margin-bottom: 0.5rem;
+}
+
+.success-overlay h3 {
+  color: white;
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+/* 아파트 정보 입력 폼 스타일 */
+.apartment-form {
+  padding: 0;
+}
+
+.form-section {
+  margin-bottom: 2rem;
+  padding: 0 1rem;
+}
+
+.section-title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--main);
+  margin-bottom: 1.5rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 2px solid var(--main);
+  opacity: 0.8;
+}
+
+.section-title svg {
+  color: var(--main);
+}
+
+.input-group {
+  margin-bottom: 1.5rem;
+}
+
+.input-label {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--deepgray);
+  margin-bottom: 0.5rem;
+}
+
+.label-text {
+  color: #333;
+}
+
+.label-required {
+  color: #e74c3c;
+  font-weight: 600;
+}
+
+.input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.form-input {
+  width: 100%;
+  padding: 1rem 3rem 1rem 1rem;
+  border: 2px solid #e9ecef;
+  border-radius: 12px;
+  font-size: 1rem;
+  background: #fff;
+  transition: all 0.3s ease;
+  box-sizing: border-box;
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: var(--main);
+  box-shadow: 0 0 0 3px rgba(70, 130, 180, 0.15);
+  transform: translateY(-1px);
+}
+
+.form-input:disabled {
+  background-color: #f8f9fa;
+  color: #6c757d;
+  cursor: not-allowed;
+}
+
+.form-input::placeholder {
+  color: #adb5bd;
+}
+
+.input-icon {
+  position: absolute;
+  right: 1rem;
+  color: #adb5bd;
+  pointer-events: none;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.ocr-info {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  background: linear-gradient(135deg, rgba(70, 130, 180, 0.08) 0%, rgba(70, 130, 180, 0.05) 100%);
+  border-radius: 8px;
+  border-left: 4px solid var(--main);
+  margin-top: 1rem;
+  border: 1px solid rgba(70, 130, 180, 0.1);
+}
+
+.info-icon {
+  color: var(--main);
+  flex-shrink: 0;
+  margin-top: 0.1rem;
+}
+
+.ocr-info span {
+  font-size: 0.85rem;
+  color: #555;
+  line-height: 1.4;
+}
+
 /* 에러 상태 */
 .error-state {
   text-align: center;
@@ -921,7 +1445,6 @@ export default {
 
 /* 버튼 스타일 */
 .verification-actions {
-  padding: 20px;
   border-top: 1px solid #f8f9fa;
 }
 

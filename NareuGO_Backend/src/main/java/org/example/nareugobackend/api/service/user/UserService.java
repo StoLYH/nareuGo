@@ -4,10 +4,12 @@ import lombok.RequiredArgsConstructor;
 import org.example.nareugobackend.api.service.auth.info.SocialUserInfo;
 import org.example.nareugobackend.api.service.user.request.LoginServiceRequest;
 import org.example.nareugobackend.api.service.user.response.LoginServiceResponse;
+import org.example.nareugobackend.common.model.UserEntity;
 import org.example.nareugobackend.domain.user.User;
 import org.example.nareugobackend.domain.user.UserRepository;
 import org.example.nareugobackend.common.exception.user.UserException;
 import org.example.nareugobackend.common.exception.user.UserErrorCode;
+import org.example.nareugobackend.mapper.UserMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class UserService {
 
   private final UserRepository userRepository;
+  private final UserMapper userMapper;
 
   @Transactional
   public User registerUser(SocialUserInfo userInfo) {
@@ -32,11 +35,12 @@ public class UserService {
         .orElseThrow(() -> new UserException(UserErrorCode.USER_NOT_FOUND));
   }
 
+  // 기본 로그인 -> 건들지 X
   @Transactional
   public LoginServiceResponse loginByEmail(LoginServiceRequest request) {
     try {
       // 이메일로 사용자 조회
-      User user = userRepository.findByEmail(request.getEmail());
+      UserEntity user = userMapper.findByEmail(request.getEmail());
       
       if (user == null) {
         return LoginServiceResponse.failure("등록되지 않은 이메일입니다.");
