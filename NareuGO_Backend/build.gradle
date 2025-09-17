@@ -58,6 +58,11 @@ dependencies {
 
     // aws s3 (SDK 2.x)
     implementation 'software.amazon.awssdk:s3:2.20.162'
+
+    // web socket
+    implementation 'org.springframework.boot:spring-boot-starter-websocket'
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+
 }
 
 tasks.named('test') {

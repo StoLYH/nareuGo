@@ -1,7 +1,5 @@
-import { defineStore } from 'pinia'                                                                                                                                               
-import { ref, computed } from 'vue'                                                                                                                                               
-import Cookies from 'js-cookie'                                                                                                                                                   
-import { authAPI } from '@/api/auth'                                                                                                                                              
+import { defineStore } from 'pinia'
+import { ref, computed } from 'vue'                                                                                                                                              
 
 export const useAuthStore = defineStore('auth', () => {
 // State                                                                                                                                                                        
@@ -25,87 +23,48 @@ const setUser = (userData) => {
 }
 
 const logout = async () => {
-    try {
-    // 백엔드 로그아웃 API 호출                                                                                                                                                 
-    await authAPI.logout()
-    } catch (error) {
-    console.error('로그아웃 에러:', error)
-    } finally {
-    // 클라이언트 측 정리                                                                                                                                                       
     clearAuth()
-    }
 }
 
 const clearAuth = () => {
-    user.value = null                                                                                                                                                             
-    accessToken.value = null                                                                                                                                                      
+    user.value = null
+    accessToken.value = null
     localStorage.removeItem('access_token')
-    Cookies.remove('refresh_token')
-    // NareuGo 쿠키도 제거 (백엔드에서 설정한 쿠키)
-    Cookies.remove('NareuGo')
+    localStorage.removeItem('user')
 }
 
 const getUserInfo = async () => {
-    if (!accessToken.value) return                                                                                                                                                
+    if (!accessToken.value) return
 
     try {
-    isLoading.value = true                                                                                                                                                      
-    const response = await authAPI.getUserInfo()
-    setUser(response.data)
+        isLoading.value = true
+        const userData = JSON.parse(localStorage.getItem('user') || '{}')
+        if (userData && userData.userId) {
+            setUser(userData)
+        }
     } catch (error) {
-    console.error('사용자 정보 조회 실패:', error)
-    clearAuth()
+        console.error('사용자 정보 조회 실패:', error)
+        clearAuth()
     } finally {
-    isLoading.value = false                                                                                                                                                     
+        isLoading.value = false
     }
 }
 
-const refreshAccessToken = async () => {
-    try {
-    const response = await authAPI.refreshToken()
-    if (!response?.data?.accessToken) {
-        throw new Error('No accessToken in refresh response')
-    }
-    setTokens(response.data.accessToken)
-    return response.data.accessToken
-    } catch (error) {
-    console.error('토큰 갱신 실패:', error)
-    clearAuth()
-    throw error
-    }
-}
-
-const updateNeighborhoodVerification = async (verificationData) => {
-    if (user.value) {
-        user.value.neighborhoodVerified = verificationData.verified
-        user.value.verifiedLocation = verificationData.location
-        user.value.verifiedAddress = verificationData.address
-        
-        // 로컬 스토리지에도 업데이트
-        const userInfo = JSON.parse(localStorage.getItem('userInfo') || '{}')
-        userInfo.neighborhoodVerified = verificationData.verified
-        userInfo.verifiedLocation = verificationData.location
-        userInfo.verifiedAddress = verificationData.address
-        localStorage.setItem('userInfo', JSON.stringify(userInfo))
-    }
-}
 
 return {
-    // State                                                                                                                                                                      
+    // State
     user,
     accessToken,
     isLoading,
 
-    // Getters                                                                                                                                                                    
+    // Getters
     isAuthenticated,
 
-    // Actions                                                                                                                                                                    
+    // Actions
     setTokens,
     setUser,
     logout,
     clearAuth,
-    getUserInfo,
-    refreshAccessToken,
-    updateNeighborhoodVerification
+    getUserInfo
 }
 })

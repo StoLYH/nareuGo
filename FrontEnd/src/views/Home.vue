@@ -30,28 +30,16 @@
 import { onMounted } from 'vue'
 import { useAuthStore } from '@/stores/auth'
 import { useRouter, useRoute } from 'vue-router'
-import { authAPI } from '@/api/auth'
 
 const authStore = useAuthStore()
 const router = useRouter()
 const route = useRoute()
 
 onMounted(async () => {
-  // URL에서 토큰 확인 (OAuth2 로그인 후 리다이렉트)
-  const token = route.query.token
-  
-  if (token) {
-    try {
-      // 토큰 저장
-      authStore.setTokens(token)
-      // 사용자 정보 조회 (토큰을 명시적으로 헤더에 실어 호출)
-      const { data } = await authAPI.getUserByToken(token)
-      authStore.setUser(data)
-      // URL에서 토큰 파라미터 제거
-      router.replace('/home')
-    } catch (error) {
-      router.push('/login')
-    }
+  // 로컬 스토리지에서 사용자 정보 확인
+  const userData = JSON.parse(localStorage.getItem('user') || '{}')
+  if (userData && userData.userId) {
+    authStore.setUser(userData)
   }
 })
 
