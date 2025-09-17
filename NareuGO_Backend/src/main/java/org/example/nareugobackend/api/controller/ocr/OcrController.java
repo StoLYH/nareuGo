@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 @Slf4j
 @RestController
-@RequestMapping("/api/ocr")
+@RequestMapping("/ocr")
 @RequiredArgsConstructor
 public class OcrController {
 

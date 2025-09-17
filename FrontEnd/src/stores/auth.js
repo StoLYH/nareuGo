@@ -77,6 +77,21 @@ const refreshAccessToken = async () => {
     }
 }
 
+const updateNeighborhoodVerification = async (verificationData) => {
+    if (user.value) {
+        user.value.neighborhoodVerified = verificationData.verified
+        user.value.verifiedLocation = verificationData.location
+        user.value.verifiedAddress = verificationData.address
+        
+        // 로컬 스토리지에도 업데이트
+        const userInfo = JSON.parse(localStorage.getItem('userInfo') || '{}')
+        userInfo.neighborhoodVerified = verificationData.verified
+        userInfo.verifiedLocation = verificationData.location
+        userInfo.verifiedAddress = verificationData.address
+        localStorage.setItem('userInfo', JSON.stringify(userInfo))
+    }
+}
+
 return {
     // State                                                                                                                                                                      
     user,
@@ -92,6 +107,7 @@ return {
     logout,
     clearAuth,
     getUserInfo,
-    refreshAccessToken
+    refreshAccessToken,
+    updateNeighborhoodVerification
 }
 })

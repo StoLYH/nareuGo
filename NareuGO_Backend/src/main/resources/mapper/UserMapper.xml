@@ -1,18 +1,74 @@
-<?xml version="1.0" encoding="UTF-8" ?>
+<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
-  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
 <mapper namespace="org.example.nareugobackend.mapper.UserMapper">
 
-    <select id="findByEmail" parameterType="string" resultType="org.example.nareugobackend.domain.user.User">
-        SELECT id, email, name, gender, birth, phone_number, provider_type, provider_id, created_at, updated_at
+    <resultMap id="UserResultMap" type="org.example.nareugobackend.common.model.UserEntity">
+        <id property="id" column="user_id"/>
+        <result property="email" column="email"/>
+        <result property="name" column="name"/>
+        <result property="sex" column="sex"/>
+        <result property="birth" column="birth"/>
+        <result property="phoneNumber" column="phone_number"/>
+        <result property="providerType" column="provider_type"/>
+        <result property="providerId" column="provider_id"/>
+        <result property="isActive" column="is_active"/>
+        <result property="nickname" column="nickname"/>
+        <result property="buildingDong" column="building_dong"/>
+        <result property="buildingHo" column="building_ho"/>
+        <result property="apartmentName" column="apartment_name"/>
+        <result property="siDo" column="si_do"/>
+        <result property="siGunGu" column="si_gun_gu"/>
+        <result property="eupMyeonDong" column="eup_myeon_dong"/>
+        <result property="role" column="role"/>
+        <result property="addressVerified" column="address_verified"/>
+        <result property="verificationDate" column="verification_date"/>
+        <result property="deletedAt" column="deleted_at"/>
+    </resultMap>
+
+    <select id="findByEmail" parameterType="String" resultMap="UserResultMap">
+        SELECT
+        user_id, email, name, sex, birth, phone_number, provider_type, provider_id,
+        is_active, nickname, building_dong, building_ho, apartment_name,
+        si_do, si_gun_gu, eup_myeon_dong, role,
+        COALESCE(address_verified, 0) as address_verified,
+        verification_date, deleted_at
         FROM users
         WHERE email = #{email}
     </select>
 
+<<<<<<< HEAD
+=======
+    <select id="findById" parameterType="Long" resultMap="UserResultMap">
+        SELECT
+        user_id, email, name, sex, birth, phone_number, provider_type, provider_id,
+        is_active, nickname, building_dong, building_ho, apartment_name,
+        si_do, si_gun_gu, eup_myeon_dong, role,
+        COALESCE(address_verified, 0) as address_verified,
+        verification_date, deleted_at
+        FROM users
+        WHERE user_id = #{id}
+    </select>
+
+>>>>>>> origin/master
     <select id="existsByEmail" parameterType="string" resultType="boolean">
         SELECT COUNT(*) > 0
         FROM users
         WHERE email = #{email}
     </select>
+
+    <update id="updateNeighborhoodVerification" parameterType="org.example.nareugobackend.common.model.UserEntity">
+        UPDATE users
+        SET
+        address_verified = #{addressVerified},
+        apartment_name = #{apartmentName},
+        si_do = #{siDo},
+        si_gun_gu = #{siGunGu},
+        eup_myeon_dong = #{eupMyeonDong},
+        verification_date = #{verificationDate}
+        WHERE user_id = #{id}
+    </update>
 
 </mapper>

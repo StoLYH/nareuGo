@@ -13,6 +13,8 @@ build-frontend:
     - cd FrontEnd
     # ✅ GitLab 변수로부터 .env.production 생성
     - echo "VITE_BASE_URL=$VITE_BASE_URL" > .env.production
+    - echo "VITE_TOSS_CLIENT_KEY=$VITE_TOSS_CLIENT_KEY" >> .env.production
+    - echo "VITE_KAKAO_MAP_API_KEY=$VITE_KAKAO_MAP_API_KEY" >> .env.production
     - npm install
     - npm run build
     - echo "====== [Frontend] 빌드 결과물(dist)을 artifacts로 저장합니다. ======"

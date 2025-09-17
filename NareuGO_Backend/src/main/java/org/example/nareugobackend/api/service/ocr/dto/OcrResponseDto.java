@@ -21,6 +21,11 @@ public class OcrResponseDto {
     private AddressComponents addressComponents;
     
     /**
+     * GPS 주소 (비교용)
+     */
+    private String gpsAddress;
+    
+    /**
      * GPS 주소와의 일치 여부
      */
     private boolean addressMatched;
@@ -47,5 +52,17 @@ public class OcrResponseDto {
         private String dong;        // 동/면/읍
         private String detail;      // 상세주소
         private String postalCode;  // 우편번호
+        
+        public void setSido(String sido) { this.sido = sido; }
+        public void setSigungu(String sigungu) { this.sigungu = sigungu; }
+        public void setDong(String dong) { this.dong = dong; }
+        public void setDetail(String detail) { this.detail = detail; }
+        public void setPostalCode(String postalCode) { this.postalCode = postalCode; }
+        
+        public String getSido() { return sido; }
+        public String getSigungu() { return sigungu; }
+        public String getDong() { return dong; }
+        public String getDetail() { return detail; }
+        public String getPostalCode() { return postalCode; }
     }
 }
