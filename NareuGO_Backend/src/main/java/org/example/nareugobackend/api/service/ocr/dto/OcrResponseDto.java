@@ -52,17 +52,26 @@ public class OcrResponseDto {
         private String dong;        // 동/면/읍
         private String detail;      // 상세주소
         private String postalCode;  // 우편번호
+        private String apartmentName; // 아파트명
+        private Integer buildingDong; // 동 번호
+        private Integer buildingHo;   // 호 번호
         
         public void setSido(String sido) { this.sido = sido; }
         public void setSigungu(String sigungu) { this.sigungu = sigungu; }
         public void setDong(String dong) { this.dong = dong; }
         public void setDetail(String detail) { this.detail = detail; }
         public void setPostalCode(String postalCode) { this.postalCode = postalCode; }
+        public void setApartmentName(String apartmentName) { this.apartmentName = apartmentName; }
+        public void setBuildingDong(Integer buildingDong) { this.buildingDong = buildingDong; }
+        public void setBuildingHo(Integer buildingHo) { this.buildingHo = buildingHo; }
         
         public String getSido() { return sido; }
         public String getSigungu() { return sigungu; }
         public String getDong() { return dong; }
         public String getDetail() { return detail; }
         public String getPostalCode() { return postalCode; }
+        public String getApartmentName() { return apartmentName; }
+        public Integer getBuildingDong() { return buildingDong; }
+        public Integer getBuildingHo() { return buildingHo; }
     }
 }

@@ -74,7 +74,8 @@ export const requestPayment = async (orderData) => {
 // 결제 승인 함수 (백엔드 API 호출)
 export const confirmPayment = async (paymentData) => {
   try {
-    const response = await fetch("/api/payments/confirm", {
+    const baseUrl = import.meta.env.VITE_BASE_URL || 'http://localhost:8080';
+    const response = await fetch(`${baseUrl}/payments/confirm`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

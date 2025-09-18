@@ -176,13 +176,12 @@ public class OcrServiceImpl implements OcrService {
             }
             
             // 인증 정보 업데이트 (단순화된 로직)
-            user.updateAddressVerification(extractedAddress, gpsAddress, addressMatched);
+            user.updateAddressVerification(extractedAddress, addressMatched);
             
             // DB 업데이트
             userMapper.updateNeighborhoodVerification(user);
             
-            log.info("사용자 인증 정보 업데이트 완료 - 인증 상태: {}", user.isAddressVerified());
-            
+
         } catch (Exception e) {
             log.error("사용자 인증 정보 업데이트 실패", e);
             // 인증 정보 업데이트 실패해도 OCR 결과는 반환
@@ -273,25 +272,38 @@ public class OcrServiceImpl implements OcrService {
             return components;
         }
         
+        // 문서 타입 확인
+        boolean isDriverLicense = address.contains("운전면허증") || address.contains("자동차운전");
+        boolean isIdCard = address.contains("주민등록증");
+        
+        // 불필요한 텍스트 제거 및 주소 부분만 추출
+        String cleanAddress = extractAddressPart(address, isDriverLicense, isIdCard);
+        
+        log.info("정제된 주소: {}", cleanAddress);
+        
         // 시/도 추출
-        Pattern sidoPattern = Pattern.compile("(.*?[시도]|.*?특별시|.*?광역시)");
-        Matcher sidoMatcher = sidoPattern.matcher(address);
+        Pattern sidoPattern = Pattern.compile("([가-힣]+[시도]|[가-힣]+특별시|[가-힣]+광역시)");
+        Matcher sidoMatcher = sidoPattern.matcher(cleanAddress);
         if (sidoMatcher.find()) {
             components.setSido(sidoMatcher.group(1).trim());
         }
         
         // 시/군/구 추출
-        Pattern sigunguPattern = Pattern.compile("(.*?[시군구])");
-        Matcher sigunguMatcher = sigunguPattern.matcher(address);
+        Pattern sigunguPattern = Pattern.compile("([가-힣]+[시군구])");
+        Matcher sigunguMatcher = sigunguPattern.matcher(cleanAddress);
         if (sigunguMatcher.find()) {
             components.setSigungu(sigunguMatcher.group(1).trim());
         }
         
-        // 동/면/읍 추출
-        Pattern dongPattern = Pattern.compile("(.*?[동면읍])");
-        Matcher dongMatcher = dongPattern.matcher(address);
+        // 읍/면/동 추출 - 실제 행정구역만 추출
+        Pattern dongPattern = Pattern.compile("([가-힣]+[읍면동구])(?![가-힣]*(?:면허증|등록증|경찰청))");
+        Matcher dongMatcher = dongPattern.matcher(cleanAddress);
         if (dongMatcher.find()) {
-            components.setDong(dongMatcher.group(1).trim());
+            String dongName = dongMatcher.group(1).trim();
+            // "자동차운전", "대구지방경찰청" 등 제외
+            if (!dongName.contains("자동차") && !dongName.contains("경찰") && !dongName.contains("지방")) {
+                components.setDong(dongName);
+            }
         }
         
         // 우편번호 추출
@@ -299,6 +311,39 @@ public class OcrServiceImpl implements OcrService {
         Matcher postalMatcher = postalPattern.matcher(address);
         if (postalMatcher.find()) {
             components.setPostalCode(postalMatcher.group(1));
+        }
+        
+        // 아파트명 추출 (괄호 안의 내용)
+        Pattern apartmentPattern = Pattern.compile("\\(([^,)]+)\\)");
+        Matcher apartmentMatcher = apartmentPattern.matcher(address);
+        if (apartmentMatcher.find()) {
+            String apartmentInfo = apartmentMatcher.group(1).trim();
+            // 동명이 아닌 경우 아파트명으로 설정
+            if (!apartmentInfo.matches(".*[동면읍]$")) {
+                components.setApartmentName(apartmentInfo);
+            }
+        }
+        
+        // 동 번호 추출 (숫자+동 패턴)
+        Pattern buildingDongPattern = Pattern.compile("(\\d+)동");
+        Matcher buildingDongMatcher = buildingDongPattern.matcher(address);
+        if (buildingDongMatcher.find()) {
+            try {
+                components.setBuildingDong(Integer.parseInt(buildingDongMatcher.group(1)));
+            } catch (NumberFormatException e) {
+                log.warn("동 번호 파싱 실패: {}", buildingDongMatcher.group(1));
+            }
+        }
+        
+        // 호 번호 추출 (숫자+호 패턴)
+        Pattern buildingHoPattern = Pattern.compile("(\\d+)호");
+        Matcher buildingHoMatcher = buildingHoPattern.matcher(address);
+        if (buildingHoMatcher.find()) {
+            try {
+                components.setBuildingHo(Integer.parseInt(buildingHoMatcher.group(1)));
+            } catch (NumberFormatException e) {
+                log.warn("호 번호 파싱 실패: {}", buildingHoMatcher.group(1));
+            }
         }
         
         return components;
@@ -452,6 +497,53 @@ public class OcrServiceImpl implements OcrService {
         }
         
         return dp[s1.length()][s2.length()];
+    }
+    
+    /**
+     * 문서 타입에 따라 주소 부분만 추출
+     */
+    private String extractAddressPart(String fullText, boolean isDriverLicense, boolean isIdCard) {
+        if (fullText == null || fullText.isEmpty()) {
+            return "";
+        }
+        
+        String cleanText = fullText;
+        
+        if (isDriverLicense) {
+            // 운전면허증: 주민번호 이후부터 동호수까지 추출
+            Pattern driverPattern = Pattern.compile("\\d{6}-\\d{7}\\s+(.+?)\\s+\\d{4}\\.\\d{2}\\.\\d{2}");
+            Matcher driverMatcher = driverPattern.matcher(fullText);
+            if (driverMatcher.find()) {
+                cleanText = driverMatcher.group(1).trim();
+            } else {
+                // 대안: 시도명부터 동호수까지
+                Pattern altPattern = Pattern.compile("([가-힣]+[시도][^가-힣]*[가-힣]+[시군구][^가-힣]*[가-힣]+[읍면동구][^가-힣]*\\d+동\\s*\\d+호)");
+                Matcher altMatcher = altPattern.matcher(fullText);
+                if (altMatcher.find()) {
+                    cleanText = altMatcher.group(1).trim();
+                }
+            }
+        } else if (isIdCard) {
+            // 주민등록증: 주민번호 이후부터 괄호 전까지 추출
+            Pattern idPattern = Pattern.compile("\\d{6}-\\d{7}\\s+(.+?)\\s+\\(");
+            Matcher idMatcher = idPattern.matcher(fullText);
+            if (idMatcher.find()) {
+                cleanText = idMatcher.group(1).trim();
+            } else {
+                // 대안: 시도명부터 동호수까지
+                Pattern altPattern = Pattern.compile("([가-힣]+[시도][^가-힣]*[가-힣]+[시군구][^가-힣]*[가-힣]+[읍면동구][^가-힣]*\\d+동\\s*\\d+호)");
+                Matcher altMatcher = altPattern.matcher(fullText);
+                if (altMatcher.find()) {
+                    cleanText = altMatcher.group(1).trim();
+                }
+            }
+        }
+        
+        // 불필요한 텍스트 제거
+        cleanText = cleanText.replaceAll("(운전면허증|자동차운전|주민등록증|지방경찰청장)", "");
+        cleanText = cleanText.replaceAll("\\s+", " ").trim();
+        
+        return cleanText;
     }
     
     /**

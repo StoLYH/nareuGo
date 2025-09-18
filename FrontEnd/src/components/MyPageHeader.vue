@@ -1,5 +1,16 @@
 <template>
   <header class="mypage-header">
+    <button class="back-btn" @click="goBack">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+        <path
+          d="M15 18L9 12L15 6"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        />
+      </svg>
+    </button>
     <h1 class="app-title">마이나르고</h1>
     <div class="header-actions">
       <button class="header-btn" @click="openCustomerService" title="고객센터">
@@ -17,6 +28,14 @@
 </template>
 
 <script setup>
+import { useRouter } from 'vue-router';
+
+const router = useRouter();
+
+const goBack = () => {
+  router.go(-1);
+};
+
 const openCustomerService = () => {
   // 고객센터 기능 구현
   console.log('고객센터 열기');
@@ -67,6 +86,27 @@ const openSettings = () => {
 }
 
 .header-btn:active {
+  transform: scale(0.95);
+}
+
+.back-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border: none;
+  background: none;
+  color: #666;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.back-btn:hover {
+  color: #333;
+}
+
+.back-btn:active {
   transform: scale(0.95);
 }
 </style>

@@ -60,6 +60,23 @@ public class ProductController {
         return ResponseEntity.ok(productService.selectProduct(userId));
     }
 
+    // ===== 결제용 API (기존 상품 코드와 분리) =====
+    /**
+     * 결제용 상품 단일 조회
+     * 
+     * @param productId 상품 ID
+     * @return ProductDetailResponse
+     */
+    @GetMapping("/payment/{productId}")
+    public ResponseEntity<ProductDetailResponse> getProductForPayment(@PathVariable Long productId) {
+        ProductDetailResponse product = productService.getProductForPayment(productId);
+        
+        if (product == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(product);
+    }
+
 
 
 //    /**
