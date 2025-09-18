@@ -28,16 +28,23 @@
 </template>
 
 <script setup>
+import { useRouter } from 'vue-router';
+
+const router = useRouter();
+
 const openDeliveryStatus = () => {
   console.log('택배 현황 열기');
+  router.push('/delivery-status');
 };
 
 const openWishlist = () => {
   console.log('관심 목록 열기');
+  router.push('/items?filter=favorites');
 };
 
 const openRecentPosts = () => {
   console.log('최근 본 글 열기');
+  router.push('/items?filter=recent');
 };
 </script>
 
