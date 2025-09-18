@@ -9,4 +9,5 @@ public class ChatMessage {
     private String receiverId;
     private String content;
     private String timestamp;
+    private Long productId;
 }

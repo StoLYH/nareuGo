@@ -1,5 +1,4 @@
 <script setup>
-import NotificationHandler from './components/NotificationHandler.vue'
 </script>
 
 <template>
@@ -7,7 +6,6 @@ import NotificationHandler from './components/NotificationHandler.vue'
     <div class="content">
       <router-view />
     </div>
-    <NotificationHandler />
   </div>
 </template>
 

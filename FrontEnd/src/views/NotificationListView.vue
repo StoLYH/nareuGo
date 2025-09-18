@@ -1,365 +1,264 @@
 <template>
-  <div class="notification-view">
-    <!-- 상단 헤더: 페이지 제목, 설정 아이콘 -->
+  <div class="notification-page">
+    <!-- 헤더 -->
     <header class="notification-header">
-      <div class="placeholder"></div>
-      <!-- 제목 중앙 정렬을 위한 빈 공간 -->
-      <h1>알림</h1>
-      <svg
-        @click="goToSettings"
-        class="settings-btn"
-        xmlns="http://www.w3.org/2000/svg"
-        width="24"
-        height="24"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        stroke-width="2"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-      >
-        <path
-          d="M19.14,12.94c0.04-0.3,0.06-0.61,0.06-0.94c0-0.32-0.02-0.64-0.07-0.94l2.03-1.58c0.18-0.14,0.23-0.41,0.12-0.61 l-1.92-3.32c-0.12-0.22-0.37-0.29-0.59-0.22l-2.39,0.96c-0.5-0.38-1.03-0.7-1.62-0.94L14.4,2.81c-0.04-0.24-0.24-0.41-0.48-0.41 h-3.84c-0.24,0-0.44,0.17-0.48,0.41L9.2,5.77C8.61,6.01,8.08,6.33,7.58,6.71L5.19,5.75C4.97,5.68,4.72,5.75,4.6,5.97L2.68,9.29 c-0.11,0.2-0.06,0.47,0.12,0.61l2.03,1.58C4.78,11.76,4.76,12.24,4.76,12s0.02,0.24,0.07,0.46l-2.03,1.58 c-0.18,0.14-0.23,0.41-0.12,0.61l1.92,3.32c0.12,0.22,0.37,0.29,0.59,0.22l2.39-0.96c0.5,0.38,1.03,0.7,1.62,0.94l0.36,2.96 c0.04,0.24,0.24,0.41,0.48,0.41h3.84c0.24,0,0.44-0.17,0.48-0.41l0.36-2.96c0.59-0.24,1.12-0.56,1.62-0.94l2.39,0.96 c0.22,0.08,0.47,0.01,0.59-0.22l1.92-3.32c0.12-0.2,0.07-0.47-0.12-0.61L19.14,12.94z"
-        />
-        <circle cx="12" cy="12" r="3.5" />
-      </svg>
+      <button class="back-btn" @click="goBack">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+          <path d="M19 12H5M12 19l-7-7 7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+      <h1 class="header-title">알림</h1>
+      <div class="header-spacer"></div>
     </header>
 
-    <!-- 탭 네비게이션 -->
-    <nav class="tabs" :class="`tab-${activeTab}-active`">
-      <button
-        @click="activeTab = 'news'"
-        :class="{ active: activeTab === 'news' }"
-      >
-        새 소식
-      </button>
-      <button
-        @click="activeTab = 'keywords'"
-        :class="{ active: activeTab === 'keywords' }"
-      >
-        키워드
-      </button>
-      <div class="tab-indicator"></div>
-    </nav>
+    <!-- 알림 목록 -->
+    <main class="notification-list">
+      <div v-if="notifications.length === 0" class="empty-state">
+        <div class="empty-icon">
+          <svg width="64" height="64" viewBox="0 0 24 24" fill="none">
+            <path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.89 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z" fill="#ccc"/>
+          </svg>
+        </div>
+        <p class="empty-message">새로운 알림이 없습니다</p>
+        <p class="empty-submessage">알림이 오면 여기에 표시됩니다</p>
+      </div>
 
-    <!-- 알림 목록 (스크롤 영역) -->
-    <main class="notification-content">
-      <!-- '새 소식' 탭 내용 -->
-      <ul v-if="activeTab === 'news'" class="notification-list">
-        <li v-for="item in newsNotifications" :key="item.id" class="news-item">
-          <div class="icon-wrapper">
-            <!-- 아이콘 타입에 따라 다른 아이콘 표시 -->
-            <svg
-              v-if="item.type === 'delivery'"
-              xmlns="http://www.w3.org/2000/svg"
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            >
-              <rect x="1" y="3" width="15" height="13"></rect>
-              <polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon>
-              <circle cx="5.5" cy="18.5" r="2.5"></circle>
-              <circle cx="18.5" cy="18.5" r="2.5"></circle>
-            </svg>
-            <svg
-              v-else-if="item.type === 'gift'"
-              xmlns="http://www.w3.org/2000/svg"
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            >
-              <polyline points="20 12 20 22 4 22 4 12"></polyline>
-              <rect x="2" y="7" width="20" height="5"></rect>
-              <line x1="12" y1="22" x2="12" y2="7"></line>
-              <path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"></path>
-              <path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"></path>
-            </svg>
-          </div>
-          <div class="text-wrapper">
-            <span class="item-title">{{ item.title }}</span>
-            <span class="item-message">{{ item.message }}</span>
-            <span class="item-timestamp">{{ item.timestamp }}</span>
-          </div>
-        </li>
-      </ul>
-
-      <!-- '키워드' 탭 내용 -->
-      <ul v-else-if="activeTab === 'keywords'" class="notification-list">
-        <li
-          v-for="item in keywordNotifications"
-          :key="item.id"
-          class="keyword-item"
+      <div v-else>
+        <div 
+          v-for="notification in notifications" 
+          :key="notification.id"
+          class="notification-item"
+          :class="{ 'unread': !notification.isRead }"
+          @click="markAsRead(notification.id)"
         >
-          <img :src="item.imageUrl" :alt="item.title" class="thumbnail" />
-          <div class="text-wrapper">
-            <span class="item-title">{{ item.title }}</span>
-            <span class="item-meta">{{ item.location }} · {{ item.time }}</span>
-            <span class="item-price"
-              >{{ item.price.toLocaleString("ko-KR") }}원</span
-            >
+          <div class="notification-icon">
+            <svg v-if="notification.type === 'LIKE'" width="20" height="20" viewBox="0 0 24 24" fill="none">
+              <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" fill="#FF3B30"/>
+            </svg>
+            <svg v-else-if="notification.type === 'PURCHASE'" width="20" height="20" viewBox="0 0 24 24" fill="none">
+              <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" stroke="#34C759" stroke-width="2"/>
+            </svg>
+            <svg v-else width="20" height="20" viewBox="0 0 24 24" fill="none">
+              <path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.89 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z" fill="#007AFF"/>
+            </svg>
           </div>
-        </li>
-      </ul>
+          
+          <div class="notification-content">
+            <h3 class="notification-title">{{ notification.title }}</h3>
+            <p class="notification-message">{{ notification.message }}</p>
+            <span class="notification-time">{{ formatTime(notification.createdAt) }}</span>
+          </div>
+          
+          <div v-if="!notification.isRead" class="unread-indicator"></div>
+        </div>
+      </div>
     </main>
   </div>
 </template>
 
-<script>
-export default {
-  name: "NotificationListView",
-  data() {
-    return {
-      activeTab: "news", // 'news' 또는 'keywords'
-      newsNotifications: [
-        {
-          id: 1,
-          type: "delivery",
-          title: "#HWDSF776567DS",
-          message: "상품의 배송이 시작되었습니다.",
-          timestamp: "09/02 10:16",
-        },
-        {
-          id: 2,
-          type: "delivery",
-          title: "#EHCSF776567BJ",
-          message: "상품의 배송이 시작되었습니다.",
-          timestamp: "09/01 12:18",
-        },
-        {
-          id: 3,
-          type: "gift",
-          title: "#ARGDGR61VCB2G",
-          message: "상품의 배송이 완료되었습니다.",
-          timestamp: "09/03 18:20",
-        },
-        {
-          id: 4,
-          type: "gift",
-          title: "#YUK1UH56KHUK1",
-          message: "상품의 배송이 완료되었습니다.",
-          timestamp: "09/02 19:34",
-        },
-        {
-          id: 5,
-          type: "delivery",
-          title: "#BN9V8N89CN1N2",
-          message: "상품의 배송이 시작되었습니다.",
-          timestamp: "09/04 13:16",
-        },
-      ],
-      keywordNotifications: [
-        {
-          id: 1,
-          imageUrl: "https://placehold.co/150x150/EFEFEF/333?text=AirPods",
-          title: "에어팟 미니",
-          location: "군자동",
-          time: "3일 전",
-          price: 100000,
-        },
-        {
-          id: 2,
-          imageUrl: "https://placehold.co/150x150/EFEFEF/333?text=AirPods",
-          title: "에어팟 3세대",
-          location: "군자동",
-          time: "3일 전",
-          price: 70000,
-        },
-        {
-          id: 3,
-          imageUrl: "https://placehold.co/150x150/EFEFEF/333?text=AirPods",
-          title: "에어팟 2세대 오른쪽",
-          location: "군자동",
-          time: "3일 전",
-          price: 30000,
-        },
-        {
-          id: 4,
-          imageUrl: "https://placehold.co/150x150/EFEFEF/333?text=AirPods",
-          title: "에어팟 프로",
-          location: "군자동",
-          time: "3일 전",
-          price: 220000,
-        },
-      ],
-    };
+<script setup>
+import { ref, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
+const notifications = ref([])
+
+// 샘플 데이터 (실제로는 API에서 가져올 데이터)
+const sampleNotifications = [
+  {
+    id: 1,
+    type: 'LIKE',
+    title: '관심 상품 알림',
+    message: '좋아요 표시한 "맛있는 사과" 상품의 가격이 할인되었습니다!',
+    createdAt: new Date(Date.now() - 1000 * 60 * 30), // 30분 전
+    isRead: false
   },
-  methods: {
-    goToSettings() {
-      alert("설정 페이지로 이동");
-    },
+  {
+    id: 2,
+    type: 'PURCHASE',
+    title: '구매 완료',
+    message: '"신선한 바나나" 상품 구매가 완료되었습니다.',
+    createdAt: new Date(Date.now() - 1000 * 60 * 60 * 2), // 2시간 전
+    isRead: true
   },
-};
+  {
+    id: 3,
+    type: 'GENERAL',
+    title: '새로운 상품 등록',
+    message: '근처에 새로운 상품이 등록되었습니다. 확인해보세요!',
+    createdAt: new Date(Date.now() - 1000 * 60 * 60 * 24), // 1일 전
+    isRead: false
+  }
+]
+
+const goBack = () => {
+  router.go(-1)
+}
+
+const markAsRead = (notificationId) => {
+  const notification = notifications.value.find(n => n.id === notificationId)
+  if (notification) {
+    notification.isRead = true
+    // 여기서 실제로는 API 호출로 읽음 상태를 서버에 업데이트
+    console.log('Marked notification as read:', notificationId)
+  }
+}
+
+const formatTime = (date) => {
+  const now = new Date()
+  const diff = now - date
+  const minutes = Math.floor(diff / (1000 * 60))
+  const hours = Math.floor(diff / (1000 * 60 * 60))
+  const days = Math.floor(diff / (1000 * 60 * 60 * 24))
+
+  if (minutes < 1) {
+    return '방금 전'
+  } else if (minutes < 60) {
+    return `${minutes}분 전`
+  } else if (hours < 24) {
+    return `${hours}시간 전`
+  } else {
+    return `${days}일 전`
+  }
+}
+
+onMounted(() => {
+  // 실제로는 여기서 API를 호출해서 알림 목록을 가져옴
+  // loadNotifications()
+  notifications.value = sampleNotifications
+})
 </script>
 
 <style scoped>
-.notification-view {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  background-color: #fff;
+.notification-page {
+  min-height: 100vh;
+  background-color: #f8f9fa;
 }
 
-/* 상단 헤더 */
 .notification-header {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  padding: 16px 16px;
-  border-bottom: 1px solid #f0f0f0;
-  flex-shrink: 0;
+  padding: 16px 20px;
+  background-color: white;
+  border-bottom: 1px solid #eee;
+  position: sticky;
+  top: 0;
+  z-index: 10;
 }
-.notification-header h1 {
+
+.back-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: #f8f8f8;
+  color: #333;
+  transition: background-color 0.2s;
+}
+
+.back-btn:hover {
+  background-color: #f0f0f0;
+}
+
+.header-title {
+  flex: 1;
+  text-align: center;
   font-size: 18px;
   font-weight: 600;
-}
-.placeholder,
-.settings-btn {
-  width: 24px;
-  height: 24px;
-}
-.settings-btn {
-  cursor: pointer;
-  color: #555;
+  color: #333;
+  margin: 0;
 }
 
-/* 탭 네비게이션 */
-.tabs {
-  position: relative;
-  display: flex;
-  flex-shrink: 0;
-  border-bottom: 1px solid #f0f0f0;
-}
-.tabs button {
-  flex: 1;
-  padding: 14px 0;
-  font-size: 16px;
-  color: #888;
-  background: none;
-  border: none;
-  cursor: pointer;
-  transition: color 0.3s, font-weight 0.3s;
-}
-.tabs button.active {
-  color: #000;
-  font-weight: 600;
-}
-.tab-indicator {
-  position: absolute;
-  bottom: -1px;
-  height: 2px;
-  width: 50%;
-  background-color: #000;
-  transition: transform 0.3s ease-in-out;
-}
-/* 탭 활성화 시 인디케이터 이동 */
-.tabs.tab-news-active .tab-indicator {
-  transform: translateX(0%);
-}
-.tabs.tab-keywords-active .tab-indicator {
-  transform: translateX(100%);
+.header-spacer {
+  width: 40px;
 }
 
-/* 알림 목록 영역 */
-.notification-content {
-  flex-grow: 1;
-  overflow-y: auto;
-}
 .notification-list {
   padding: 0;
-  margin: 0;
-  list-style: none;
 }
 
-/* '새 소식' 아이템 스타일 */
-.news-item {
-  display: flex;
-  align-items: center;
-  padding: 16px;
-  border-bottom: 1px solid #f0f0f0;
-}
-.icon-wrapper {
-  flex-shrink: 0;
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  background-color: #f0f0f0;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-right: 16px;
-  color: #555;
-}
-.news-item .text-wrapper {
+.empty-state {
   display: flex;
   flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 80px 20px;
+  text-align: center;
 }
-.news-item .item-title {
+
+.empty-icon {
+  margin-bottom: 16px;
+  opacity: 0.5;
+}
+
+.empty-message {
+  font-size: 18px;
+  font-weight: 500;
+  color: #666;
+  margin-bottom: 8px;
+}
+
+.empty-submessage {
   font-size: 14px;
+  color: #999;
+}
+
+.notification-item {
+  display: flex;
+  align-items: flex-start;
+  padding: 16px 20px;
+  background-color: white;
+  border-bottom: 1px solid #eee;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  position: relative;
+}
+
+.notification-item:hover {
+  background-color: #f8f9fa;
+}
+
+.notification-item.unread {
+  background-color: #f0f8ff;
+}
+
+.notification-icon {
+  margin-right: 12px;
+  margin-top: 2px;
+}
+
+.notification-content {
+  flex: 1;
+}
+
+.notification-title {
+  font-size: 16px;
   font-weight: 600;
   color: #333;
-  margin-bottom: 4px;
+  margin: 0 0 4px 0;
 }
-.news-item .item-message {
+
+.notification-message {
   font-size: 14px;
-  color: #555;
-  margin-bottom: 6px;
+  color: #666;
+  line-height: 1.4;
+  margin: 0 0 8px 0;
 }
-.news-item .item-timestamp {
+
+.notification-time {
   font-size: 12px;
   color: #999;
 }
 
-/* '키워드' 아이템 스타일 */
-.keyword-item {
-  display: flex;
-  align-items: center;
-  padding: 16px;
-  border-bottom: 1px solid #f0f0f0;
-}
-.keyword-item .thumbnail {
+.unread-indicator {
+  width: 8px;
+  height: 8px;
+  background-color: #007AFF;
+  border-radius: 50%;
+  margin-left: 8px;
+  margin-top: 6px;
   flex-shrink: 0;
-  width: 80px;
-  height: 80px;
-  border-radius: 8px;
-  object-fit: cover;
-  margin-right: 16px;
-}
-.keyword-item .text-wrapper {
-  display: flex;
-  flex-direction: column;
-}
-.keyword-item .item-title {
-  font-size: 16px;
-  color: #333;
-  margin-bottom: 6px;
-}
-.keyword-item .item-meta {
-  font-size: 13px;
-  color: #888;
-  margin-bottom: 8px;
-}
-.keyword-item .item-price {
-  font-size: 16px;
-  font-weight: 600;
-  color: #4682b4; /* 당근마켓의 가격 색상 */
-}
-
-/* 스크롤바 숨기기 */
-.notification-content::-webkit-scrollbar {
-  display: none;
-}
-.notification-content {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
 }
 </style>

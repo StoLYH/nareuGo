@@ -10,11 +10,11 @@ public interface ProductService {
 
     ProductCreateResponse createProduct(ProductCreateRequest productRequest);
 
-//    void deleteProduct(long productId);
+    //void deleteProduct(long productId);
 
     List<ProductDetailResponse> selectProduct (long userId);
 
-//    ProductDetailResponse selectOneProduct (long productId);
+    ProductDetailResponse selectOneProduct (long productId);
 
     // ===== 결제용 메서드 (기존 상품 코드와 분리) =====
     /**
