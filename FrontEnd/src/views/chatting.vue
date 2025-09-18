@@ -114,6 +114,7 @@ const loadChatRooms = async () => {
         lastMessage: room.lastMessage || '메시지가 없습니다.',
         lastMessageAt: room.lastMessageAt || room.createdAt,
         otherUserId: otherUserId,
+        productId: room.productId, // productId 추가
         hasUnread: false // 추후 읽음 상태 관리 추가 가능
       }
     })
@@ -181,7 +182,8 @@ const handleChatClick = (chatId) => {
       query: {
         otherUserId: chatRoom.otherUserId,
         otherUserName: chatRoom.name,
-        productTitle: '' // 채팅방 목록에서는 상품 정보가 없을 수 있음
+        productTitle: '', // 채팅방 목록에서는 상품 정보가 없을 수 있음
+        productId: chatRoom.productId // productId 추가
       }
     })
   }

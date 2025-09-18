@@ -16,8 +16,8 @@ public interface ChatMapper {
     // 채팅방 생성
     void insertChatRoom(ChatRoom chatRoom);
     
-    // 채팅방 찾기 (두 사용자 간)
-    ChatRoom findChatRoom(@Param("user1Id") String user1Id, @Param("user2Id") String user2Id);
+    // 채팅방 찾기 (두 사용자 간, 특정 상품)
+    ChatRoom findChatRoom(@Param("user1Id") String user1Id, @Param("user2Id") String user2Id, @Param("productId") Long productId);
     
     // 채팅방의 메시지 목록 조회
     List<ChatMessage> findMessagesByRoomId(@Param("roomId") Long roomId);

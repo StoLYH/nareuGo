@@ -37,7 +37,7 @@ public class ProductController {
         return ResponseEntity.ok(productService.createProduct(productRequest));
     }
 
-
+    // TODO is_delete 필드
 //    /**
 //     * 상품 삭제
 //     *
@@ -52,7 +52,6 @@ public class ProductController {
 
     /**
      * 아파트 별 상품 전체 조회 (서울특별시 강남구 역삼동 래미안아파트) - 일단 고정
-     *
      *
      * @return
      */
@@ -75,13 +74,4 @@ public class ProductController {
         }
         return ResponseEntity.ok(product);
     }
-
-
-//    /**
-//     * 상품 검색 (엘라스틱 서치용)
-//     * // TODO 나중에하기
-//     * @return
-//     */
-
-
 }
