@@ -32,6 +32,7 @@ public class UserEntity {
     private String role;
     
     // 주소 인증 관련 필드들 (새로 추가될 컬럼)
+    @Builder.Default
     private Boolean addressVerified = false;
     private java.time.LocalDateTime verificationDate;
     
