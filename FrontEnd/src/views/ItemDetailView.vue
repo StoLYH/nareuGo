@@ -384,13 +384,15 @@ export default {
 
         console.log('채팅방 생성 요청:', {
           currentUserId: currentUser.userId,
-          sellerId: this.item.sellerId || 'unknown'
+          sellerId: this.item.sellerId || 'unknown',
+          productId: this.item.id // 상품 ID 로깅 추가
         });
 
         // 채팅방 생성 또는 기존 채팅방 찾기
         const roomId = await findOrCreateChatRoom(
           currentUser.userId.toString(), 
-          this.item.sellerId?.toString() || '1' // sellerId가 없으면 임시로 1 사용
+          this.item.sellerId?.toString() || '1', // sellerId가 없으면 임시로 1 사용
+          this.item.id // this.item.productId 대신 this.item.id 사용
         );
 
         console.log('생성된 채팅방 ID:', roomId);
@@ -401,7 +403,8 @@ export default {
           query: {
             otherUserId: this.item.sellerId,
             otherUserName: this.item.seller.name,
-            productTitle: this.item.title
+            productTitle: this.item.title,
+            productId: this.item.id // productId 추가
           }
         });
 

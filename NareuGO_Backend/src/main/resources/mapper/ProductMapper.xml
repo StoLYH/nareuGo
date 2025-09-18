@@ -55,6 +55,27 @@
     ORDER BY p.created_at DESC
   </select>
 
+  <select id="selectOneProduct" parameterType="long" resultType="org.example.nareugobackend.api.controller.product.response.ProductDetailResponse">
+    SELECT
+    p.product_id,
+    p.seller_id,
+    p.title,
+    p.description,
+    p.price,
+    p.status,
+    p.created_at,
+    p.updated_at,
+    p.si_do,
+    p.si_gun_gu,
+    p.eup_myeon_dong,
+    p.apartment_name,
+    u.building_dong,
+    u.building_ho
+    FROM products p
+    LEFT JOIN users u ON p.seller_id = u.user_id
+    WHERE p.product_id = #{productId}
+  </select>
+
   <select id="selectProductImages" parameterType="long" resultType="string">
     SELECT image_url
     FROM product_images

@@ -52,7 +52,6 @@ public class ProductController {
     /**
      * 아파트 별 상품 전체 조회 (서울특별시 강남구 역삼동 래미안아파트) - 일단 고정
      *
-     *
      * @return
      */
     @GetMapping("/{userId}")
@@ -63,14 +62,14 @@ public class ProductController {
     // ===== 결제용 API (기존 상품 코드와 분리) =====
     /**
      * 결제용 상품 단일 조회
-     * 
+     *
      * @param productId 상품 ID
      * @return ProductDetailResponse
      */
     @GetMapping("/payment/{productId}")
     public ResponseEntity<ProductDetailResponse> getProductForPayment(@PathVariable Long productId) {
         ProductDetailResponse product = productService.getProductForPayment(productId);
-        
+
         if (product == null) {
             return ResponseEntity.notFound().build();
         }
@@ -78,28 +77,18 @@ public class ProductController {
     }
 
 
+    /**
+     * 상품 개별 조회 (단일 조회)
+     *
+     * @return
+     */
+    @GetMapping("/item/{productId}")
+    public ResponseEntity<ProductDetailResponse> selectOneProduct(@PathVariable Long productId) {
+        ProductDetailResponse product = productService.selectOneProduct(productId);
 
-//    /**
-//     * 상품 개별 조회 (단일 조회)
-//     *
-//     * @return
-//     */
-//    @GetMapping("/{productId}")
-//    public ResponseEntity<ProductDetailResponse> selectOneProduct(@PathVariable Long productId) {
-//        ProductDetailResponse product = productService.selectOneProduct(productId);
-//
-//        if (product == null) {
-//            return ResponseEntity.notFound().build();
-//        }
-//        return ResponseEntity.ok(product);
-//    }
-//
-//
-//    /**
-//     * 상품 검색 (엘라스틱 서치용)
-//     * // TODO 나중에하기
-//     * @return
-//     */
-
-
+        if (product == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(product);
+    }
 }

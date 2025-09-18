@@ -11,7 +11,7 @@ public interface ChatService {
     void saveMessage(ChatMessage message);
     
     // 채팅방 생성 또는 기존 방 찾기
-    Long findOrCreateChatRoom(String user1Id, String user2Id);
+    Long findOrCreateChatRoom(String user1Id, String user2Id, Long productId);
     
     // 채팅방의 메시지 목록 조회
     List<ChatMessage> getChatMessages(Long roomId);
