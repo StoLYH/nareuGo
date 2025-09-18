@@ -1,149 +1,55 @@
-import axios from 'axios';
-import { getFCMToken, requestNotificationPermission, onMessageListener } from '../config/firebase';
+// 알림 서비스 (Firebase 비활성화됨 - HTTP 환경에서는 지원되지 않음)
 
 class NotificationService {
   constructor() {
     this.currentToken = null;
     this.userId = null;
-    this.setupForegroundListener();
+    console.log('NotificationService: Firebase messaging disabled in HTTP environment');
   }
 
-  // 알림 서비스 초기화
+  // 알림 서비스 초기화 (비활성화됨)
   async initialize(userId) {
     this.userId = userId;
-
-    // 서비스 워커 등록
-    await this.registerServiceWorker();
-
-    // 알림 권한 요청
-    const hasPermission = await requestNotificationPermission();
-    if (!hasPermission) {
-      console.log('Notification permission not granted');
-      return false;
-    }
-
-    // FCM 토큰 가져오기 및 저장
-    await this.getAndSaveToken();
-
-    return true;
+    console.log('NotificationService: Notification service disabled');
+    return false; // 항상 false 반환
   }
 
-  // 서비스 워커 등록
-  async registerServiceWorker() {
-    if ('serviceWorker' in navigator) {
-      try {
-        const registration = await navigator.serviceWorker.register('/firebase-messaging-sw.js');
-        console.log('Service Worker registered successfully:', registration);
-        return registration;
-      } catch (error) {
-        console.error('Service Worker registration failed:', error);
-        throw error;
-      }
-    }
-  }
-
-  // FCM 토큰 가져오기 및 서버에 저장
-  async getAndSaveToken() {
-    try {
-      const token = await getFCMToken();
-      if (token && this.userId) {
-        this.currentToken = token;
-        await this.saveTokenToServer(token);
-        console.log('FCM token saved successfully');
-      }
-      return token;
-    } catch (error) {
-      console.error('Error getting FCM token:', error);
-      throw error;
-    }
-  }
-
-  // 서버에 토큰 저장
+  // 서버에 토큰 저장 (비활성화됨)
   async saveTokenToServer(token) {
-    try {
-      await axios.post('/api/fcm/token', {
-        userId: this.userId,
-        token: token,
-        deviceType: 'WEB'
-      });
-    } catch (error) {
-      console.error('Error saving token to server:', error);
-      throw error;
-    }
+    console.log('NotificationService: Token saving disabled');
+    return false;
   }
 
-  // 서버에서 토큰 제거
+  // 서버에서 토큰 제거 (비활성화됨)
   async removeTokenFromServer() {
-    if (this.currentToken && this.userId) {
-      try {
-        await axios.delete('/api/fcm/token', {
-          data: {
-            userId: this.userId,
-            token: this.currentToken
-          }
-        });
-        console.log('FCM token removed successfully');
-      } catch (error) {
-        console.error('Error removing token from server:', error);
-      }
-    }
+    console.log('NotificationService: Token removal disabled');
+    return false;
   }
 
-  // 포그라운드 메시지 리스너 설정
+  // 포그라운드 메시지 리스너 설정 (비활성화됨)
   setupForegroundListener() {
-    onMessageListener()
-      .then((payload) => {
-        console.log('Foreground notification received:', payload);
-        this.showForegroundNotification(payload);
-      })
-      .catch((err) => {
-        console.error('Error setting up foreground listener:', err);
-      });
+    console.log('NotificationService: Foreground listener disabled');
   }
 
-  // 포그라운드에서 알림 표시
+  // 포그라운드에서 알림 표시 (비활성화됨)
   showForegroundNotification(payload) {
-    const { title, body } = payload.notification || {};
-    const { type } = payload.data || {};
+    console.log('NotificationService: Foreground notification disabled');
+  }
 
-    // 브라우저 알림 API 사용
+  // 앱 내 알림 표시 (기본 브라우저 알림만 사용)
+  showInAppNotification(payload) {
+    // 기본 브라우저 알림만 사용 (Firebase 없이)
     if (Notification.permission === 'granted') {
-      const notification = new Notification(title || '새 알림', {
-        body: body || '',
-        icon: '/icons/icon-192x192.png',
-        badge: '/icons/badge-72x72.png',
-        tag: type || 'default',
-        data: payload.data,
-        requireInteraction: true
+      const notification = new Notification(payload.title || '새 알림', {
+        body: payload.body || '',
+        icon: '/images/logo.png'
       });
-
-      notification.onclick = () => {
-        // 알림 클릭 시 적절한 페이지로 이동
-        this.handleNotificationClick(payload.data);
-        notification.close();
-      };
 
       // 자동으로 5초 후 닫기
       setTimeout(() => {
         notification.close();
       }, 5000);
     }
-
-    // 앱 내 알림 표시 (선택사항)
-    this.showInAppNotification(payload);
-  }
-
-  // 앱 내 알림 표시
-  showInAppNotification(payload) {
-    // Vuetify snackbar나 toast 알림으로 구현 가능
-    const event = new CustomEvent('show-notification', {
-      detail: {
-        title: payload.notification?.title,
-        body: payload.notification?.body,
-        type: payload.data?.type
-      }
-    });
-    window.dispatchEvent(event);
   }
 
   // 알림 클릭 처리
@@ -172,7 +78,7 @@ class NotificationService {
 
   // 알림 서비스 종료
   async cleanup() {
-    await this.removeTokenFromServer();
+    console.log('NotificationService: Cleanup completed');
     this.currentToken = null;
     this.userId = null;
   }
