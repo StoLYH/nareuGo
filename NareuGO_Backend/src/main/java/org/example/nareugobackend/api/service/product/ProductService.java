@@ -14,6 +14,6 @@ public interface ProductService {
 
     List<ProductDetailResponse> selectProduct (long userId);
 
-//    ProductDetailResponse selectOneProduct (long productId);
+    ProductDetailResponse selectOneProduct (long productId);
 
 }

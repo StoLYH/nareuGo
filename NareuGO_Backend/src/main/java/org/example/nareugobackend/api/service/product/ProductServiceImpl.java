@@ -150,7 +150,7 @@ public class ProductServiceImpl implements ProductService {
 
     /**
      * 메인페이지 상품 목록 조회
-     *g
+     *
      */
     @Transactional
     @Override
@@ -214,34 +214,34 @@ public class ProductServiceImpl implements ProductService {
     }
 
 
-//    /**
-//     * 단일 상품 조회
-//     * ProductDetailResponse selectOneProduct (long productId);
-//     *
-//     */
-//    @Override
-//    public ProductDetailResponse selectOneProduct(long productId) {
-//        // 상품 기본 정보 조회
-//        ProductDetailResponse product = productMapper.selectOneProduct(productId);
-//
-//        if (product == null) {
-//            return null; // 상품이 존재하지 않음
-//        }
-//
-//        // 해당 상품의 이미지들 조회 (공통 메서드 사용)
-//        List<String> imageKeys = productMapper.selectProductImages(productId);
-//
-//        // S3 KEY들을 Presigned Download URL로 변환
-//        List<String> downloadUrls = new ArrayList<>();
-//        for (String s3Key : imageKeys) {
-//            String downloadUrl = generatePresignedDownloadUrl(s3Key);
-//            downloadUrls.add(downloadUrl);
-//        }
-//
-//        // 이미지 URL 설정
-//        product.setImageUrls(downloadUrls);
-//
-//        return product;
-//    }
+    /**
+     * 단일 상품 조회
+     * ProductDetailResponse selectOneProduct (long productId);
+     *
+     */
+    @Override
+    public ProductDetailResponse selectOneProduct(long productId) {
+        // 상품 기본 정보 조회
+        ProductDetailResponse product = productMapper.selectOneProduct(productId);
+
+        if (product == null) {
+            return null; // 상품이 존재하지 않음
+        }
+
+        // 해당 상품의 이미지들 조회 (공통 메서드 사용)
+        List<String> imageKeys = productMapper.selectProductImages(productId);
+
+        // S3 KEY들을 Presigned Download URL로 변환
+        List<String> downloadUrls = new ArrayList<>();
+        for (String s3Key : imageKeys) {
+            String downloadUrl = generatePresignedDownloadUrl(s3Key);
+            downloadUrls.add(downloadUrl);
+        }
+
+        // 이미지 URL 설정
+        product.setImageUrls(downloadUrls);
+
+        return product;
+    }
 
 }

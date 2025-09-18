@@ -21,8 +21,8 @@ public interface ProductMapper {
     List<ProductDetailResponse> selectProduct(UserInfoRequest userInfoRequest);
 
 
-//    // 개별 단위
-//    ProductDetailResponse selectOneProduct(@Param("productId") Long productId);
+    // 개별 단위
+    ProductDetailResponse selectOneProduct(@Param("productId") Long productId);
 
 
 

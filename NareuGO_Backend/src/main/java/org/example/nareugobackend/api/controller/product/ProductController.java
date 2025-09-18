@@ -60,24 +60,22 @@ public class ProductController {
         return ResponseEntity.ok(productService.selectProduct(userId));
     }
 
+    /**
+     * 상품 개별 조회 (단일 조회)
+     *
+     * @return
+     */
+    @GetMapping("/{productId}")
+    public ResponseEntity<ProductDetailResponse> selectOneProduct(@PathVariable Long productId) {
+        ProductDetailResponse product = productService.selectOneProduct(productId);
+
+        if (product == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(product);
+    }
 
 
-//    /**
-//     * 상품 개별 조회 (단일 조회)
-//     *
-//     * @return
-//     */
-//    @GetMapping("/{productId}")
-//    public ResponseEntity<ProductDetailResponse> selectOneProduct(@PathVariable Long productId) {
-//        ProductDetailResponse product = productService.selectOneProduct(productId);
-//
-//        if (product == null) {
-//            return ResponseEntity.notFound().build();
-//        }
-//        return ResponseEntity.ok(product);
-//    }
-//
-//
 //    /**
 //     * 상품 검색 (엘라스틱 서치용)
 //     * // TODO 나중에하기
