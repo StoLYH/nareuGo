@@ -8,6 +8,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import java.time.Instant;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -21,10 +22,12 @@ import org.example.nareugobackend.api.service.auth.info.SocialUserInfo;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
+@Table(name = "users")
 public class User {
 
   @Id
   @GeneratedValue(strategy = IDENTITY)
+  @Column(name = "user_id")
   private Long id;
 
   @Column(unique = true, nullable = false)
@@ -50,17 +53,17 @@ public class User {
 
   private String nickname;
 
-  private Integer building_dong;
+  private Integer buildingDong;
 
-  private Integer building_ho;
+  private Integer buildingHo;
 
-  private String apartment_name;
+  private String apartmentName;
 
-  private String si_do;
+  private String siDo;
 
-  private String si_gun_gu;
+  private String siGunGu;
 
-  private String eup_myeon_dong;
+  private String eupMyeonDong;
 
   private Instant deletedAt;
 

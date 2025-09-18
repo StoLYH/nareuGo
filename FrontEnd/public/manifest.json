@@ -1,0 +1,128 @@
+{
+  "name": "나르고 (NareuGO)",
+  "short_name": "나르고",
+  "description": "아파트 내 중고거래 및 배송 서비스",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#007AFF",
+  "orientation": "portrait-primary",
+  "scope": "/",
+  "lang": "ko",
+  "categories": ["shopping", "marketplace", "delivery"],
+  "icons": [
+    {
+      "src": "/icons/icon-72x72.png",
+      "sizes": "72x72",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/icons/icon-96x96.png",
+      "sizes": "96x96",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/icons/icon-128x128.png",
+      "sizes": "128x128",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/icons/icon-144x144.png",
+      "sizes": "144x144",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/icons/icon-152x152.png",
+      "sizes": "152x152",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/icons/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/icons/icon-384x384.png",
+      "sizes": "384x384",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/icons/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable any"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/screenshots/mobile-1.png",
+      "sizes": "390x844",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "상품 목록 화면"
+    },
+    {
+      "src": "/screenshots/mobile-2.png",
+      "sizes": "390x844",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "마이페이지 화면"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "상품 목록",
+      "short_name": "상품",
+      "description": "등록된 상품들을 확인합니다",
+      "url": "/items",
+      "icons": [
+        {
+          "src": "/icons/shortcut-items.png",
+          "sizes": "96x96"
+        }
+      ]
+    },
+    {
+      "name": "마이페이지",
+      "short_name": "마이",
+      "description": "내 정보와 거래내역을 확인합니다",
+      "url": "/mypage",
+      "icons": [
+        {
+          "src": "/icons/shortcut-profile.png",
+          "sizes": "96x96"
+        }
+      ]
+    },
+    {
+      "name": "배송 현황",
+      "short_name": "배송",
+      "description": "배송 현황을 확인합니다",
+      "url": "/delivery-status",
+      "icons": [
+        {
+          "src": "/icons/shortcut-delivery.png",
+          "sizes": "96x96"
+        }
+      ]
+    }
+  ],
+  "related_applications": [],
+  "prefer_related_applications": false,
+  "edge_side_panel": {
+    "preferred_width": 400
+  },
+  "protocol_handlers": [
+    {
+      "protocol": "web+nareugo",
+      "url": "/handle?url=%s"
+    }
+  ]
+}

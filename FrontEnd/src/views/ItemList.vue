@@ -10,21 +10,18 @@
 
     <!-- 상품 목록 -->
     <main class="item-list">
+      <ItemCard v-for="item in items" :key="item.id" :item="item" />
+      
       <!-- 로딩 인디케이터 -->
       <div v-if="isLoading" class="loading-indicator">
         <div class="spinner"></div>
         <p>상품을 불러오는 중...</p>
       </div>
       
-      <!-- 상품 목록 -->
-      <template v-else>
-        <ItemCard v-for="item in items" :key="item.id" :item="item" />
-        
-        <!-- 상품이 없을 때 -->
-        <div v-if="items.length === 0" class="no-products">
-          <p>등록된 상품이 없습니다</p>
-        </div>
-      </template>
+      <!-- 더 이상 로드할 데이터가 없을 때 -->
+      <div v-if="!hasMore && items.length > 0" class="no-more-data">
+        <p>모든 상품을 불러왔습니다</p>
+      </div>
     </main>
 
     <!-- 하단 네비게이션 -->
@@ -68,16 +65,16 @@ const formatTimeAgo = (dateString) => {
   }
   
   const diffInMinutes = Math.floor((now - past) / (1000 * 60))
-  
+
   // 디버깅용 로그
   console.log(`시간 계산: now=${now.toISOString()}, past=${past.toISOString()}, diff=${diffInMinutes}분`)
-  
+
   if (diffInMinutes < 1) return '방금 전'
   if (diffInMinutes < 60) return `${diffInMinutes}분 전`
-  
+
   const diffInHours = Math.floor(diffInMinutes / 60)
   if (diffInHours < 24) return `${diffInHours}시간 전`
-  
+
   const diffInDays = Math.floor(diffInHours / 24)
   return `${diffInDays}일 전`
 }
@@ -85,9 +82,9 @@ const formatTimeAgo = (dateString) => {
 // 실제 데이터 로드
 const loadProductData = async () => {
   if (isLoading.value) return
-  
+
   isLoading.value = true
-  
+
   try {
     // 로컬 스토리지에서 사용자 정보 가져오기
     const userInfo = JSON.parse(localStorage.getItem('user'))
@@ -95,16 +92,16 @@ const loadProductData = async () => {
       console.error('사용자 정보가 없습니다.')
       return
     }
-    
+
     // API 호출하여 상품 목록 조회
     const productList = await getProducts(userInfo.userId)
     console.log('상품 목록 조회 성공:', productList)
-    
+
     // 백엔드 데이터를 프론트엔드 형식으로 변환
     items.value = productList.map(product => {
       const firstImage = product.imageUrls && product.imageUrls.length > 0 ? product.imageUrls[0] : null
       console.log(`상품 ${product.productId} 이미지 URL:`, firstImage)
-      
+
       return {
         id: product.productId,
         title: product.title,
@@ -125,7 +122,7 @@ const loadProductData = async () => {
         updatedAt: product.updatedAt
       }
     })
-    
+
   } catch (error) {
     console.error('상품 목록 조회 실패:', error)
     // 에러 발생 시 빈 배열로 설정

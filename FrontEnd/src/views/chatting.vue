@@ -22,21 +22,40 @@
 
     <!-- 채팅 목록 -->
     <main class="chat-list">
-      <div class="chat-item" v-for="chat in chats" :key="chat.id" @click="handleChatClick(chat.id)">
-        <div class="profile-image">
-          <img :src="chat.profileImage" :alt="chat.name" />
+      <!-- 로딩 상태 -->
+      <div v-if="loading" class="loading-container">
+        <div class="loading-spinner"></div>
+        <p>채팅방 목록을 불러오는 중...</p>
+      </div>
+      
+      <!-- 빈 목록 상태 -->
+      <div v-else-if="chats.length === 0" class="empty-container">
+        <p>아직 채팅방이 없습니다.</p>
+        <p class="empty-subtitle">상품에서 "채팅하기"를 눌러 대화를 시작해보세요!</p>
+      </div>
+      
+      <!-- 채팅방 목록 -->
+      <div v-else>
+        <div class="chat-item" v-for="chat in chats" :key="chat.id" @click="handleChatClick(chat.id)">
+          <div class="profile-image">
+            <img :src="chat.profileImage" :alt="chat.name" />
+          </div>
+          <div class="chat-info">
+            <h3 class="chat-name">{{ chat.name }}</h3>
+            <p class="chat-location">{{ chat.location }}</p>
+            <p class="last-message">{{ chat.lastMessage }}</p>
+          </div>
+          <div class="chat-meta">
+            <span class="chat-time">{{ formatTime(chat.lastMessageAt) }}</span>
+            <button class="more-menu" @click.stop="handleMoreMenu(chat.id)">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                <circle cx="12" cy="5" r="2" fill="currentColor"/>
+                <circle cx="12" cy="12" r="2" fill="currentColor"/>
+                <circle cx="12" cy="19" r="2" fill="currentColor"/>
+              </svg>
+            </button>
+          </div>
         </div>
-        <div class="chat-info">
-          <h3 class="chat-name">{{ chat.name }}</h3>
-          <p class="chat-location">{{ chat.location }}</p>
-        </div>
-        <button class="more-menu" @click.stop="handleMoreMenu(chat.id)">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-            <circle cx="12" cy="5" r="2" fill="currentColor"/>
-            <circle cx="12" cy="12" r="2" fill="currentColor"/>
-            <circle cx="12" cy="19" r="2" fill="currentColor"/>
-          </svg>
-        </button>
       </div>
     </main>
 
@@ -49,71 +68,95 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import AppHeader from '../components/AppHeader.vue'
 import BottomNavigation from '../components/BottomNavigation.vue'
+import { getUserChatRooms } from '@/api/chat/chat.js'
 
 const router = useRouter()
+const chats = ref([])
+const loading = ref(false)
 
-const chats = ref([
-  {
-    id: 1,
-    name: '김민수',
-    location: '111동-101호',
-    profileImage: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face&auto=format&q=90',
-    hasUnread: false
-  },
-  {
-    id: 2,
-    name: '이지은',
-    location: '112동-103호',
-    profileImage: 'https://images.unsplash.com/photo-1494790108755-2616b612b786?w=150&h=150&fit=crop&crop=face&auto=format&q=90',
-    hasUnread: false
-  },
-  {
-    id: 3,
-    name: '박서준',
-    location: '113동-205호',
-    profileImage: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face&auto=format&q=90',
-    hasUnread: true
-  },
-  {
-    id: 4,
-    name: '최유진',
-    location: '114동-301호',
-    profileImage: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150&h=150&fit=crop&crop=face&auto=format&q=90',
-    hasUnread: true
-  },
-  {
-    id: 5,
-    name: '정현우',
-    location: '115동-102호',
-    profileImage: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&h=150&fit=crop&crop=face&auto=format&q=90',
-    hasUnread: true
-  },
-  {
-    id: 6,
-    name: '한소영',
-    location: '116동-203호',
-    profileImage: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&h=150&fit=crop&crop=face&auto=format&q=90',
-    hasUnread: false
-  },
-  {
-    id: 7,
-    name: '강태현',
-    location: '117동-304호',
-    profileImage: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=150&h=150&fit=crop&crop=face&auto=format&q=90',
-    hasUnread: true
-  },
-  {
-    id: 8,
-    name: '윤서연',
-    location: '118동-105호',
-    profileImage: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&h=150&fit=crop&crop=face&auto=format&q=90',
-    hasUnread: false
+// 채팅방 목록 로드
+const loadChatRooms = async () => {
+  try {
+    loading.value = true
+    
+    // 현재 사용자 정보 가져오기
+    const userInfo = JSON.parse(localStorage.getItem('user'))
+    if (!userInfo || !userInfo.userId) {
+      console.error('사용자 정보가 없습니다.')
+      router.push('/login')
+      return
+    }
+
+    console.log('채팅방 목록 로드 중... userId:', userInfo.userId)
+    
+    // API에서 채팅방 목록 가져오기
+    const chatRooms = await getUserChatRooms(userInfo.userId.toString())
+    
+    console.log('받은 채팅방 목록:', chatRooms)
+    
+    // 채팅방 데이터를 UI 형식으로 변환
+    chats.value = chatRooms.map(room => {
+      // 상대방 ID 찾기 (내가 user1이면 user2가 상대방, 반대도 마찬가지)
+      const otherUserId = room.user1Id === userInfo.userId.toString() 
+        ? room.user2Id 
+        : room.user1Id
+      
+      return {
+        id: room.roomId,
+        roomId: room.roomId,
+        name: `사용자 ${otherUserId}`, // 실제로는 사용자 정보를 조회해야 함
+        location: '위치 정보', // 실제로는 사용자 위치 정보를 조회해야 함
+        profileImage: '/images/social/사용자더미.png', // 기본 프로필 이미지
+        lastMessage: room.lastMessage || '메시지가 없습니다.',
+        lastMessageAt: room.lastMessageAt || room.createdAt,
+        otherUserId: otherUserId,
+        hasUnread: false // 추후 읽음 상태 관리 추가 가능
+      }
+    })
+    
+  } catch (error) {
+    console.error('채팅방 목록 로드 실패:', error)
+    chats.value = []
+  } finally {
+    loading.value = false
   }
-])
+}
+
+// 시간 포맷팅 함수
+const formatTime = (timeString) => {
+  if (!timeString) return ''
+  
+  try {
+    const messageTime = new Date(timeString)
+    const now = new Date()
+    const diffInMinutes = Math.floor((now - messageTime) / (1000 * 60))
+    
+    if (diffInMinutes < 1) return '방금 전'
+    if (diffInMinutes < 60) return `${diffInMinutes}분 전`
+    
+    const diffInHours = Math.floor(diffInMinutes / 60)
+    if (diffInHours < 24) return `${diffInHours}시간 전`
+    
+    const diffInDays = Math.floor(diffInHours / 24)
+    if (diffInDays < 7) return `${diffInDays}일 전`
+    
+    // 일주일 이상이면 날짜 표시
+    return messageTime.toLocaleDateString('ko-KR', { 
+      month: 'short', 
+      day: 'numeric' 
+    })
+  } catch (error) {
+    return ''
+  }
+}
+
+onMounted(() => {
+  loadChatRooms()
+})
 
 // 이벤트 핸들러들
 const handleEdit = () => {
@@ -129,7 +172,18 @@ const handleNotification = () => {
 }
 
 const handleChatClick = (chatId) => {
-  router.push(`/chat/${chatId}`)
+  // 채팅방 정보 찾기
+  const chatRoom = chats.value.find(chat => chat.id === chatId)
+  if (chatRoom) {
+    router.push({
+      path: `/chat/${chatRoom.roomId}`,
+      query: {
+        otherUserId: chatRoom.otherUserId,
+        otherUserName: chatRoom.name,
+        productTitle: '' // 채팅방 목록에서는 상품 정보가 없을 수 있음
+      }
+    })
+  }
 }
 
 const handleMoreMenu = (chatId) => {
@@ -266,11 +320,97 @@ const handleNavigation = (tab) => {
   letter-spacing: -0.005em;
 }
 
+/* 로딩 및 빈 상태 */
+.loading-container, .empty-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  text-align: center;
+}
+
+.loading-spinner {
+  width: 32px;
+  height: 32px;
+  border: 3px solid #f0f0f0;
+  border-top: 3px solid #007bff;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 16px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.empty-container p {
+  margin: 0;
+  color: #666;
+  font-size: 16px;
+}
+
+.empty-subtitle {
+  font-size: 14px !important;
+  color: #999 !important;
+  margin-top: 8px !important;
+}
+
+/* 채팅 아이템 레이아웃 수정 */
+.chat-item {
+  display: flex;
+  align-items: flex-start;
+  padding: 16px 0;
+  gap: 12px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  border-bottom: 1px solid #f5f5f5;
+}
+
+.chat-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  min-width: 0;
+  gap: 4px;
+}
+
+.last-message {
+  font-size: 14px;
+  color: #666;
+  margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.chat-meta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.chat-time {
+  font-size: 12px;
+  color: #999;
+  white-space: nowrap;
+}
+
 .more-menu {
   color: #007bff;
   background: none;
   border: none;
-  padding: 8px;
+  padding: 4px;
   cursor: pointer;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+}
+
+.more-menu:hover {
+  background-color: #f0f0f0;
 }
 </style>

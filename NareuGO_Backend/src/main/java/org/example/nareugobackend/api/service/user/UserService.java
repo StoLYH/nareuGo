@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.example.nareugobackend.api.service.auth.info.SocialUserInfo;
 import org.example.nareugobackend.api.service.user.request.LoginServiceRequest;
 import org.example.nareugobackend.api.service.user.response.LoginServiceResponse;
+import org.example.nareugobackend.api.service.user.response.UserProfileResponse;
 import org.example.nareugobackend.common.model.UserEntity;
 import org.example.nareugobackend.domain.user.User;
 import org.example.nareugobackend.domain.user.UserRepository;
@@ -56,4 +57,22 @@ public class UserService {
       return LoginServiceResponse.failure("로그인 처리 중 오류가 발생했습니다.");
     }
   }
+
+  public UserProfileResponse getUserProfile(Long userId) {
+    User user = findById(userId);
+
+    return UserProfileResponse.builder()
+        .userId(user.getId())
+        .nickname(user.getNickname())
+        .email(user.getEmail())
+        .apartmentName(user.getApartmentName())
+        .buildingDong(String.valueOf(user.getBuildingDong()))
+        .buildingHo(String.valueOf(user.getBuildingHo()))
+        .siDo(user.getSiDo())
+        .siGunGu(user.getSiGunGu())
+        .eupMyeonDong(user.getEupMyeonDong())
+        .addressVerified(user.getNickname() != null) // nickname이 있으면 인증된 것으로 가정
+        .build();
+  }
+
 }

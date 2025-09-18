@@ -158,13 +158,14 @@
       <div class="price-info">
         <span class="price">{{ formattedPrice }}원</span>
       </div>
-      <button class="chat-button" @click="goToPayment">결제하기</button>
+      <button class="chat-button" @click="startChat">채팅하기</button>
     </footer>
   </div>
 </template>
 
 <script>
 import { getProducts } from '@/api/product/product.js'
+import { findOrCreateChatRoom } from '@/api/chat/chat.js'
 
 export default {
   name: "ItemDetailView",
@@ -265,6 +266,7 @@ export default {
         views: 0, // 기본값
         price: itemData.price,
         location: itemData.location,
+        sellerId: itemData.sellerId, // 채팅을 위해 필요한 판매자 ID 추가
         seller: {
           name: "201동 행복주민", // 고정값
           location: `${itemData.location} ${itemData.apartmentName || ''}`.trim(), // 구+동 + 아파트명
@@ -299,7 +301,7 @@ export default {
               // 추가 정보들
               allImages: product.imageUrls || [],
               description: product.description || "",
-              sellerId: product.sellerId,
+              sellerId: product.sellerId, // 채팅을 위해 필요한 판매자 ID
               siDo: product.siDo,
               siGunGu: product.siGunGu,
               eupMyeonDong: product.eupMyeonDong,
@@ -364,8 +366,53 @@ export default {
     goToImage(index) {
       this.currentImageIndex = index;
     },
+    async startChat() {
+      try {
+        // 현재 로그인한 사용자 정보 가져오기
+        const currentUser = JSON.parse(localStorage.getItem('user'));
+        if (!currentUser || !currentUser.userId) {
+          alert('로그인이 필요합니다.');
+          this.$router.push('/login');
+          return;
+        }
+
+        // 자기 자신과 채팅하려고 하는 경우 방지
+        if (currentUser.userId.toString() === this.item.sellerId?.toString()) {
+          alert('자신의 상품에는 채팅할 수 없습니다.');
+          return;
+        }
+
+        console.log('채팅방 생성 요청:', {
+          currentUserId: currentUser.userId,
+          sellerId: this.item.sellerId || 'unknown'
+        });
+
+        // 채팅방 생성 또는 기존 채팅방 찾기
+        const roomId = await findOrCreateChatRoom(
+          currentUser.userId.toString(), 
+          this.item.sellerId?.toString() || '1' // sellerId가 없으면 임시로 1 사용
+        );
+
+        console.log('생성된 채팅방 ID:', roomId);
+
+        // 채팅 페이지로 이동 (roomId와 상대방 정보 전달)
+        this.$router.push({
+          path: `/chat/${roomId}`,
+          query: {
+            otherUserId: this.item.sellerId,
+            otherUserName: this.item.seller.name,
+            productTitle: this.item.title
+          }
+        });
+
+      } catch (error) {
+        console.error('채팅방 생성 실패:', error);
+        alert('채팅방 생성에 실패했습니다. 다시 시도해주세요.');
+      }
+    },
+
     goToPayment() {
-      // 결제 페이지로 이동
+      // 결제 페이지로 이동 (기존 함수 유지)
       this.$router.push("/payment");
     },
   },
