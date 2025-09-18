@@ -240,7 +240,8 @@ export default {
         sellerName: "",
         sellerLocation: "",
         status: "",
-        amount: 0
+        amount: 0,
+        tossOrderId: null  // 토스페이먼츠용 orderId 추가
       },
       buyerInfo: {
         name: "",
@@ -282,6 +283,7 @@ export default {
         this.orderInfo.price = orderData.amount;
         this.orderInfo.amount = orderData.amount;
         this.orderInfo.status = orderData.status;
+        this.orderInfo.tossOrderId = orderData.tossOrderId; // 토스페이먼츠용 orderId 설정
         
         // 상품 정보 로드 (productId 기반)
         await this.loadProductInfo(orderData.productId);
@@ -293,13 +295,39 @@ export default {
       }
     },
 
+    // ===== 판매자 정보 조회 (결제용) =====
+    async loadSellerInfo(sellerId) {
+      try {
+        console.log('판매자 정보 로딩 - sellerId:', sellerId);
+        
+        const baseUrl = import.meta.env.VITE_BASE_URL || 'http://localhost:8080';
+        const response = await fetch(`${baseUrl}/payment/users/${sellerId}`);
+        if (!response.ok) {
+          throw new Error('판매자 정보를 불러올 수 없습니다.');
+        }
+        
+        const sellerData = await response.json();
+        console.log('판매자 정보 로드 완료:', sellerData);
+        
+        // 판매자 실제 이름 설정
+        this.orderInfo.sellerName = sellerData.name || `판매자 ${sellerId}`;
+        
+        console.log('판매자 정보 설정 완료');
+        
+      } catch (error) {
+        console.error('판매자 정보 로드 실패:', error);
+        // 기본값 사용
+        this.orderInfo.sellerName = `판매자 ${sellerId}`;
+      }
+    },
+
     // ===== 상품 정보 조회 =====
     async loadProductInfo(productId) {
       try {
         console.log('상품 정보 로딩 - productId:', productId);
         
         const baseUrl = import.meta.env.VITE_BASE_URL || 'http://localhost:8080';
-        const response = await fetch(`${baseUrl}/products/${productId}`);
+        const response = await fetch(`${baseUrl}/products/payment/${productId}`);
         if (!response.ok) {
           throw new Error('상품 정보를 불러올 수 없습니다.');
         }
@@ -308,9 +336,21 @@ export default {
         console.log('상품 정보 로드 완료:', productData);
         
         this.orderInfo.productTitle = productData.title;
-        this.orderInfo.productImage = productData.imageUrl || "https://placehold.co/300x300/333333/FFF?text=No+Image";
-        this.orderInfo.sellerName = productData.sellerName;
-        this.orderInfo.sellerLocation = productData.sellerLocation;
+        // 첫 번째 이미지 URL 사용 (imageUrls 배열에서)
+        this.orderInfo.productImage = (productData.imageUrls && productData.imageUrls.length > 0) 
+          ? productData.imageUrls[0] 
+          : "https://placehold.co/300x300/333333/FFF?text=No+Image";
+        
+        // 판매자 실제 이름 가져오기
+        await this.loadSellerInfo(productData.sellerId);
+        
+        // 위치 정보 조합
+        let locationParts = [];
+        if (productData.siDo) locationParts.push(productData.siDo);
+        if (productData.siGunGu) locationParts.push(productData.siGunGu);
+        if (productData.eupMyeonDong) locationParts.push(productData.eupMyeonDong);
+        if (productData.apartmentName) locationParts.push(productData.apartmentName);
+        this.orderInfo.sellerLocation = locationParts.length > 0 ? locationParts.join(' ') : '위치 정보 없음';
         
         console.log('상품 정보 설정 완료');
         
@@ -381,15 +421,15 @@ export default {
       this.isLoading = true;
 
       try {
-        // 이미 생성된 주문 사용 (orderId는 이미 있음)
-        const orderId = this.orderInfo.orderId;
+        // 토스페이먼츠용 orderId 사용 (tossOrderId)
+        const tossOrderId = this.orderInfo.tossOrderId;
         
-        if (!orderId) {
-          throw new Error('주문 정보가 없습니다.');
+        if (!tossOrderId) {
+          throw new Error('토스페이먼츠 주문 정보가 없습니다.');
         }
 
         // 토스페이먼츠 결제위젯 초기화
-        await this.initializeTossWidget(orderId);
+        await this.initializeTossWidget(tossOrderId);
       } catch (error) {
         console.error("결제 처리 중 오류:", error);
         alert("결제 처리 중 오류가 발생했습니다: " + error.message);
@@ -408,14 +448,15 @@ export default {
       }
 
       // 백엔드 API 호출
-      const response = await fetch("/api/orders", {
+      const baseUrl = import.meta.env.VITE_BASE_URL || 'http://localhost:8080';
+      const response = await fetch(`${baseUrl}/orders`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
           productId: this.orderInfo.productId,
-          buyerId: 1, // 실제로는 로그인한 사용자 ID
+          buyerId: buyerId, // 로그인한 사용자 ID 사용
         }),
       });
 

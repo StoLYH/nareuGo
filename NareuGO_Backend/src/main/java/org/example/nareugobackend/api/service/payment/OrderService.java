@@ -40,6 +40,17 @@ public interface OrderService {
      * @throws IllegalArgumentException 주문이 존재하지 않는 경우
      */
     OrderSummary getOrderAndAutoExpire(Long orderId);
+
+    /**
+     * 토스페이먼츠 orderId로 주문 정보를 조회합니다.
+     *
+     * 결제 완료 페이지에서 tossOrderId를 사용하여 주문 정보를 가져올 때 호출됩니다.
+     *
+     * @param tossOrderId 토스페이먼츠 주문 ID
+     * @return 주문 요약 정보 (ID, 상품ID, 구매자ID, 상태, 금액)
+     * @throws IllegalArgumentException 주문이 존재하지 않는 경우
+     */
+    OrderSummary getOrderByTossOrderId(String tossOrderId);
 }
 
 

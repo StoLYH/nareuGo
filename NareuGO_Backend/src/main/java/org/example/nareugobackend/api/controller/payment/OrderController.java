@@ -63,6 +63,28 @@ public class OrderController {
         res.setBuyerId(summary.getBuyerId());
         res.setStatus(summary.getStatus());
         res.setAmount(summary.getAmount());
+        res.setTossOrderId(summary.getTossOrderId()); // 토스페이먼츠용 orderId 추가
+        return ResponseEntity.ok(res);
+    }
+
+    /**
+     * 토스페이먼츠 orderId로 주문 정보를 조회합니다.
+     * 
+     * 결제 완료 페이지에서 tossOrderId를 사용하여 주문 정보를 가져올 때 호출되는 API입니다.
+     * 
+     * @param tossOrderId 토스페이먼츠 주문 ID
+     * @return 주문 정보 (ID, 상품ID, 구매자ID, 상태, 금액)
+     */
+    @GetMapping("/toss/{tossOrderId}")
+    public ResponseEntity<OrderResponseDto> getOrderByTossOrderId(@PathVariable String tossOrderId) {
+        OrderSummary summary = orderService.getOrderByTossOrderId(tossOrderId);
+        OrderResponseDto res = new OrderResponseDto();
+        res.setOrderId(summary.getOrderId());
+        res.setProductId(summary.getProductId());
+        res.setBuyerId(summary.getBuyerId());
+        res.setStatus(summary.getStatus());
+        res.setAmount(summary.getAmount());
+        res.setTossOrderId(summary.getTossOrderId());
         return ResponseEntity.ok(res);
     }
 }

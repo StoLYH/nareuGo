@@ -3,6 +3,7 @@ package org.example.nareugobackend.api.service.payment;
 import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.example.nareugobackend.common.model.Order;
 import org.example.nareugobackend.common.model.OrderStatus;
@@ -48,6 +49,11 @@ public class OrderServiceImpl implements OrderService {
         order.setBuyerId(buyerId);
         order.setStatus(OrderStatus.PAYMENT_PENDING);
         order.setAmount(productPrice); // 실제 상품 가격 사용
+        
+        // 토스페이먼츠 규격에 맞는 orderId 생성 (영문 대소문자, 숫자, -, _ 허용, 6-64자)
+        String tossOrderId = generateTossOrderId(productId, buyerId);
+        order.setTossOrderId(tossOrderId);
+        
         orderMapper.insert(order);
         return order.getOrderId();
     }
@@ -55,23 +61,60 @@ public class OrderServiceImpl implements OrderService {
     @Override
     @Transactional
     public OrderSummary getOrderAndAutoExpire(Long orderId) {
-        Order order = orderMapper.findById(String.valueOf(orderId))
-            .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 주문입니다."));
-
-        // 결제 대기 15분 초과 시 자동 취소
-        if (order.getStatus() == OrderStatus.PAYMENT_PENDING && order.getCreatedAt() != null) {
-            if (Duration.between(order.getCreatedAt(), LocalDateTime.now()).toMinutes() >= 15) {
-                orderMapper.updateStatus(order.getOrderId(), OrderStatus.CANCELLED);
-                order.setStatus(OrderStatus.CANCELLED);
-            }
+        Order order = orderMapper.findById(orderId);
+        if (order == null) {
+            throw new IllegalArgumentException("주문을 찾을 수 없습니다: " + orderId);
         }
 
-        OrderSummary summary = new OrderSummary();
-        summary.setOrderId(order.getOrderId());
-        summary.setProductId(order.getProductId());
-        summary.setBuyerId(order.getBuyerId());
-        summary.setStatus(order.getStatus().name());
-        summary.setAmount(order.getAmount());
-        return summary;
+        // 자동 만료는 스케줄러에서 DB 시간 기준으로 처리합니다.
+
+        return new OrderSummary(
+            order.getOrderId(),
+            order.getProductId(),
+            order.getBuyerId(),
+            order.getStatus().name(),
+            order.getAmount(),
+            order.getTossOrderId()
+        );
+    }
+
+    @Override
+    public OrderSummary getOrderByTossOrderId(String tossOrderId) {
+        Order order = orderMapper.findByTossOrderId(tossOrderId);
+        if (order == null) {
+            throw new IllegalArgumentException("주문을 찾을 수 없습니다: " + tossOrderId);
+        }
+
+        return new OrderSummary(
+            order.getOrderId(),
+            order.getProductId(),
+            order.getBuyerId(),
+            order.getStatus().name(),
+            order.getAmount(),
+            order.getTossOrderId()
+        );
+    }
+
+    // ===== 토스페이먼츠 규격 orderId 생성 (결제용) =====
+    /**
+     * 토스페이먼츠 규격에 맞는 orderId 생성
+     * - 영문 대소문자, 숫자, 특수문자(-, _)만 허용
+     * - 6자 이상 64자 이하
+     */
+    private String generateTossOrderId(Long productId, Long buyerId) {
+        // 현재 시간을 밀리초로 변환하여 고유성 보장
+        long timestamp = System.currentTimeMillis();
+        
+        // 형식: ORDER_productId_buyerId_timestamp (예: ORDER_18_5_1726644123456)
+        String orderId = String.format("ORDER_%d_%d_%d", productId, buyerId, timestamp);
+        
+        // 64자 제한 확인 (초과 시 UUID 사용)
+        if (orderId.length() > 64) {
+            // UUID 사용 (하이픈 제거하여 32자)
+            String uuid = UUID.randomUUID().toString().replace("-", "");
+            orderId = "ORDER_" + uuid.substring(0, 26); // ORDER_ + 26자 = 32자
+        }
+        
+        return orderId;
     }
 }

@@ -6,6 +6,7 @@ import org.apache.ibatis.annotations.Param;
 import org.example.nareugobackend.api.controller.product.response.ProductDetailResponse;
 import org.example.nareugobackend.api.service.product.request.ProductServiceRequest;
 import org.example.nareugobackend.api.service.product.request.UserInfoRequest;
+import org.example.nareugobackend.common.model.ProductStatus;
 
 @Mapper
 public interface ProductMapper {
@@ -39,4 +40,6 @@ public interface ProductMapper {
     // 결제용 상품 가격 조회 (기존 코드와 분리)
     BigDecimal findProductPriceById(@Param("productId") Long productId);
 
+    // 결제 완료 시 상품 상태 변경 (FOR_SALE -> SOLD)
+    void updateStatus(@Param("productId") Long productId, @Param("status") ProductStatus status);
 }

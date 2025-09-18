@@ -62,5 +62,41 @@
     ORDER BY image_id ASC
   </select>
 
+  <!-- 결제용 SQL 매핑 (기존 상품 코드와 분리) -->
+  <!-- 결제용 상품 상세 조회 -->
+  <select id="findProductDetailById" parameterType="long" resultType="org.example.nareugobackend.api.controller.product.response.ProductDetailResponse">
+    SELECT
+      p.product_id,
+      p.seller_id,
+      p.title,
+      p.description,
+      p.price,
+      p.status,
+      p.created_at,
+      p.updated_at,
+      p.si_do,
+      p.si_gun_gu,
+      p.eup_myeon_dong,
+      p.apartment_name
+    FROM products p
+    WHERE p.product_id = #{productId}
+    AND p.status = 'FOR_SALE'
+  </select>
+
+  <!-- 결제용 상품 가격 조회 -->
+  <select id="findProductPriceById" parameterType="long" resultType="java.math.BigDecimal">
+    SELECT price
+    FROM products
+    WHERE product_id = #{productId}
+    AND status = 'FOR_SALE'
+  </select>
+
+  <!-- 결제 완료 시 상품 상태 변경 -->
+  <update id="updateStatus">
+    UPDATE products
+    SET status = #{status}
+    WHERE product_id = #{productId}
+  </update>
+
 
 </mapper>

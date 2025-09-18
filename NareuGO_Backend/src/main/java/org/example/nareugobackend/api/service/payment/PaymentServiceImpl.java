@@ -8,6 +8,8 @@ import org.example.nareugobackend.common.model.Payment;
 import org.example.nareugobackend.common.model.PaymentStatus;
 import org.example.nareugobackend.mapper.OrderMapper;
 import org.example.nareugobackend.mapper.PaymentMapper;
+import org.example.nareugobackend.mapper.ProductMapper;
+import org.example.nareugobackend.common.model.ProductStatus;
 import org.example.nareugobackend.api.controller.payment.response.TossPaymentConfirmResponseDto;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -28,6 +30,7 @@ public class PaymentServiceImpl implements PaymentService {
     // @RequiredArgsConstructor가 생성자를 통해 자동으로 주입해주는 필드들입니다.
     private final OrderMapper orderMapper;
     private final PaymentMapper paymentMapper;
+    private final ProductMapper productMapper;
 
     // WebClient는 빌더를 주입받아 필요할 때 생성해서 사용하는 것이 좋습니다.
     private final WebClient.Builder webClientBuilder;
@@ -51,10 +54,11 @@ public class PaymentServiceImpl implements PaymentService {
     public void confirmPayment(PaymentConfirmRequestDto requestDto) {
 
         // --- 1. DB에서 주문 정보 조회 및 검증 ---
-        // requestDto에 담긴 orderId를 사용하여 우리 DB에서 실제 주문 정보를 가져옵니다.
-        Order order = orderMapper.findById(String.valueOf(requestDto.getOrderId()))
-            .orElseThrow(() -> new IllegalArgumentException(
-                "존재하지 않는 주문입니다. orderId=" + requestDto.getOrderId()));
+        // 토스 결제용 orderId(tossOrderId)는 문자열이므로 해당 값으로 주문을 조회합니다.
+        Order order = orderMapper.findByTossOrderId(requestDto.getOrderId());
+        if (order == null) {
+            throw new IllegalArgumentException("존재하지 않는 주문입니다. tossOrderId=" + requestDto.getOrderId());
+        }
 
         // --- 2. 결제 금액 위변조 검증 (매우 중요!) ---
         // 프론트엔드에서 보낸 결제 금액과 DB에 저장된 실제 주문 금액이 일치하는지 확인합니다.
@@ -80,9 +84,15 @@ public class PaymentServiceImpl implements PaymentService {
             .bodyValue(requestDto) // paymentKey, orderId, amount
             .retrieve()
             .onStatus(
-                status -> status.isError(),
+                status -> status.is4xxClientError() || status.is5xxServerError(),
                 clientResponse -> clientResponse.bodyToMono(String.class)
-                    .map(body -> new IllegalStateException("Toss confirm failed: " + body))
+                    .flatMap(body -> {
+                        String message = "Toss confirm failed: " + body;
+                        if (clientResponse.statusCode().is4xxClientError()) {
+                            return reactor.core.publisher.Mono.error(new org.springframework.web.server.ResponseStatusException(org.springframework.http.HttpStatus.BAD_REQUEST, message));
+                        }
+                        return reactor.core.publisher.Mono.error(new org.springframework.web.server.ResponseStatusException(org.springframework.http.HttpStatus.BAD_GATEWAY, message));
+                    })
             )
             .bodyToMono(TossPaymentConfirmResponseDto.class)
             .block();
@@ -116,5 +126,8 @@ public class PaymentServiceImpl implements PaymentService {
         payment.setStatus(PaymentStatus.DONE);
         payment.setApprovedAt(tossResponse.getApprovedAt() != null ? tossResponse.getApprovedAt().toLocalDateTime() : LocalDateTime.now());
         paymentMapper.save(payment); // MyBatis 매퍼를 통해 DB에 저장
+
+        // 5-3. 상품(products) 상태를 SOLD로 변경합니다.
+        productMapper.updateStatus(order.getProductId(), ProductStatus.SOLD);
     }
 }

@@ -9,20 +9,39 @@
 -->
 <mapper namespace="org.example.nareugobackend.mapper.OrderMapper">
   
+  <!-- Order 결과 매핑 -->
+  <resultMap id="OrderResultMap" type="org.example.nareugobackend.common.model.Order">
+    <id property="orderId" column="order_id"/>
+    <result property="productId" column="product_id"/>
+    <result property="buyerId" column="buyer_id"/>
+    <result property="status" column="status" typeHandler="org.apache.ibatis.type.EnumTypeHandler"/>
+    <result property="amount" column="amount"/>
+    <result property="tossOrderId" column="toss_order_id"/>
+    <result property="createdAt" column="created_at"/>
+    <result property="updatedAt" column="updated_at"/>
+  </resultMap>
+  
   <!-- 주문 ID로 주문 정보 조회 -->
-  <select id="findById" resultType="org.example.nareugobackend.common.model.Order">
-    SELECT order_id, product_id, buyer_id, status, amount, created_at, updated_at
+  <select id="findById" resultMap="OrderResultMap">
+    SELECT order_id, product_id, buyer_id, status, amount, toss_order_id, created_at, updated_at
     FROM orders
     WHERE order_id = #{orderId}
   </select>
   
   <!-- 상품 ID로 최근 주문 조회 (동시 대기 제한용) -->
-  <select id="findByProductId" resultType="org.example.nareugobackend.common.model.Order">
-    SELECT order_id, product_id, buyer_id, status, amount, created_at, updated_at
+  <select id="findByProductId" resultMap="OrderResultMap">
+    SELECT order_id, product_id, buyer_id, status, amount, created_at, toss_order_id, updated_at
     FROM orders
     WHERE product_id = #{productId}
-    ORDER BY order_id DESC
+    ORDER BY created_at DESC
     LIMIT 1
+  </select>
+  
+  <!-- 토스 주문 ID로 주문 조회 -->
+  <select id="findByTossOrderId" resultMap="OrderResultMap">
+    SELECT order_id, product_id, buyer_id, status, amount, created_at, toss_order_id, updated_at
+    FROM orders
+    WHERE toss_order_id = #{tossOrderId}
   </select>
   
   <!-- 주문 상태 업데이트 -->
@@ -35,8 +54,8 @@
   
   <!-- 새 주문 생성 (결제 대기 상태로 생성) -->
   <insert id="insert" parameterType="org.example.nareugobackend.common.model.Order" useGeneratedKeys="true" keyProperty="order.orderId">
-    INSERT INTO orders (product_id, buyer_id, status, amount, created_at, updated_at)
-    VALUES (#{order.productId}, #{order.buyerId}, #{order.status}, #{order.amount}, NOW(), NOW())
+    INSERT INTO orders (product_id, buyer_id, status, amount, toss_order_id, created_at, updated_at)
+    VALUES (#{order.productId}, #{order.buyerId}, 'PAYMENT_PENDING', #{order.amount}, #{order.tossOrderId}, NOW(), NOW())
   </insert>
   
   <!-- 기존 주문을 결제 대기 상태로 재활성화 (미사용) -->
