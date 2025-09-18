@@ -171,6 +171,7 @@ const handleNotification = () => {
   router.push('/notifications')
 }
 
+
 const handleChatClick = (chatId) => {
   // 채팅방 정보 찾기
   const chatRoom = chats.value.find(chat => chat.id === chatId)

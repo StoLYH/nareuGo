@@ -145,6 +145,7 @@ const handleNotification = () => {
   router.push('/notifications')
 }
 
+
 const handleNavigation = (tab) => {
   switch(tab) {
     case 'home':

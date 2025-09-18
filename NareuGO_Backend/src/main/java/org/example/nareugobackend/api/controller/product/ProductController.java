@@ -37,15 +37,16 @@ public class ProductController {
         return ResponseEntity.ok(productService.createProduct(productRequest));
     }
 
-//
+
 //    /**
 //     * 상품 삭제
 //     *
-//     * @parm id
+//     * @param id
 //     * @return ProductDeleteResponse
 //     */
 //    @DeleteMapping("/{id}")
 //    public ResponseEntity<ProductDeleteResponse> deleteProduct(@PathVariable Long id) {
+//        productService.deleteProduct(id);
 //        return ResponseEntity.ok(new ProductDeleteResponse(true, "상품삭제 성공"));
 //    }
 
@@ -65,7 +66,7 @@ public class ProductController {
      *
      * @return
      */
-    @GetMapping("/{productId}")
+    @GetMapping("/item/{productId}")
     public ResponseEntity<ProductDetailResponse> selectOneProduct(@PathVariable Long productId) {
         ProductDetailResponse product = productService.selectOneProduct(productId);
 

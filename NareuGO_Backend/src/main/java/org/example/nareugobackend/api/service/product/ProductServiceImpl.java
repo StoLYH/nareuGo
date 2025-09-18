@@ -133,13 +133,11 @@ public class ProductServiceImpl implements ProductService {
         }
     }
 
-//
-//    /**
-//     * 상품 삭제
-//     *
-//     * @parm id
-//     * @return ProductDeleteResponse
-//     */
+    /**
+     * 상품 삭제
+     *
+     * @param productId
+     */
 //    @Transactional
 //    @Override
 //    public void deleteProduct(long productId) {
@@ -223,6 +221,8 @@ public class ProductServiceImpl implements ProductService {
     public ProductDetailResponse selectOneProduct(long productId) {
         // 상품 기본 정보 조회
         ProductDetailResponse product = productMapper.selectOneProduct(productId);
+
+        System.out.println(product.getApartmentName());
 
         if (product == null) {
             return null; // 상품이 존재하지 않음

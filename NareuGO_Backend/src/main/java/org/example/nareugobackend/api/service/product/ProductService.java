@@ -10,7 +10,7 @@ public interface ProductService {
 
     ProductCreateResponse createProduct(ProductCreateRequest productRequest);
 
-//    void deleteProduct(long productId);
+    //void deleteProduct(long productId);
 
     List<ProductDetailResponse> selectProduct (long userId);
 
