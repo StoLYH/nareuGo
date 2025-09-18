@@ -45,8 +45,9 @@ try {
     // 사용자 정보 조회
     await authStore.getUserInfo()
 
-    // ItemList 페이지로 리다이렉트
-    const redirectTo = route.query.redirect || '/items'
+    // 환경별 리다이렉트 설정
+    const isLocal = window.location.hostname === 'localhost'
+    const redirectTo = route.query.redirect || (isLocal ? '/' : '/items')
     router.replace(redirectTo)
 
 } catch (err) {

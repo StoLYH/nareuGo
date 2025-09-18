@@ -194,3 +194,65 @@ CREATE TABLE IF NOT EXISTS `notifications` (
     REFERENCES `orders` (`order_id`)
     ON DELETE SET NULL ON UPDATE CASCADE
     ) ENGINE = InnoDB COMMENT = '실시간 알림 정보';
+
+-- -----------------------------------------------------
+-- 5. 마이페이지 관련 테이블
+-- -----------------------------------------------------
+
+-- 사용자 좋아요(관심목록) 테이블
+CREATE TABLE IF NOT EXISTS `user_favorites` (
+    `favorite_id` BIGINT NOT NULL AUTO_INCREMENT COMMENT '좋아요 ID',
+    `user_id` BIGINT NOT NULL COMMENT '사용자 ID',
+    `product_id` BIGINT NOT NULL COMMENT '상품 ID',
+    `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '좋아요 등록 시간',
+    PRIMARY KEY (`favorite_id`),
+    UNIQUE INDEX `unique_user_product` (`user_id` ASC, `product_id` ASC),
+    INDEX `fk_user_favorites_users_idx` (`user_id` ASC),
+    INDEX `fk_user_favorites_products_idx` (`product_id` ASC),
+    CONSTRAINT `fk_user_favorites_users`
+        FOREIGN KEY (`user_id`)
+        REFERENCES `users` (`user_id`)
+        ON DELETE CASCADE ON UPDATE CASCADE,
+    CONSTRAINT `fk_user_favorites_products`
+        FOREIGN KEY (`product_id`)
+        REFERENCES `products` (`product_id`)
+        ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE = InnoDB COMMENT = '사용자 관심목록(좋아요)';
+
+-- 사용자 상품 조회 이력 테이블
+CREATE TABLE IF NOT EXISTS `user_product_history` (
+    `history_id` BIGINT NOT NULL AUTO_INCREMENT COMMENT '이력 ID',
+    `user_id` BIGINT NOT NULL COMMENT '사용자 ID',
+    `product_id` BIGINT NOT NULL COMMENT '상품 ID',
+    `viewed_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '조회 시간',
+    PRIMARY KEY (`history_id`),
+    INDEX `fk_user_product_history_users_idx` (`user_id` ASC),
+    INDEX `fk_user_product_history_products_idx` (`product_id` ASC),
+    INDEX `idx_user_viewed_at` (`user_id` ASC, `viewed_at` DESC),
+    CONSTRAINT `fk_user_product_history_users`
+        FOREIGN KEY (`user_id`)
+        REFERENCES `users` (`user_id`)
+        ON DELETE CASCADE ON UPDATE CASCADE,
+    CONSTRAINT `fk_user_product_history_products`
+        FOREIGN KEY (`product_id`)
+        REFERENCES `products` (`product_id`)
+        ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE = InnoDB COMMENT = '사용자 상품 조회 이력';
+
+-- 동네 인증 테이블
+CREATE TABLE IF NOT EXISTS `neighborhood_verification` (
+    `verification_id` BIGINT NOT NULL AUTO_INCREMENT COMMENT '인증 ID',
+    `user_id` BIGINT NOT NULL COMMENT '사용자 ID',
+    `verification_type` ENUM('PHOTO', 'DOCUMENT', 'MANUAL') NOT NULL COMMENT '인증 방식',
+    `verification_data` TEXT COMMENT '인증 데이터 (사진 URL, 문서 정보 등)',
+    `status` ENUM('PENDING', 'APPROVED', 'REJECTED') NOT NULL DEFAULT 'PENDING' COMMENT '인증 상태',
+    `submitted_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '제출 시간',
+    `processed_at` DATETIME NULL COMMENT '처리 시간',
+    `admin_notes` TEXT COMMENT '관리자 메모',
+    PRIMARY KEY (`verification_id`),
+    INDEX `fk_neighborhood_verification_users_idx` (`user_id` ASC),
+    CONSTRAINT `fk_neighborhood_verification_users`
+        FOREIGN KEY (`user_id`)
+        REFERENCES `users` (`user_id`)
+        ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE = InnoDB COMMENT = '동네 인증 정보';
