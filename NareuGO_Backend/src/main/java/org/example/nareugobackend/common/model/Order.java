@@ -32,6 +32,7 @@ public class Order {
     private Long buyerId;           // 구매자 ID
     private OrderStatus status;     // 주문 상태
     private BigDecimal amount;      // 주문 금액 (결제 시점의 상품 가격)
+    private String tossOrderId;     // 토스페이먼츠용 orderId (영문+숫자+특수문자, 6-64자)
     private LocalDateTime createdAt; // 주문 생성 시각
     private LocalDateTime updatedAt; // 상태 변경 시각
 }

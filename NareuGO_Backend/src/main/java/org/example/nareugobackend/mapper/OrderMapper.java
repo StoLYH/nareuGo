@@ -9,8 +9,9 @@ import org.example.nareugobackend.common.model.OrderStatus;
 @Mapper
 public interface OrderMapper {
 
-    Optional<Order> findById(String orderId);
+    Order findById(@Param("orderId") Long orderId);
     Optional<Order> findByProductId(@Param("productId") Long productId);
+    Order findByTossOrderId(@Param("tossOrderId") String tossOrderId);
 
     void updateStatus(@Param("orderId") Long orderId, @Param("status") OrderStatus status);
 

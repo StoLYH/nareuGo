@@ -14,8 +14,9 @@ public class PaymentConfirmRequestDto {
 
     @NotBlank
     private String paymentKey;
-    @NotNull
-    private Long orderId;
+    // 토스페이먼츠 결제 승인 요청에서는 tossOrderId(String)를 사용합니다.
+    @NotBlank
+    private String orderId;
     @NotNull
     @Positive
     private BigDecimal amount;

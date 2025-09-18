@@ -36,6 +36,15 @@ public class UserService {
         .orElseThrow(() -> new UserException(UserErrorCode.USER_NOT_FOUND));
   }
 
+  // 결제용 사용자 정보 조회 (기존 코드와 분리)
+  public UserEntity getUserById(Long userId) {
+    UserEntity user = userMapper.findById(userId);
+    if (user == null) {
+      throw new UserException(UserErrorCode.USER_NOT_FOUND);
+    }
+    return user;
+  }
+
   // 기본 로그인 -> 건들지 X
   @Transactional
   public LoginServiceResponse loginByEmail(LoginServiceRequest request) {

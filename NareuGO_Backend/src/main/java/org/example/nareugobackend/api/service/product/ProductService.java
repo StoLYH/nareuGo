@@ -16,4 +16,12 @@ public interface ProductService {
 
 //    ProductDetailResponse selectOneProduct (long productId);
 
+    // ===== 결제용 메서드 (기존 상품 코드와 분리) =====
+    /**
+     * 결제용 상품 단일 조회
+     * @param productId 상품 ID
+     * @return ProductDetailResponse
+     */
+    ProductDetailResponse getProductForPayment(long productId);
+
 }

@@ -17,9 +17,10 @@
         <h2>{{ otherUserName }}</h2>
         <span>{{ productTitle }}</span>
       </div>
-      <!-- 결제 아이콘 버튼 -->
-      <button class="payment-btn" title="결제">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+       <!-- 결제 아이콘 버튼 -->
+       <button class="payment-btn" title="결제" @click="handlePaymentClick" :disabled="isCreatingOrder">
+        <div v-if="isCreatingOrder" class="loading-spinner-small"></div>
+        <svg v-else width="20" height="20" viewBox="0 0 24 24" fill="none">
           <rect
             x="2"
             y="5"
@@ -39,7 +40,7 @@
             stroke-width="2"
           />
         </svg>
-        <span>결제</span>
+        <span>{{ isCreatingOrder ? '주문 생성 중...' : '결제' }}</span>
       </button>
     </div>
 
@@ -148,6 +149,71 @@ const loading = ref(false);
 const hasMoreMessages = ref(true);
 const currentPage = ref(1);
 const newMessage = ref('');
+const isCreatingOrder = ref(false);
+
+
+// ===== 결제 버튼 클릭 처리 =====
+const handlePaymentClick = async () => {
+  if (isCreatingOrder.value) return;
+  
+  isCreatingOrder.value = true;
+  
+  try {
+    console.log('결제 버튼 클릭 - 주문 생성 시작');
+    
+    // 테스트용 상품 정보 (실제로는 채팅방 컨텍스트에서 가져와야 함)
+    const productId = 18; // 채팅 중인 상품 ID
+    const buyerId = getCurrentUserId(); // 로그인한 사용자 ID
+    
+    // 백엔드에서 주문 생성
+    const baseUrl = import.meta.env.VITE_BASE_URL || 'http://localhost:8080';
+    const response = await fetch(`${baseUrl}/orders`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        productId: productId,
+        buyerId: buyerId
+      })
+    });
+    
+    if (!response.ok) {
+      throw new Error('주문 생성에 실패했습니다.');
+    }
+    
+    const orderData = await response.json();
+    const orderId = orderData.orderId;
+    
+    console.log('주문 생성 완료 - orderId:', orderId);
+    
+    // 생성된 orderId로 결제 페이지로 이동
+    router.push({
+      name: 'PaymentDetail',
+      params: { orderId: orderId }
+    });
+    
+  } catch (error) {
+    console.error('주문 생성 실패:', error);
+    alert('주문 생성 중 오류가 발생했습니다: ' + error.message);
+  } finally {
+    isCreatingOrder.value = false;
+  }
+};
+
+// 현재 로그인한 사용자 ID 가져오기
+const getCurrentUserId = () => {
+  try {
+    const userInfo = JSON.parse(localStorage.getItem('user') || '{}');
+    return userInfo.userId || 1; // 기본값 1
+  } catch (error) {
+    console.error('사용자 정보 로드 실패:', error);
+    return 1; // 기본값
+  }
+};
+
+
+
 
 // 채팅 관련 데이터
 const roomId = ref(route.params.id);

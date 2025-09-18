@@ -12,6 +12,7 @@ public class OrderResponseDto {
     private Long buyerId;
     private String status;
     private BigDecimal amount;
+    private String tossOrderId;     // 토스페이먼츠용 orderId
 }
 
 
