@@ -150,7 +150,7 @@ public class ProductServiceImpl implements ProductService {
 
     /**
      * 메인페이지 상품 목록 조회
-     *
+     *g
      */
     @Transactional
     @Override
