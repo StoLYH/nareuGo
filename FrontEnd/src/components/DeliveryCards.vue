@@ -5,7 +5,7 @@
 
     <div class="cards-container">
       <!-- 택배 현황 카드 (API 데이터 기반) -->
-      <div v-for="delivery in activeDeliveries" :key="delivery.deliveryId" class="delivery-card">
+      <div v-for="delivery in activeDeliveries" :key="delivery.deliveryId" class="delivery-card" @click="openDetailModal(delivery)">
         <div class="card-header">
           <div class="delivery-icon">📦</div>
           <div class="delivery-info">
@@ -107,6 +107,15 @@
         </div>
       </div>
     </div>
+
+    <!-- 택배 상세 모달 -->
+    <DeliveryDetailModal
+      :isVisible="isModalVisible"
+      :delivery="selectedDelivery || {}"
+      @close="closeDetailModal"
+      @inquiry="handleInquiry"
+      @change-address="handleAddressChange"
+    />
   </div>
 </template>
 
@@ -114,10 +123,15 @@
 import { ref, onMounted, computed } from 'vue';
 import { useAuthStore } from '@/stores/auth';
 import apiClient from '@/api/client';
+import DeliveryDetailModal from './DeliveryDetailModal.vue';
 
 const authStore = useAuthStore();
 const deliveries = ref([]);
 const isLoading = ref(false);
+
+// 모달 관련 상태
+const isModalVisible = ref(false);
+const selectedDelivery = ref(null);
 
 // 배송 상태별 순서 정의
 const statusOrder = {
@@ -221,6 +235,27 @@ const formatDateTime = (dateTime) => {
 const activeDeliveries = computed(() => {
   return deliveries.value.filter(delivery => delivery.status !== 'CANCELLED');
 });
+
+// 모달 관련 함수들
+const openDetailModal = (delivery) => {
+  selectedDelivery.value = delivery;
+  isModalVisible.value = true;
+};
+
+const closeDetailModal = () => {
+  isModalVisible.value = false;
+  selectedDelivery.value = null;
+};
+
+const handleInquiry = (delivery) => {
+  alert('문의하기 기능이 곧 추가될 예정입니다.');
+  closeDetailModal();
+};
+
+const handleAddressChange = (delivery) => {
+  alert('배송지 변경 기능이 곧 추가될 예정입니다.');
+  closeDetailModal();
+};
 </script>
 
 <style scoped>
@@ -255,6 +290,7 @@ const activeDeliveries = computed(() => {
   padding: 20px;
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
   transition: all 0.3s ease;
+  cursor: pointer;
 }
 
 .delivery-card:hover {
