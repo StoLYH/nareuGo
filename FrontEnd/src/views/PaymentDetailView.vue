@@ -230,18 +230,22 @@ export default {
       selectedMethod: "card",
       termsAgreed: false,
       isLoading: false,
+      isLoadingOrder: true,
       orderInfo: {
-        productId: 1,
-        productTitle: "소니 Wh-1000xm5 실버 팝니다.",
-        productImage: "https://placehold.co/300x300/333333/FFF?text=Product",
-        price: 360000,
-        sellerName: "감성탐방러",
-        sellerLocation: "102동 501호",
+        orderId: null,
+        productId: null,
+        productTitle: "",
+        productImage: "https://placehold.co/300x300/333333/FFF?text=Loading",
+        price: 0,
+        sellerName: "",
+        sellerLocation: "",
+        status: "",
+        amount: 0
       },
       buyerInfo: {
-        name: "홍길동",
-        phone: "010-1234-5678",
-        address: "OO마을 12단지 102동 501호",
+        name: "",
+        phone: "",
+        address: "",
       },
     };
   },
@@ -257,6 +261,117 @@ export default {
     goBack() {
       this.$router.go(-1);
     },
+
+    // ===== orderId로 주문 정보 조회 =====
+    async loadOrderInfo(orderId) {
+      try {
+        console.log('주문 정보 로딩 시작 - orderId:', orderId);
+        
+        const baseUrl = import.meta.env.VITE_BASE_URL || 'http://localhost:8080';
+        const response = await fetch(`${baseUrl}/orders/${orderId}`);
+        if (!response.ok) {
+          throw new Error('주문 정보를 불러올 수 없습니다.');
+        }
+        
+        const orderData = await response.json();
+        console.log('주문 정보 로드 완료:', orderData);
+        
+        // 주문 기본 정보 설정
+        this.orderInfo.orderId = orderData.orderId;
+        this.orderInfo.productId = orderData.productId;
+        this.orderInfo.price = orderData.amount;
+        this.orderInfo.amount = orderData.amount;
+        this.orderInfo.status = orderData.status;
+        
+        // 상품 정보 로드 (productId 기반)
+        await this.loadProductInfo(orderData.productId);
+        
+      } catch (error) {
+        console.error('주문 정보 로드 실패:', error);
+        alert('주문 정보를 불러오는데 실패했습니다: ' + error.message);
+        this.$router.go(-1);
+      }
+    },
+
+    // ===== 상품 정보 조회 =====
+    async loadProductInfo(productId) {
+      try {
+        console.log('상품 정보 로딩 - productId:', productId);
+        
+        const baseUrl = import.meta.env.VITE_BASE_URL || 'http://localhost:8080';
+        const response = await fetch(`${baseUrl}/products/${productId}`);
+        if (!response.ok) {
+          throw new Error('상품 정보를 불러올 수 없습니다.');
+        }
+        
+        const productData = await response.json();
+        console.log('상품 정보 로드 완료:', productData);
+        
+        this.orderInfo.productTitle = productData.title;
+        this.orderInfo.productImage = productData.imageUrl || "https://placehold.co/300x300/333333/FFF?text=No+Image";
+        this.orderInfo.sellerName = productData.sellerName;
+        this.orderInfo.sellerLocation = productData.sellerLocation;
+        
+        console.log('상품 정보 설정 완료');
+        
+      } catch (error) {
+        console.error('상품 정보 로드 실패:', error);
+        // 기본값 사용
+        this.orderInfo.productTitle = "상품 정보 로드 실패";
+        this.orderInfo.productImage = "https://placehold.co/300x300/333333/FFF?text=Error";
+        this.orderInfo.sellerName = "알 수 없음";
+        this.orderInfo.sellerLocation = "알 수 없음";
+      }
+    },
+
+    // ===== 구매자 정보 로드 (백엔드 API 호출) =====
+    async loadBuyerInfo() {
+      try {
+        // localStorage에서 userId 가져오기
+        const userInfo = JSON.parse(localStorage.getItem('user') || '{}');
+        const userId = userInfo.userId || userInfo.id;
+        
+        if (!userId) {
+          throw new Error('사용자 ID를 찾을 수 없습니다.');
+        }
+
+        console.log('사용자 정보 API 호출 - userId:', userId);
+        
+        // 백엔드에서 사용자 정보 조회
+        const baseUrl = import.meta.env.VITE_BASE_URL || 'http://localhost:8080';
+        const response = await fetch(`${baseUrl}/general-login/users/${userId}`);
+        
+        if (!response.ok) {
+          throw new Error('사용자 정보를 불러올 수 없습니다.');
+        }
+        
+        const userData = await response.json();
+        console.log('백엔드에서 받은 사용자 정보:', userData);
+        
+        // 사용자 정보 매핑
+        this.buyerInfo.name = userData.name || '구매자';
+        this.buyerInfo.phone = userData.phoneNumber || '010-0000-0000';
+        
+        // 주소 정보를 아파트명, 동, 호수로 조합
+        let addressParts = [];
+        // if (userData.siDo) addressParts.push(userData.siDo);
+        // if (userData.siGunGu) addressParts.push(userData.siGunGu);
+        // if (userData.eupMyeonDong) addressParts.push(userData.eupMyeonDong);
+        if (userData.apartmentName) addressParts.push(userData.apartmentName);
+        if (userData.buildingDong) addressParts.push(`${userData.buildingDong}동`);
+        if (userData.buildingHo) addressParts.push(`${userData.buildingHo}호`);
+        
+        this.buyerInfo.address = addressParts.length > 0 ? addressParts.join(' ') : '주소 정보 없음';
+        
+        console.log('구매자 정보 로드 완료:', this.buyerInfo);
+        
+      } catch (error) {
+        console.error('구매자 정보 로드 실패:', error);
+        this.buyerInfo.name = '구매자';
+        this.buyerInfo.phone = '010-0000-0000';
+        this.buyerInfo.address = '주소 정보 없음';
+      }
+    },
     selectPaymentMethod(method) {
       this.selectedMethod = method;
     },
@@ -266,15 +381,11 @@ export default {
       this.isLoading = true;
 
       try {
-        // 백엔드가 실행 중이면 실제 주문 생성, 아니면 테스트용 주문 ID 사용
-        let orderId;
-        try {
-          const orderResponse = await this.createOrder();
-          orderId = orderResponse.orderId;
-        } catch (error) {
-          console.warn("백엔드 API 호출 실패, 테스트 모드로 진행:", error);
-          // 테스트용 주문 ID 생성 (타임스탬프 기반)
-          orderId = `test_${Date.now()}`;
+        // 이미 생성된 주문 사용 (orderId는 이미 있음)
+        const orderId = this.orderInfo.orderId;
+        
+        if (!orderId) {
+          throw new Error('주문 정보가 없습니다.');
         }
 
         // 토스페이먼츠 결제위젯 초기화
@@ -288,6 +399,14 @@ export default {
     },
 
     async createOrder() {
+      // localStorage에서 현재 로그인한 사용자 정보 가져오기
+      const userInfo = JSON.parse(localStorage.getItem('user') || '{}');
+      const buyerId = userInfo.userId;
+      
+      if (!buyerId) {
+        throw new Error('로그인 정보를 찾을 수 없습니다.');
+      }
+
       // 백엔드 API 호출
       const response = await fetch("/api/orders", {
         method: "POST",
@@ -333,8 +452,32 @@ export default {
     },
   },
 
-  mounted() {
+  async mounted() {
     // 토스페이먼츠 SDK는 requestPayment 함수에서 자동으로 로드됩니다
+    
+    // 라우트 파라미터에서 orderId 가져오기
+    const orderId = this.$route.params.orderId;
+    
+    if (!orderId) {
+      alert('주문 정보가 없습니다.');
+      this.$router.go(-1);
+      return;
+    }
+    
+    try {
+      // 구매자 정보 로드
+      this.loadBuyerInfo();
+      
+      // 주문 정보 로드 (상품 정보 포함)
+      await this.loadOrderInfo(orderId);
+      
+    } catch (error) {
+      console.error('페이지 초기화 실패:', error);
+      alert('페이지를 불러오는데 실패했습니다.');
+      this.$router.go(-1);
+    } finally {
+      this.isLoadingOrder = false;
+    }
   },
 };
 </script>

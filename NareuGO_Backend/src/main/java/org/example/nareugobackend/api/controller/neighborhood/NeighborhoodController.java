@@ -28,28 +28,26 @@ public class NeighborhoodController {
      */
     @PostMapping("/verify")
     public ResponseEntity<NeighborhoodVerificationResponse> verifyNeighborhood(
-            @RequestBody NeighborhoodVerificationRequest request,
-            @AuthenticationPrincipal UserDetails userDetails) {
+            @RequestBody NeighborhoodVerificationRequest request) {
         
         try {
-            log.info("동네 인증 저장 요청 - 사용자: {}, GPS 주소: {}", 
-                userDetails != null ? userDetails.getUsername() : "unknown", 
-                request.getGpsAddress());
+            log.info("동네 인증 저장 요청 - GPS 주소: {}", request.getGpsAddress());
             
-            // 사용자 정보 검증
-            if (userDetails == null) {
+            // 개발 단계에서는 요청 본문의 userEmail 사용
+            String userEmail = request.getUserEmail();
+            if (userEmail == null || userEmail.isEmpty()) {
                 NeighborhoodVerificationResponse errorResponse = new NeighborhoodVerificationResponse();
                 errorResponse.setSuccess(false);
-                errorResponse.setMessage("인증이 필요합니다.");
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
+                errorResponse.setMessage("사용자 이메일이 필요합니다.");
+                return ResponseEntity.badRequest().body(errorResponse);
             }
             
             // 동네 인증 정보 저장
             NeighborhoodVerificationResponse response = neighborhoodService.saveVerificationInfo(
-                userDetails.getUsername(), request);
+                userEmail, request);
             
             if (response.isSuccess()) {
-                log.info("동네 인증 저장 성공 - 사용자: {}", userDetails.getUsername());
+                log.info("동네 인증 저장 성공 - 사용자: {}", userEmail);
                 return ResponseEntity.ok(response);
             } else {
                 log.warn("동네 인증 저장 실패: {}", response.getMessage());
@@ -72,18 +70,18 @@ public class NeighborhoodController {
      */
     @GetMapping("/status")
     public ResponseEntity<NeighborhoodVerificationResponse> getVerificationStatus(
-            @AuthenticationPrincipal UserDetails userDetails) {
+            @RequestParam String userEmail) {
         
         try {
-            if (userDetails == null) {
+            if (userEmail == null || userEmail.isEmpty()) {
                 NeighborhoodVerificationResponse errorResponse = new NeighborhoodVerificationResponse();
                 errorResponse.setSuccess(false);
-                errorResponse.setMessage("인증이 필요합니다.");
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
+                errorResponse.setMessage("사용자 이메일이 필요합니다.");
+                return ResponseEntity.badRequest().body(errorResponse);
             }
             
             NeighborhoodVerificationResponse response = neighborhoodService.getVerificationStatus(
-                userDetails.getUsername());
+                userEmail);
             
             return ResponseEntity.ok(response);
             

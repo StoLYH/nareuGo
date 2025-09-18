@@ -1,4 +1,5 @@
 package org.example.nareugobackend.mapper;
+import java.math.BigDecimal;
 import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -31,5 +32,11 @@ public interface ProductMapper {
 
     // 사용자 Id 이용하기
     UserInfoRequest selectUserInfo(@Param("userId") Long userId);
+
+    // 결제용 상품 상세 조회 (기존 코드와 분리)
+    ProductDetailResponse findProductDetailById(@Param("productId") Long productId);
+
+    // 결제용 상품 가격 조회 (기존 코드와 분리)
+    BigDecimal findProductPriceById(@Param("productId") Long productId);
 
 }
