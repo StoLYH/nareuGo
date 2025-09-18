@@ -122,7 +122,7 @@
 <script setup>
 import { ref, onMounted, computed } from 'vue';
 import { useAuthStore } from '@/stores/auth';
-import apiClient from '@/api/client';
+import { getDeliveries } from '@/api/delivery/delivery';
 import DeliveryDetailModal from './DeliveryDetailModal.vue';
 
 const authStore = useAuthStore();
@@ -165,11 +165,10 @@ const loadDeliveries = async () => {
 
   try {
     isLoading.value = true;
-    const response = await apiClient.get(`/mypage/deliveries/${authStore.user.userId}`);
-    deliveries.value = response.data || [];
+    const data = await getDeliveries(authStore.user.userId);
+    deliveries.value = data || [];
     console.log('배송 데이터 조회 성공:', deliveries.value);
     console.log('첫 번째 배송 데이터 구조:', deliveries.value[0]);
-    console.log('전체 응답 객체:', response);
   } catch (error) {
     console.error('배송 데이터 조회 실패:', error);
     deliveries.value = [];
