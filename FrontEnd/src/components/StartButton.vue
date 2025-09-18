@@ -7,10 +7,13 @@
 </template>
 
 <script setup>
+import { useRouter } from 'vue-router';
+
+const router = useRouter();
+
 const startMyNarGo = () => {
-  // 마이나르고 시작하기 기능 구현
-  console.log('마이나르고 서비스 시작');
-  // 여기에 실제 서비스 시작 로직을 구현
+  console.log('나르고 시작하기 - ItemList로 이동');
+  router.push('/items');
 };
 </script>
 

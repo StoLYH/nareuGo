@@ -2,7 +2,7 @@
   <div class="chat-page">
     <!-- 헤더 -->
     <div class="chat-header">
-      <button class="back-btn">
+      <button class="back-btn" @click="goBack">
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
           <path
             d="M15 18L9 12L15 6"
@@ -14,8 +14,8 @@
         </svg>
       </button>
       <div class="header-info">
-        <h2>Flipkart Health+</h2>
-        <span>HEALTH ORGANIZATION</span>
+        <h2>{{ otherUserName }}</h2>
+        <span>{{ productTitle }}</span>
       </div>
       <!-- 결제 아이콘 버튼 -->
       <button class="payment-btn" title="결제">
@@ -103,7 +103,13 @@
           />
         </svg>
       </button>
-      <input type="text" placeholder="Message" class="message-text" />
+      <input 
+        type="text" 
+        placeholder="Message" 
+        class="message-text" 
+        v-model="newMessage"
+        @keyup.enter="sendMessage"
+      />
       <button class="camera-btn">
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
           <path
@@ -127,50 +133,126 @@
 </template>
 
 <script setup>
-import { ref, onMounted, nextTick } from "vue";
+import { ref, onMounted, onUnmounted, nextTick } from "vue";
+import { useRoute, useRouter } from "vue-router";
+import SockJS from 'sockjs-client';
+import { Stomp } from '@stomp/stompjs';
+import { getChatMessages } from '@/api/chat/chat.js';
+
+const route = useRoute();
+const router = useRouter();
 
 const chatMessages = ref(null);
 const messages = ref([]);
 const loading = ref(false);
 const hasMoreMessages = ref(true);
 const currentPage = ref(1);
+const newMessage = ref('');
 
-// 더미 메시지 데이터 생성
-const generateMessages = (page, count = 10) => {
-  const newMessages = [];
-  const messageTexts = [
-    "Hello,i'm fine,how can i help you?",
-    "What is the best programming language?",
-    "How are you doing today?",
-    "Can you help me with this problem?",
-    "Thank you for your assistance!",
-    "I have a question about the project",
-    "Let's schedule a meeting",
-    "The weather is nice today",
-    "I'm working on the new feature",
-    "Have you seen the latest update?",
-  ];
+// 채팅 관련 데이터
+const roomId = ref(route.params.id);
+const otherUserId = ref(route.query.otherUserId);
+const otherUserName = ref(route.query.otherUserName || '상대방');
+const productTitle = ref(route.query.productTitle || '');
+const currentUserId = ref(null);
 
-  for (let i = 0; i < count; i++) {
-    const messageId = (page - 1) * count + i + 1;
-    const randomText =
-      messageTexts[Math.floor(Math.random() * messageTexts.length)];
-    const isReceived = Math.random() > 0.5;
+// WebSocket 관련
+let stompClient = null;
 
-    newMessages.push({
-      id: messageId,
-      text: randomText,
-      type: isReceived ? "received" : "sent",
+// WebSocket 연결
+const connectWebSocket = () => {
+  const socket = new SockJS('http://localhost:8080/ws');
+  stompClient = Stomp.over(socket);
+  
+  stompClient.connect({}, (frame) => {
+    console.log('Connected: ' + frame);
+    
+    // 자신의 큐를 구독하여 메시지 수신
+    stompClient.subscribe(`/queue/user.${currentUserId.value}`, (message) => {
+      const receivedMessage = JSON.parse(message.body);
+      console.log('받은 메시지:', receivedMessage);
+      
+      // 현재 채팅방의 메시지인지 확인
+      if (receivedMessage.roomId.toString() === roomId.value) {
+        addMessageToChat(receivedMessage, 'received');
+      }
     });
-  }
-
-  return newMessages;
+  }, (error) => {
+    console.error('WebSocket 연결 실패:', error);
+  });
 };
 
-// 초기 메시지 로드
-const loadInitialMessages = () => {
-  messages.value = generateMessages(1, 5);
-  hasMoreMessages.value = true;
+// WebSocket 연결 해제
+const disconnectWebSocket = () => {
+  if (stompClient && stompClient.connected) {
+    stompClient.disconnect();
+  }
+};
+
+// 메시지 전송
+const sendMessage = () => {
+  if (!newMessage.value.trim() || !stompClient || !stompClient.connected) {
+    return;
+  }
+
+  const messageData = {
+    roomId: parseInt(roomId.value),
+    senderId: currentUserId.value.toString(),
+    receiverId: otherUserId.value.toString(),
+    content: newMessage.value.trim()
+  };
+
+  console.log('메시지 전송:', messageData);
+
+  // WebSocket을 통해 메시지 전송
+  stompClient.send('/app/chat.send', {}, JSON.stringify(messageData));
+
+  // 내가 보낸 메시지를 즉시 화면에 추가
+  addMessageToChat(messageData, 'sent');
+  
+  // 입력창 초기화
+  newMessage.value = '';
+};
+
+// 채팅에 메시지 추가
+const addMessageToChat = (messageData, type) => {
+  const message = {
+    id: Date.now() + Math.random(),
+    text: messageData.content,
+    type: type,
+    timestamp: messageData.timestamp || new Date().toISOString()
+  };
+  
+  messages.value.push(message);
+  
+  // 스크롤을 맨 아래로
+  nextTick(() => {
+    if (chatMessages.value) {
+      chatMessages.value.scrollTop = chatMessages.value.scrollHeight;
+    }
+  });
+};
+
+// 초기 메시지 로드 (API에서)
+const loadInitialMessages = async () => {
+  try {
+    loading.value = true;
+    const chatHistory = await getChatMessages(roomId.value);
+    
+    messages.value = chatHistory.map(msg => ({
+      id: msg.messageId || Date.now() + Math.random(),
+      text: msg.content,
+      type: msg.senderId === currentUserId.value.toString() ? 'sent' : 'received',
+      timestamp: msg.timestamp
+    }));
+    
+    hasMoreMessages.value = false; // 일단 페이징 없이
+  } catch (error) {
+    console.error('메시지 로드 실패:', error);
+    messages.value = []; // 빈 배열로 초기화
+  } finally {
+    loading.value = false;
+  }
 };
 
 // 이전 메시지 로드
@@ -208,8 +290,30 @@ const handleScroll = () => {
   }
 };
 
-onMounted(() => {
-  loadInitialMessages();
+onMounted(async () => {
+  // 현재 사용자 정보 가져오기
+  const userInfo = JSON.parse(localStorage.getItem('user'));
+  if (!userInfo || !userInfo.userId) {
+    alert('로그인이 필요합니다.');
+    router.push('/login');
+    return;
+  }
+  
+  currentUserId.value = userInfo.userId;
+  
+  console.log('채팅 정보:', {
+    roomId: roomId.value,
+    currentUserId: currentUserId.value,
+    otherUserId: otherUserId.value,
+    otherUserName: otherUserName.value,
+    productTitle: productTitle.value
+  });
+
+  // 초기 메시지 로드
+  await loadInitialMessages();
+
+  // WebSocket 연결
+  connectWebSocket();
 
   // 채팅 메시지 영역을 맨 아래로 스크롤
   nextTick(() => {
@@ -217,6 +321,16 @@ onMounted(() => {
       chatMessages.value.scrollTop = chatMessages.value.scrollHeight;
     }
   });
+});
+
+// 뒤로가기
+const goBack = () => {
+  router.go(-1);
+};
+
+onUnmounted(() => {
+  // 컴포넌트 해제 시 WebSocket 연결 해제
+  disconnectWebSocket();
 });
 </script>
 

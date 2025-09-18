@@ -25,22 +25,82 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
+import { useAuthStore } from '@/stores/auth';
+import apiClient from '@/api/client';
 
 // 기본 프로필 이미지
 const defaultProfileImage = 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face';
 
-// 사용자 정보 (실제로는 props나 store에서 가져올 데이터)
-const userInfo = ref({
-  name: '김승호',
-  profileImage: null, // 실제 프로필 이미지 URL
-  location: {
-    city: '강남구',
-    district: '역삼동',
-    apartmentName: '역삼래미안',
-    building: '105',
-    unit: '1301'
+const authStore = useAuthStore();
+const myPageData = ref(null);
+
+onMounted(async () => {
+  console.log('UserProfile onMounted - authStore.user:', authStore.user);
+  console.log('UserProfile onMounted - authStore.accessToken:', authStore.accessToken);
+
+  if (!authStore.user && authStore.accessToken) {
+    try {
+      await authStore.getUserInfo();
+      console.log('UserProfile - getUserInfo 후 user:', authStore.user);
+    } catch (e) {
+      console.error('UserProfile - getUserInfo 실패:', e);
+    }
   }
+
+  // 마이페이지 API 호출
+  if (authStore.user?.userId) {
+    console.log('UserProfile - API 호출 시도, userId:', authStore.user.userId);
+    try {
+      const response = await apiClient.get(`/mypage/user/${authStore.user.userId}`);
+      console.log('UserProfile - API 응답:', response.data);
+      myPageData.value = response.data;
+    } catch (error) {
+      console.error('마이페이지 정보 조회 실패:', error);
+    }
+  } else {
+    console.log('UserProfile - userId가 없어서 API 호출 안함');
+  }
+});
+
+// 스토어 사용자 정보를 화면 표시용으로 매핑
+const userInfo = computed(() => {
+  console.log('UserProfile userInfo computed - myPageData:', myPageData.value);
+  console.log('UserProfile userInfo computed - authStore.user:', authStore.user);
+
+  // 마이페이지 API 데이터 우선 사용
+  if (myPageData.value) {
+    const result = {
+      name: myPageData.value.name || '사용자',
+      profileImage: null, // MyPageResponse에 프로필 이미지 없음
+      location: {
+        city: myPageData.value.siGunGu || '',
+        district: myPageData.value.eupMyeonDong || '',
+        apartmentName: myPageData.value.apartName || '',
+        building: myPageData.value.buildingDong || '',
+        unit: myPageData.value.buildingHo || ''
+      }
+    };
+    console.log('UserProfile userInfo - API 데이터 사용:', result);
+    return result;
+  }
+
+  // 기존 스토어 데이터 fallback
+  const u = authStore.user || {};
+  const name = u.nickname || u.name || (u.email ? u.email.split('@')[0] : '') || '사용자';
+  const result = {
+    name,
+    profileImage: u.profileImageUrl || u.profileImage || null,
+    location: {
+      city: u.siGunGu || '',
+      district: u.eupMyeonDong || '',
+      apartmentName: u.apartmentName || '',
+      building: u.buildingDong || '',
+      unit: u.buildingHo || ''
+    }
+  };
+  console.log('UserProfile userInfo - 스토어 데이터 사용:', result);
+  return result;
 });
 </script>
 

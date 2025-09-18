@@ -141,44 +141,38 @@ CREATE TABLE IF NOT EXISTS `deliveries` (
     ) ENGINE = InnoDB COMMENT = '로봇 배송 정보';
 
 -- -----------------------------------------------------
--- 4. 커뮤니케이션 관련 테이블
+-- 4. 커뮤니케이션 관련 테이블 (WebSocket 채팅용)
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `chat_rooms` (
                                             `room_id` BIGINT NOT NULL AUTO_INCREMENT COMMENT '채팅방 ID',
-                                            `product_id` BIGINT NOT NULL COMMENT '관련 상품 ID',
-                                            `buyer_id` BIGINT NOT NULL COMMENT '구매 희망자 ID',
-                                            `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                                            `user1_id` VARCHAR(50) NOT NULL COMMENT '사용자1 ID',
+                                            `user2_id` VARCHAR(50) NOT NULL COMMENT '사용자2 ID',
+                                            `created_at` VARCHAR(255) NOT NULL COMMENT '생성 시간',
+                                            `last_message_at` VARCHAR(255) NULL COMMENT '마지막 메시지 시간',
+                                            `last_message` TEXT NULL COMMENT '마지막 메시지 내용',
                                             PRIMARY KEY (`room_id`),
-    INDEX `fk_chat_rooms_products_idx` (`product_id` ASC),
-    INDEX `fk_chat_rooms_users_idx` (`buyer_id` ASC),
-    CONSTRAINT `fk_chat_rooms_products`
-    FOREIGN KEY (`product_id`)
-    REFERENCES `products` (`product_id`)
-    ON DELETE CASCADE ON UPDATE CASCADE,
-    CONSTRAINT `fk_chat_rooms_users`
-    FOREIGN KEY (`buyer_id`)
-    REFERENCES `users` (`user_id`)
-    ON DELETE CASCADE ON UPDATE CASCADE
-    ) ENGINE = InnoDB COMMENT = '채팅방 정보';
+    UNIQUE INDEX `unique_users` (`user1_id`, `user2_id`),
+    INDEX `idx_user1` (`user1_id`),
+    INDEX `idx_user2` (`user2_id`)
+    ) ENGINE = InnoDB COMMENT = 'WebSocket 채팅방 정보';
 
 CREATE TABLE IF NOT EXISTS `chat_messages` (
                                                `message_id` BIGINT NOT NULL AUTO_INCREMENT COMMENT '메시지 ID',
-                                               `room_id` BIGINT NOT NULL COMMENT 'c채팅방 ID',
-                                               `sender_id` BIGINT NOT NULL COMMENT '발신자 ID',
-                                               `message` TEXT NOT NULL COMMENT '메시지 내용',
-                                               `sent_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '전송 시간',
+                                               `room_id` BIGINT NOT NULL COMMENT '채팅방 ID',
+                                               `sender_id` VARCHAR(50) NOT NULL COMMENT '발신자 ID',
+                                               `receiver_id` VARCHAR(50) NOT NULL COMMENT '수신자 ID',
+                                               `content` TEXT NOT NULL COMMENT '메시지 내용',
+                                               `timestamp` VARCHAR(255) NOT NULL COMMENT '전송 시간',
                                                PRIMARY KEY (`message_id`),
     INDEX `fk_chat_messages_rooms_idx` (`room_id` ASC),
-    INDEX `fk_chat_messages_users_idx` (`sender_id` ASC),
+    INDEX `idx_sender` (`sender_id`),
+    INDEX `idx_receiver` (`receiver_id`),
+    INDEX `idx_timestamp` (`timestamp`),
     CONSTRAINT `fk_chat_messages_rooms`
     FOREIGN KEY (`room_id`)
     REFERENCES `chat_rooms` (`room_id`)
-    ON DELETE CASCADE ON UPDATE CASCADE,
-    CONSTRAINT `fk_chat_messages_users`
-    FOREIGN KEY (`sender_id`)
-    REFERENCES `users` (`user_id`)
     ON DELETE CASCADE ON UPDATE CASCADE
-    ) ENGINE = InnoDB COMMENT = '채팅 메시지';
+    ) ENGINE = InnoDB COMMENT = 'WebSocket 채팅 메시지';
 
 CREATE TABLE IF NOT EXISTS `notifications` (
                                                `notification_id` BIGINT NOT NULL AUTO_INCREMENT COMMENT '알림 고유 ID',
@@ -200,3 +194,65 @@ CREATE TABLE IF NOT EXISTS `notifications` (
     REFERENCES `orders` (`order_id`)
     ON DELETE SET NULL ON UPDATE CASCADE
     ) ENGINE = InnoDB COMMENT = '실시간 알림 정보';
+
+-- -----------------------------------------------------
+-- 5. 마이페이지 관련 테이블
+-- -----------------------------------------------------
+
+-- 사용자 좋아요(관심목록) 테이블
+CREATE TABLE IF NOT EXISTS `user_favorites` (
+    `favorite_id` BIGINT NOT NULL AUTO_INCREMENT COMMENT '좋아요 ID',
+    `user_id` BIGINT NOT NULL COMMENT '사용자 ID',
+    `product_id` BIGINT NOT NULL COMMENT '상품 ID',
+    `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '좋아요 등록 시간',
+    PRIMARY KEY (`favorite_id`),
+    UNIQUE INDEX `unique_user_product` (`user_id` ASC, `product_id` ASC),
+    INDEX `fk_user_favorites_users_idx` (`user_id` ASC),
+    INDEX `fk_user_favorites_products_idx` (`product_id` ASC),
+    CONSTRAINT `fk_user_favorites_users`
+        FOREIGN KEY (`user_id`)
+        REFERENCES `users` (`user_id`)
+        ON DELETE CASCADE ON UPDATE CASCADE,
+    CONSTRAINT `fk_user_favorites_products`
+        FOREIGN KEY (`product_id`)
+        REFERENCES `products` (`product_id`)
+        ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE = InnoDB COMMENT = '사용자 관심목록(좋아요)';
+
+-- 사용자 상품 조회 이력 테이블
+CREATE TABLE IF NOT EXISTS `user_product_history` (
+    `history_id` BIGINT NOT NULL AUTO_INCREMENT COMMENT '이력 ID',
+    `user_id` BIGINT NOT NULL COMMENT '사용자 ID',
+    `product_id` BIGINT NOT NULL COMMENT '상품 ID',
+    `viewed_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '조회 시간',
+    PRIMARY KEY (`history_id`),
+    INDEX `fk_user_product_history_users_idx` (`user_id` ASC),
+    INDEX `fk_user_product_history_products_idx` (`product_id` ASC),
+    INDEX `idx_user_viewed_at` (`user_id` ASC, `viewed_at` DESC),
+    CONSTRAINT `fk_user_product_history_users`
+        FOREIGN KEY (`user_id`)
+        REFERENCES `users` (`user_id`)
+        ON DELETE CASCADE ON UPDATE CASCADE,
+    CONSTRAINT `fk_user_product_history_products`
+        FOREIGN KEY (`product_id`)
+        REFERENCES `products` (`product_id`)
+        ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE = InnoDB COMMENT = '사용자 상품 조회 이력';
+
+-- 동네 인증 테이블
+CREATE TABLE IF NOT EXISTS `neighborhood_verification` (
+    `verification_id` BIGINT NOT NULL AUTO_INCREMENT COMMENT '인증 ID',
+    `user_id` BIGINT NOT NULL COMMENT '사용자 ID',
+    `verification_type` ENUM('PHOTO', 'DOCUMENT', 'MANUAL') NOT NULL COMMENT '인증 방식',
+    `verification_data` TEXT COMMENT '인증 데이터 (사진 URL, 문서 정보 등)',
+    `status` ENUM('PENDING', 'APPROVED', 'REJECTED') NOT NULL DEFAULT 'PENDING' COMMENT '인증 상태',
+    `submitted_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '제출 시간',
+    `processed_at` DATETIME NULL COMMENT '처리 시간',
+    `admin_notes` TEXT COMMENT '관리자 메모',
+    PRIMARY KEY (`verification_id`),
+    INDEX `fk_neighborhood_verification_users_idx` (`user_id` ASC),
+    CONSTRAINT `fk_neighborhood_verification_users`
+        FOREIGN KEY (`user_id`)
+        REFERENCES `users` (`user_id`)
+        ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE = InnoDB COMMENT = '동네 인증 정보';
