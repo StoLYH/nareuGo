@@ -161,7 +161,9 @@ let stompClient = null;
 
 // WebSocket 연결
 const connectWebSocket = () => {
-  const socket = new SockJS('http://localhost:8080/ws');
+  // 환경 변수를 사용하여 WebSocket 서버 URL 설정
+  const baseUrl = import.meta.env.VITE_BASE_URL || 'http://localhost:8080';
+  const socket = new SockJS(`${baseUrl}/ws`);
   stompClient = Stomp.over(socket);
   
   stompClient.connect({}, (frame) => {
