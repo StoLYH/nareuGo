@@ -1,5 +1,6 @@
 package org.example.nareugobackend.api.controller.chat;
 
+import lombok.RequiredArgsConstructor;
 import org.example.nareugobackend.api.service.chat.ChatService;
 import org.example.nareugobackend.api.controller.chat.request.ChatMessage;
 import org.example.nareugobackend.api.controller.chat.request.ChatRoom;
@@ -11,18 +12,15 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@Controller
+
+@RequiredArgsConstructor
 @RestController
-@RequestMapping("/api/chat")
+@RequestMapping("/chat")
 public class ChatController {
 
     private final SimpMessagingTemplate template;
     private final ChatService chatService;
 
-    public ChatController(SimpMessagingTemplate template, ChatService chatService) {
-        this.template = template;
-        this.chatService = chatService;
-    }
 
     @MessageMapping("/chat.send")   // 클라이언트 → 서버 (/app/chat.send)
     public void send(ChatMessage msg) {
