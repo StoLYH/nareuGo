@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { ref, computed } from 'vue'                                                                                                                                              
+import { ref, computed } from 'vue'
 
 export const useAuthStore = defineStore('auth', () => {
 // State                                                                                                                                                                        
@@ -23,7 +23,15 @@ const setUser = (userData) => {
 }
 
 const logout = async () => {
+    try {
+    // 백엔드 로그아웃 API 호출
+    // await authAPI.logout()
+    } catch (error) {
+    console.error('로그아웃 에러:', error)
+    } finally {
+    // 클라이언트 측 정리
     clearAuth()
+    }
 }
 
 const clearAuth = () => {

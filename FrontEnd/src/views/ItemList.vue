@@ -35,18 +35,26 @@
 
 <script setup>
 import { ref, onMounted, onUnmounted, nextTick, watch } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
+import axios from 'axios'
 import AppHeader from '../components/AppHeader.vue'
 import BottomNavigation from '../components/BottomNavigation.vue'
 import ItemCard from '../components/ItemCard.vue'
 
 const router = useRouter()
+const route = useRoute()
 
 // 무한 스크롤 관련 상태
 const items = ref([])
 const isLoading = ref(false)
 const hasMore = ref(true)
 const currentPage = ref(1)
+
+// 필터링 관련 상태
+const currentFilter = ref('all') // 'all', 'favorites', 'recent'
+const favoriteProductIds = ref([])
+const recentProductIds = ref([])
+const userId = ref(localStorage.getItem('userId') || 1)
 
 // 더미 데이터 생성 함수
 const generateItems = (page, count = 5) => {
@@ -143,30 +151,64 @@ const generateItems = (page, count = 5) => {
   return newItems
 }
 
+// 필터링된 아이템 가져오기
+const getFilteredItems = (allItems) => {
+  if (currentFilter.value === 'favorites') {
+    return allItems.filter(item => favoriteProductIds.value.includes(item.id))
+  } else if (currentFilter.value === 'recent') {
+    return allItems.filter(item => recentProductIds.value.includes(item.id))
+  }
+  return allItems
+}
+
 // 초기 데이터 로드
-const loadInitialData = () => {
-  items.value = generateItems(1)
+const loadInitialData = async () => {
+  // URL 파라미터에서 필터 확인
+  const filter = route.query.filter
+  if (filter && ['favorites', 'recent'].includes(filter)) {
+    currentFilter.value = filter
+    await loadFilterData()
+  }
+
+  const allItems = generateItems(1)
+  items.value = getFilteredItems(allItems)
+}
+
+// 필터 데이터 로드
+const loadFilterData = async () => {
+  try {
+    if (currentFilter.value === 'favorites') {
+      const response = await axios.get(`/api/favorites/user/${userId.value}`)
+      favoriteProductIds.value = response.data
+    } else if (currentFilter.value === 'recent') {
+      const response = await axios.get(`/api/history/user/${userId.value}`)
+      recentProductIds.value = response.data
+    }
+  } catch (error) {
+    console.error('필터 데이터 로드 실패:', error)
+  }
 }
 
 // 추가 데이터 로드
 const loadMoreData = async () => {
   if (isLoading.value || !hasMore.value) return
-  
+
   isLoading.value = true
-  
+
   // 실제 API 호출을 시뮬레이션
   await new Promise(resolve => setTimeout(resolve, 1000))
-  
+
   currentPage.value++
   const newItems = generateItems(currentPage.value)
-  
+  const filteredNewItems = getFilteredItems(newItems)
+
   // 최대 50개까지만 로드 (무한 스크롤 시뮬레이션)
   if (items.value.length >= 50) {
     hasMore.value = false
   } else {
-    items.value.push(...newItems)
+    items.value.push(...filteredNewItems)
   }
-  
+
   isLoading.value = false
 }
 
@@ -210,6 +252,20 @@ const handleScroll = () => {
     loadMoreData()
   }
 }
+
+// URL 파라미터 변경 감지
+watch(
+  () => route.query.filter,
+  async (newFilter) => {
+    currentFilter.value = newFilter || 'all'
+    if (newFilter && ['favorites', 'recent'].includes(newFilter)) {
+      await loadFilterData()
+    }
+    // 필터가 변경되면 아이템 목록 다시 로드
+    const allItems = generateItems(1, Math.min(items.value.length, 10))
+    items.value = getFilteredItems(allItems)
+  }
+)
 
 // 컴포넌트 마운트/언마운트
 onMounted(() => {
