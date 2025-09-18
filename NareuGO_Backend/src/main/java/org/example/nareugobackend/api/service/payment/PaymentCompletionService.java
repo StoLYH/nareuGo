@@ -23,8 +23,10 @@ public class PaymentCompletionService {
 
     @Transactional
     public void completePayment(Long orderId) {
-        Order order = orderMapper.findById(String.valueOf(orderId))
-            .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 주문입니다."));
+        Order order = orderMapper.findById(orderId);
+        if (order == null) {
+            throw new IllegalArgumentException("존재하지 않는 주문입니다.");
+        }
 
         if (order.getStatus() != OrderStatus.PAYMENT_PENDING) {
             throw new IllegalStateException("결제 완료할 수 없는 주문 상태입니다.");

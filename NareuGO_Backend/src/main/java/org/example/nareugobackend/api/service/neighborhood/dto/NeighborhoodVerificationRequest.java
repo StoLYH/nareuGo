@@ -33,4 +33,24 @@ public class NeighborhoodVerificationRequest {
      * 주소 일치 여부
      */
     private boolean addressMatched;
+    
+    /**
+     * 사용자 이메일 (개발 단계용)
+     */
+    private String userEmail;
+    
+    /**
+     * 아파트명
+     */
+    private String apartmentName;
+    
+    /**
+     * 동 번호
+     */
+    private Integer buildingDong;
+    
+    /**
+     * 호 번호
+     */
+    private Integer buildingHo;
 }

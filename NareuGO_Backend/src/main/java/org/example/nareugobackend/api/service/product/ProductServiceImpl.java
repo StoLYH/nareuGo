@@ -244,4 +244,36 @@ public class ProductServiceImpl implements ProductService {
         return product;
     }
 
+    // ===== 결제용 메서드 (기존 상품 코드와 분리) =====
+    /**
+     * 결제용 상품 단일 조회
+     * @param productId 상품 ID
+     * @return ProductDetailResponse
+     */
+    @Override
+    public ProductDetailResponse getProductForPayment(long productId) {
+        // 결제용 상품 기본 정보 조회 (새로 추가한 매퍼 메서드 사용)
+        ProductDetailResponse product = productMapper.findProductDetailById(productId);
+        
+        if (product == null) {
+            return null; // 상품이 존재하지 않거나 판매중이 아님
+        }
+        
+        // 해당 상품의 이미지들 조회
+        List<String> imageKeys = productMapper.selectProductImages(productId);
+        
+        // S3 KEY들을 직접 URL로 변환 (기존 로직과 동일)
+        List<String> downloadUrls = new ArrayList<>();
+        for (String s3Key : imageKeys) {
+            // 직접 S3 URL 사용
+            String directUrl = "https://" + bucketName + ".s3." + region + ".amazonaws.com/" + s3Key;
+            downloadUrls.add(directUrl);
+        }
+        
+        // 이미지 URL 설정
+        product.setImageUrls(downloadUrls);
+        
+        return product;
+    }
+
 }

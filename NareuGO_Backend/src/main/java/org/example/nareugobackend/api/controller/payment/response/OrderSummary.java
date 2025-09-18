@@ -1,7 +1,9 @@
 package org.example.nareugobackend.api.controller.payment.response;
 
 import java.math.BigDecimal;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 /**
@@ -12,10 +14,13 @@ import lombok.Setter;
  */
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class OrderSummary {
     private Long orderId;           // 주문 ID
     private Long productId;         // 상품 ID
     private Long buyerId;           // 구매자 ID
     private String status;          // 주문 상태 (문자열)
     private BigDecimal amount;      // 주문 금액
+    private String tossOrderId;     // 토스페이먼츠용 orderId
 }

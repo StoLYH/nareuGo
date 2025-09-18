@@ -37,16 +37,15 @@ public class ProductController {
         return ResponseEntity.ok(productService.createProduct(productRequest));
     }
 
-    // TODO is_delete 필드
+//
 //    /**
 //     * 상품 삭제
 //     *
-//     * @param id
+//     * @parm id
 //     * @return ProductDeleteResponse
 //     */
 //    @DeleteMapping("/{id}")
 //    public ResponseEntity<ProductDeleteResponse> deleteProduct(@PathVariable Long id) {
-//        productService.deleteProduct(id);
 //        return ResponseEntity.ok(new ProductDeleteResponse(true, "상품삭제 성공"));
 //    }
 
@@ -59,6 +58,24 @@ public class ProductController {
     public ResponseEntity<List<ProductDetailResponse>> selectProduct(@PathVariable Long userId) {
         return ResponseEntity.ok(productService.selectProduct(userId));
     }
+
+    // ===== 결제용 API (기존 상품 코드와 분리) =====
+    /**
+     * 결제용 상품 단일 조회
+     *
+     * @param productId 상품 ID
+     * @return ProductDetailResponse
+     */
+    @GetMapping("/payment/{productId}")
+    public ResponseEntity<ProductDetailResponse> getProductForPayment(@PathVariable Long productId) {
+        ProductDetailResponse product = productService.getProductForPayment(productId);
+
+        if (product == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(product);
+    }
+
 
     /**
      * 상품 개별 조회 (단일 조회)

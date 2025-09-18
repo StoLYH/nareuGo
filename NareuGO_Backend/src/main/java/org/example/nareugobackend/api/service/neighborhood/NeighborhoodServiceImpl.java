@@ -33,15 +33,19 @@ public class NeighborhoodServiceImpl implements NeighborhoodService {
             // OCR 주소에서 주소 구성 요소 파싱
             AddressComponents addressComponents = parseOcrAddress(request.getOcrAddress());
             
-            // 인증 정보 업데이트
+            // 인증 정보 업데이트 - 프론트엔드에서 보낸 값 우선 사용
             LocalDateTime verificationDate = LocalDateTime.now();
             user.setAddressVerified(true);
-            user.setApartmentName(addressComponents.getApartmentName());
+            
+            // 프론트엔드에서 보낸 아파트 정보 우선 사용, 없으면 OCR 파싱 결과 사용
+            user.setApartmentName(request.getApartmentName() != null ? request.getApartmentName() : addressComponents.getApartmentName());
+            user.setBuildingDong(request.getBuildingDong() != null ? request.getBuildingDong() : addressComponents.getBuildingDong());
+            user.setBuildingHo(request.getBuildingHo() != null ? request.getBuildingHo() : addressComponents.getBuildingHo());
+            
+            // 주소 정보는 OCR 파싱 결과 사용
             user.setSiDo(addressComponents.getSiDo());
             user.setSiGunGu(addressComponents.getSiGunGu());
             user.setEupMyeonDong(addressComponents.getEupMyeonDong());
-            user.setBuildingDong(addressComponents.getBuildingDong());
-            user.setBuildingHo(addressComponents.getBuildingHo());
             user.setVerificationDate(verificationDate);
             
             int updateResult = userMapper.updateNeighborhoodVerification(user);
@@ -69,7 +73,47 @@ public class NeighborhoodServiceImpl implements NeighborhoodService {
     }
     
     /**
+     * OCR 텍스트 전처리 - 운전면허증과 주민등록증에서 불필요한 텍스트 제거
+     */
+    private String preprocessOcrText(String ocrText) {
+        if (ocrText == null) return "";
+        
+        String processed = ocrText.trim();
+        
+        // 운전면허증 관련 불필요한 텍스트 제거
+        processed = processed.replaceAll("운전면허증|DRIVER'S LICENSE|자동차운전면허증", "");
+        processed = processed.replaceAll("면허번호|LICENSE NO\\.|NO\\.", "");
+        processed = processed.replaceAll("발급일자|ISSUED", "");
+        processed = processed.replaceAll("유효기간|VALID UNTIL", "");
+        processed = processed.replaceAll("운전면허|DRIVER", "");
+        
+        // 주민등록증 관련 불필요한 텍스트 제거
+        processed = processed.replaceAll("주민등록증|RESIDENT REGISTRATION", "");
+        processed = processed.replaceAll("주민등록번호|REGISTRATION NUMBER", "");
+        processed = processed.replaceAll("발급기관|ISSUED BY", "");
+        processed = processed.replaceAll("발급일|ISSUE DATE", "");
+        
+        // 공통 불필요한 텍스트 제거
+        processed = processed.replaceAll("대한민국|REPUBLIC OF KOREA", "");
+        processed = processed.replaceAll("성명|NAME", "");
+        processed = processed.replaceAll("생년월일|DATE OF BIRTH", "");
+        processed = processed.replaceAll("주소|ADDRESS", "");
+        processed = processed.replaceAll("[0-9]{4}-[0-9]{2}-[0-9]{2}", ""); // 날짜 형식 제거
+        processed = processed.replaceAll("[0-9]{2}-[0-9]{2}-[0-9]{6}", ""); // 면허번호 형식 제거
+        processed = processed.replaceAll("[0-9]{6}-[0-9]{7}", ""); // 주민번호 형식 제거
+        
+        // 연속된 공백을 하나로 정리
+        processed = processed.replaceAll("\\s+", " ");
+        
+        // 특수문자 정리
+        processed = processed.replaceAll("[\\[\\]{}()<>]", "");
+        
+        return processed.trim();
+    }
+    
+    /**
      * OCR로 추출된 주소를 파싱하여 주소 구성 요소를 추출합니다.
+     * 운전면허증과 주민등록증 모두 지원합니다.
      */
     private AddressComponents parseOcrAddress(String ocrAddress) {
         AddressComponents components = new AddressComponents();
@@ -78,8 +122,9 @@ public class NeighborhoodServiceImpl implements NeighborhoodService {
             return components;
         }
         
-        String address = ocrAddress.trim();
-        log.info("OCR 주소 파싱 시작: {}", address);
+        // OCR 텍스트 전처리
+        String address = preprocessOcrText(ocrAddress);
+        log.info("OCR 주소 파싱 시작 (전처리 후): {}", address);
         
         try {
             // 정규식을 사용한 상세 주소 파싱
@@ -96,8 +141,21 @@ public class NeighborhoodServiceImpl implements NeighborhoodService {
             java.util.regex.Matcher sigunguMatcher = sigunguPattern.matcher(address);
             while (sigunguMatcher.find()) {
                 String match = sigunguMatcher.group(1);
-                // 특별시, 광역시는 제외
-                if (!match.contains("특별시") && !match.contains("광역시")) {
+                int matchStart = sigunguMatcher.start();
+                int matchEnd = sigunguMatcher.end();
+                
+                // 앞뒤 문맥을 확인하여 기관명인지 판단
+                String beforeMatch = matchStart > 0 ? address.substring(Math.max(0, matchStart - 10), matchStart) : "";
+                String afterMatch = matchEnd < address.length() ? address.substring(matchEnd, Math.min(address.length(), matchEnd + 10)) : "";
+                
+                // 제외할 패턴들: 경찰청, 지방경찰청, 교육청, 법원, 검찰청 등
+                boolean isInstitution = beforeMatch.contains("지방") || afterMatch.contains("경찰청") || 
+                                      afterMatch.contains("교육청") || afterMatch.contains("법원") || 
+                                      afterMatch.contains("검찰청") || afterMatch.contains("청장") ||
+                                      beforeMatch.contains("경찰") || beforeMatch.contains("교육");
+                
+                // 특별시, 광역시, 기관명은 제외
+                if (!match.contains("특별시") && !match.contains("광역시") && !isInstitution) {
                     if (components.getSiGunGu() == null) {
                         components.setSiGunGu(match);
                     } else {
@@ -109,14 +167,32 @@ public class NeighborhoodServiceImpl implements NeighborhoodService {
                 }
             }
             
-            // 3. 동/면/읍 추출 (정자일로, 금곡동 등)
-            java.util.regex.Pattern dongPattern = java.util.regex.Pattern.compile("([가-힣]+[동면읍로])");
+            // 3. 읍/면/동 추출 (거창읍, 정자일로, 금곡동 등)
+            java.util.regex.Pattern dongPattern = java.util.regex.Pattern.compile("([가-힣]+[읍면동])");
             java.util.regex.Matcher dongMatcher = dongPattern.matcher(address);
             while (dongMatcher.find()) {
                 String match = dongMatcher.group(1);
-                if (match.endsWith("동") && components.getEupMyeonDong() == null) {
+                
+                // 제외할 패턴들: 운전면허증, 주민등록증 관련 용어
+                boolean isInvalidTerm = match.contains("운전면") || match.contains("등록동") || 
+                                      match.contains("면허동") || match.contains("자동차") ||
+                                      match.contains("운전") || match.contains("면허") ||
+                                      match.contains("등록") || match.contains("주민") ||
+                                      match.length() > 6; // 너무 긴 경우 제외
+                
+                if (isInvalidTerm) {
+                    continue; // 잘못된 용어는 건너뛰기
+                }
+                
+                // 읍/면/동 우선순위: 읍 > 면 > 동
+                if ((match.endsWith("읍") || match.endsWith("면")) && components.getEupMyeonDong() == null) {
+                    components.setEupMyeonDong(match);
+                } else if (match.endsWith("동") && components.getEupMyeonDong() == null) {
                     // 괄호 안의 동 정보 우선 (예: 금곡동)
                     if (address.contains("(" + match + ")") || address.contains("（" + match + "）")) {
+                        components.setEupMyeonDong(match);
+                    } else {
+                        // 괄호 밖의 동도 고려 (읍/면이 없는 경우)
                         components.setEupMyeonDong(match);
                     }
                 }
@@ -130,22 +206,7 @@ public class NeighborhoodServiceImpl implements NeighborhoodService {
                 components.setBuildingHo(Integer.parseInt(buildingMatcher.group(2)));
             }
             
-            // 5. 아파트명 추출 (청솔마을)
-            java.util.regex.Pattern apartmentPattern = java.util.regex.Pattern.compile("\\(([가-힣\\s]+)\\)");
-            java.util.regex.Matcher apartmentMatcher = apartmentPattern.matcher(address);
-            while (apartmentMatcher.find()) {
-                String match = apartmentMatcher.group(1).trim();
-                // 동 이름이 아닌 아파트명 추출
-                if (!match.endsWith("동") && match.length() > 2) {
-                    String[] parts = match.split(",\\s*");
-                    for (String part : parts) {
-                        if (!part.endsWith("동") && part.length() > 2) {
-                            components.setApartmentName(part.trim());
-                            break;
-                        }
-                    }
-                }
-            }
+            // 아파트명은 프론트엔드에서 사용자 입력으로 처리
             
             log.info("파싱 결과 - 시도: {}, 시군구: {}, 읍면동: {}, 동: {}, 호: {}, 아파트: {}", 
                     components.getSiDo(), components.getSiGunGu(), components.getEupMyeonDong(),
@@ -201,8 +262,7 @@ public class NeighborhoodServiceImpl implements NeighborhoodService {
             }
             
             response.setSuccess(true);
-            response.setVerified(user.isAddressVerified());
-            response.setVerifiedLocation(user.getVerifiedLocation());
+            response.setVerified(user.isAddressVerifiedFlag());
             response.setVerifiedAddress(user.getVerifiedAddress());
             response.setVerificationDate(user.getVerificationDate());
             response.setMessage("인증 상태 조회 완료");

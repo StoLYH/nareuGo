@@ -130,7 +130,7 @@ table {
   font-style: normal;
 }
 :root {
-  --main: #961f1f;
+  --main: #4682b4;
   --disabled: #dcb6b6;
   --gray: #dbdbdb;
   --warning: #fc6d6d;
