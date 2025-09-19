@@ -116,22 +116,10 @@
         v-model="newMessage"
         @keyup.enter="sendMessage"
       />
-      <button class="camera-btn">
+      <button class="send-btn" @click="sendMessage" title="전송">
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-          <path
-            d="M23 19C23 19.5304 22.7893 20.0391 22.4142 20.4142C22.0391 20.7893 21.5304 21 21 21H3C2.46957 21 1.96086 20.7893 1.58579 20.4142C1.21071 20.0391 1 19.5304 1 19V8C1 7.46957 1.21071 6.96086 1.58579 6.58579C1.96086 6.21071 2.46957 6 3 6H7L9 4H15L17 6H21C21.5304 6 22.0391 6.21071 22.4142 6.58579C22.7893 6.96086 23 7.46957 23 8V19Z"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          />
-          <circle
-            cx="12"
-            cy="13"
-            r="4"
-            stroke="currentColor"
-            stroke-width="2"
-          />
+          <path d="M22 2L11 13" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M22 2L15 22L11 13L2 9L22 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
       </button>
     </div>
@@ -450,7 +438,9 @@ onUnmounted(() => {
 
 /* 헤더 */
 .chat-header {
+  position: relative;
   display: flex;
+  justify-content: center;
   align-items: center;
   padding: 16px;
   border-bottom: 1px solid #f0f0f0;
@@ -458,10 +448,14 @@ onUnmounted(() => {
 }
 
 .back-btn {
-  margin-right: 16px;
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
   color: #333;
 }
 
+.header-info { text-align: center; }
 .header-info h2 {
   font-size: 18px;
   font-weight: 600;
@@ -505,12 +499,12 @@ onUnmounted(() => {
 }
 
 .message.received .message-bubble {
-  background-color: #f0f0f0;
-  color: #333;
+  background-color: #f3f6fa;
+  color: #2c3e50;
 }
 
 .message.sent .message-bubble {
-  background-color: #007bff;
+  background-color: #4682b4;
   color: white;
 }
 
@@ -524,10 +518,32 @@ onUnmounted(() => {
 }
 
 .emoji-btn,
-.camera-btn {
-  color: #666;
+.send-btn {
+  color: #6b7280;
   margin: 0 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 18px;
+  border: 1px solid #e5eaf0;
+  background: #fff;
+  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
 }
+.emoji-btn:hover,
+.send-btn:hover {
+  background: #f3f6fa;
+  color: #4682b4;
+  border-color: #d7e3ef;
+}
+
+/* Distinct accents for emoji and send icons */
+.emoji-btn { color: #f59e0b; border-color: #fde68a; }
+.emoji-btn:hover { background: #fff7ed; color: #d97706; border-color: #fcd34d; }
+
+.send-btn { color: #10b981; border-color: #bbf7d0; }
+.send-btn:hover { background: #ecfdf5; color: #059669; border-color: #86efac; }
 
 .message-text {
   flex: 1;
@@ -540,7 +556,7 @@ onUnmounted(() => {
 }
 
 .message-text:focus {
-  border-color: #007bff;
+  border-color: #4682b4;
   background-color: white;
 }
 
@@ -563,7 +579,7 @@ onUnmounted(() => {
   width: 16px;
   height: 16px;
   border: 2px solid #e0e0e0;
-  border-top: 2px solid #007bff;
+  border-top: 2px solid #4682b4;
   border-radius: 50%;
   animation: spin 1s linear infinite;
 }
@@ -588,23 +604,32 @@ onUnmounted(() => {
 }
 
 .payment-btn {
-  margin-left: auto;
-  display: flex;
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 6px 12px;
+  padding: 8px 14px;
+  border-radius: 9999px;
   border: none;
-  border-radius: 20px;
-  background-color: #28a745;
-  color: white;
-  font-size: 14px;
-  font-weight: 500;
+  background: linear-gradient(90deg, #4682B4, #6EC6CA);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
   cursor: pointer;
-  transition: background-color 0.2s, transform 0.2s;
+  transition: background 0.3s ease, box-shadow 0.2s ease, transform 0.15s ease;
 }
+.payment-btn:hover { background: linear-gradient(90deg, #5A9BD6, #7FD7DA); box-shadow: 0 2px 8px rgba(70,130,180,0.25); }
+.payment-btn:disabled { opacity: 0.7; cursor: not-allowed; box-shadow: none; transform: none; }
 
-.payment-btn:hover {
-  background-color: #218838;
-  transform: scale(1.03);
+.loading-spinner-small {
+  width: 16px;
+  height: 16px;
+  border: 2px solid #e0e0e0;
+  border-top: 2px solid #4682b4;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
 }
 </style>

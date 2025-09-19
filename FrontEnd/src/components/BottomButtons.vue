@@ -63,27 +63,31 @@ const openWishlistBottom = () => {
   width: 100%;
   padding: 16px 20px;
   border: none;
-  background: white;
+  background: var(--surface, #fff);
   cursor: pointer;
   transition: all 0.2s ease;
   border-radius: 12px;
   margin-bottom: 12px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
 }
 
 .bottom-button:hover {
-  background-color: #f8f9fa;
+  background-color: var(--surface-2, #f3f6fa);
 }
 
 .bottom-button svg {
-  color: #333;
+  color: var(--muted, #6b7280);
   margin-right: 16px;
   flex-shrink: 0;
 }
 
 .bottom-button span {
   font-size: 16px;
-  color: #333;
-  font-weight: 500;
+  color: var(--secondary, #2c3e50);
+  font-weight: 600;
+}
+
+.bottom-button:hover svg {
+  color: var(--primary, #4682b4);
 }
 </style>

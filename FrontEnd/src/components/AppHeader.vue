@@ -1,6 +1,8 @@
 <template>
   <header class="header">
-    <div class="location">{{ location }}</div>
+    <div class="location">
+      <span class="location-text">{{ location }}</span>
+    </div>
     <div class="header-icons">
       <button class="icon-btn" @click="$emit('edit')">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
@@ -28,7 +30,6 @@ defineProps({
     default: 'OO마을 12단지'
   }
 })
-
 defineEmits(['edit', 'search', 'notification'])
 </script>
 
@@ -39,19 +40,17 @@ defineEmits(['edit', 'search', 'notification'])
   align-items: center;
   padding: 16px 20px;
   background-color: white;
+  border-bottom: 1px solid #e0e0e0;
 }
-
 .location {
   font-size: 18px;
-  font-weight: 600;
+  font-weight: 700;
   color: #333;
 }
-
 .header-icons {
   display: flex;
-  gap: 16px;
+  gap: 8px;
 }
-
 .icon-btn {
   display: flex;
   align-items: center;
@@ -59,12 +58,49 @@ defineEmits(['edit', 'search', 'notification'])
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  background-color: #f8f8f8;
+  background-color: transparent;
   color: #666;
-  transition: background-color 0.2s;
+  transition: background-color 0.2s, color 0.2s;
+}
+.icon-btn:hover {
+  background-color: #f0f0f0;
+  color: #333;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  background: linear-gradient(90deg, #f9f9f9, #ffffff);
+  border-bottom: 1px solid #e0e0e0;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  /* border-radius: 0 0 16px 16px;  */
+}
+.icon-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background-color: #f5f6fa;
+  color: #555;
+  transition: all 0.2s;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.08);
 }
 
 .icon-btn:hover {
-  background-color: #f0f0f0;
+  background-color: #e0e4e8;
+  color: #2c3e50;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.12);
 }
+.location {
+  font-size: 20px;
+  font-weight: 600;
+  color: #2c3e50;
+}
+
+
 </style>

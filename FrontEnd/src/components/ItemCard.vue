@@ -1,15 +1,17 @@
 <template>
   <div class="item-card" @click="handleItemClick">
-    <div class="item-image">
-      <img 
-        v-if="item.image" 
-        :src="item.image" 
-        :alt="item.title" 
-        @error="handleImageError"
-        @load="handleImageLoad"
-      />
-      <div v-else class="no-image">
-        <span>이미지 없음</span>
+    <div class="item-image-wrapper">
+      <div class="item-image">
+        <img 
+          v-if="item.image" 
+          :src="item.image" 
+          :alt="item.title" 
+          @error="handleImageError"
+          @load="handleImageLoad"
+        />
+        <div v-else class="no-image">
+          <span>이미지 없음</span>
+        </div>
       </div>
     </div>
     <div class="item-info">
@@ -56,82 +58,113 @@ const handleImageLoad = () => {
 </script>
 
 <style scoped>
+/* 카드 전체 */
 .item-card {
   display: flex;
-  padding: 16px 0;
-  border-bottom: 1px solid #f0f0f0;
-  gap: 12px;
+  align-items: flex-start;
+  padding: 16px;
+  margin-bottom: 12px;
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  gap: 14px;
   cursor: pointer;
-  transition: background-color 0.2s;
+  transition: transform 0.2s ease, box-shadow 0.3s ease, background-color 0.3s;
 }
 
 .item-card:hover {
-  background-color: #f8f8f8;
+  transform: translateY(-3px);
+  box-shadow: 0 6px 16px rgba(70,130,180,0.2);
+  background-color: #f9fbfd;
+}
+
+/* 이미지 래퍼 */
+.item-image-wrapper {
+  flex-shrink: 0;
+  position: relative;
 }
 
 .item-image {
   width: 120px;
   height: 120px;
-  border-radius: 8px;
+  border-radius: 12px;
   overflow: hidden;
-  background-color: #f8f8f8;
-  flex-shrink: 0;
+  background: #f0f4f8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.3s ease;
+}
+
+.item-card:hover .item-image {
+  transform: scale(1.05);
 }
 
 .item-image img {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  display: block;
 }
 
+/* 이미지 없음 */
+.no-image {
+  width: 100%;
+  height: 100%;
+  font-size: 13px;
+  color: #999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: repeating-linear-gradient(
+    45deg,
+    #f0f0f0,
+    #f0f0f0 10px,
+    #e6e6e6 10px,
+    #e6e6e6 20px
+  );
+}
+
+/* 정보 영역 */
 .item-info {
   flex: 1;
   display: flex;
   flex-direction: column;
-  justify-content: flex-start;
+  justify-content: center;
   min-width: 0;
-  padding-top: 2px;
 }
 
+/* 제목 */
 .item-title {
-  font-size: 16px;
-  font-weight: 400;
-  color: #000;
-  margin: 0 0 4px 0;
-  line-height: 1.3;
-  letter-spacing: -0.01em;
+  font-size: 17px;
+  font-weight: 600;
+  color: #2c3e50;
+  margin: 0 0 6px 0;
+  line-height: 1.4;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
+  transition: color 0.2s ease;
 }
 
+.item-card:hover .item-title {
+  /* color: #4682b4; */
+}
+
+/* 위치 */
 .item-location {
-  font-size: 13px;
-  color: #666;
-  margin: 0 0 8px 0;
-  font-weight: 400;
-  line-height: 1.3;
-  letter-spacing: -0.005em;
+  font-size: 14px;
+  color: #7b8a97;
+  margin: 0 0 10px 0;
 }
 
+/* 가격 */
 .item-price {
-  font-size: 16px;
-  font-weight: 600;
-  color: #000;
+  font-size: 18px;
+  font-weight: 700;
+  color: #4682b4;
   margin: 0;
-  letter-spacing: -0.01em;
-}
-
-.no-image {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: #f0f0f0;
-  color: #999;
-  font-size: 12px;
 }
 </style>

@@ -59,17 +59,26 @@ const handleNavigation = (tab) => {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  background-color: #f8f9fa;
+  /* Brand palette */
+  --primary: #4682b4;
+  --primary-600: #3a6b9a;
+  --secondary: #2c3e50;
+  --muted: #6b7280;
+  --surface: #ffffff;
+  --surface-2: #f3f6fa;
+
+  background-color: var(--surface-2);
 }
 
 /* 전체 페이지 스타일링 */
 .mypage > * {
-  background-color: white;
+  background-color: var(--surface);
 }
 
 /* 콘텐츠 영역은 남는 공간을 차지하여 하단 네비가 바닥에 고정되도록 함 */
 .mypage-content {
   flex: 1;
   overflow-y: auto;
+  padding-bottom: calc(96px + env(safe-area-inset-bottom));
 }
 </style>

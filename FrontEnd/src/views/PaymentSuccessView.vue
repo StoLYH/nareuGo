@@ -83,8 +83,6 @@
                 </p>
                 <p class="seller-info">
                   판매자: {{ productInfo.sellerName }}
-                </p>
-                <p class="seller-info address">        
                   {{ productInfo.sellerLocation }}
                 </p>
               </div>
@@ -305,21 +303,13 @@ export default {
         this.productInfo.title = productData.title;
         this.productInfo.price = productData.price;
 
-        // 이미지 URL 처리 (단일 필드 또는 배열 모두 대응)
-        const candidates = [];
-        if (productData.imageUrl) candidates.push(productData.imageUrl);
-        if (Array.isArray(productData.imageUrls) && productData.imageUrls.length > 0) {
-          candidates.push(productData.imageUrls[0]);
-        }
-        if (productData.thumbnailUrl) candidates.push(productData.thumbnailUrl);
-        if (productData.image) candidates.push(productData.image);
-
-        const chosen = candidates.find(u => typeof u === 'string' && u.length > 0);
-        if (chosen) {
-          this.productInfo.image = chosen.startsWith('http') ? chosen : `${baseUrl}${chosen}`;
-        } else {
-          // 서버에서 이미지 경로를 주지 않는 경우, placeholder 유지
-          this.productInfo.image = this.productInfo.image || 'https://placehold.co/300x300/333333/FFF?text=No+Image';
+        // 이미지 URL 처리
+        if (productData.imageUrl) {
+          const baseUrl =
+            import.meta.env.VITE_BASE_URL || "http://localhost:8080";
+          this.productInfo.image = productData.imageUrl.startsWith("http")
+            ? productData.imageUrl
+            : `${baseUrl}${productData.imageUrl}`;
         }
 
         // 판매자 정보 로드
@@ -565,16 +555,7 @@ export default {
 .seller-info {
   font-size: 14px;
   color: #666;
-  font-weight: 500;
   margin: 0;
-  margin-top: 4px;
-}
-
-.seller-info.address {
-  font-size: 12px;
-  font-weight: 300;
-  margin: 0;
-  margin-top: 4px;
 }
 
 /* 다음 단계 */
