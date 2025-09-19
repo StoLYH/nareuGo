@@ -15,7 +15,6 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor
 public class OrderSummary {
     private Long orderId;           // 주문 ID
     private Long productId;         // 상품 ID
@@ -27,4 +26,36 @@ public class OrderSummary {
     private String deliveryStatus;  // 배송 상태
     private String productTitle;    // 상품명
     private String buyerNickname;   // 구매자 닉네임
+    private String buyerName;       // 구매자 이름
+
+    public OrderSummary(Long orderId, Long productId, Long buyerId, String status, BigDecimal amount,
+                       String tossOrderId, Long sellerId, String deliveryStatus, String productTitle,
+                       String buyerNickname) {
+        this.orderId = orderId;
+        this.productId = productId;
+        this.buyerId = buyerId;
+        this.status = status;
+        this.amount = amount;
+        this.tossOrderId = tossOrderId;
+        this.sellerId = sellerId;
+        this.deliveryStatus = deliveryStatus;
+        this.productTitle = productTitle;
+        this.buyerNickname = buyerNickname;
+    }
+
+    public OrderSummary(Long orderId, Long productId, Long buyerId, String status, BigDecimal amount,
+                       String tossOrderId, Long sellerId, String deliveryStatus, String productTitle,
+                       String buyerNickname, String buyerName) {
+        this.orderId = orderId;
+        this.productId = productId;
+        this.buyerId = buyerId;
+        this.status = status;
+        this.amount = amount;
+        this.tossOrderId = tossOrderId;
+        this.sellerId = sellerId;
+        this.deliveryStatus = deliveryStatus;
+        this.productTitle = productTitle;
+        this.buyerNickname = buyerNickname;
+        this.buyerName = buyerName;
+    }
 }
