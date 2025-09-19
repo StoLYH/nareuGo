@@ -3,6 +3,7 @@ package org.example.nareugobackend.api.service.chat;
 import org.example.nareugobackend.api.controller.chat.request.ChatMessage;
 import org.example.nareugobackend.api.controller.chat.request.ChatRoom;
 import org.example.nareugobackend.mapper.ChatMapper;
+import org.example.nareugobackend.mapper.OrderMapper;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -13,9 +14,11 @@ import java.util.List;
 public class ChatServiceImpl implements ChatService {
 
     private final ChatMapper chatMapper;
+    private final OrderMapper orderMapper;
 
-    public ChatServiceImpl(ChatMapper chatMapper) {
+    public ChatServiceImpl(ChatMapper chatMapper, OrderMapper orderMapper) {
         this.chatMapper = chatMapper;
+        this.orderMapper = orderMapper;
     }
 
     @Override
@@ -68,5 +71,11 @@ public class ChatServiceImpl implements ChatService {
     @Override
     public List<ChatRoom> getUserChatRooms(String userId) {
         return chatMapper.findChatRoomsByUserId(userId);
+    }
+    
+    @Override
+    public Long getProductIdByRoomId(Long roomId) {
+        // 채팅방 ID로 상품 ID 조회 (채팅 중인 상품 정보 가져오기용)
+        return orderMapper.getProductIdByRoomId(roomId);
     }
 }
