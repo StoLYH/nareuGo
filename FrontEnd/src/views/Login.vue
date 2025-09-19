@@ -114,7 +114,9 @@ const handleLogin = async () => {
       authStore.setUser({
         userId: response.data.userId,
         email: response.data.email,
-        name: response.data.name
+        name: response.data.name,
+        // 닉네임 저장 (백엔드에서 추가된 필드)
+        nickname: response.data.nickname
       })
       
       // 더미 토큰 설정 (라우터 가드 통과용)
@@ -124,7 +126,9 @@ const handleLogin = async () => {
       localStorage.setItem('user', JSON.stringify({
         userId: response.data.userId,
         email: response.data.email,
-        name: response.data.name
+        name: response.data.name,
+        // 닉네임을 함께 저장하여 이후 화면에서 표시 가능
+        nickname: response.data.nickname
       }))
       
       console.log('localStorage 저장 확인:', localStorage.getItem('user'))
