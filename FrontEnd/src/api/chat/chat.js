@@ -3,12 +3,13 @@ import axios from 'axios'
 const BASE_URL = import.meta.env.VITE_BASE_URL || 'http://localhost:8080'
 
 // 채팅방 생성 또는 기존 채팅방 찾기
-export const findOrCreateChatRoom = async (user1Id, user2Id) => {
+export const findOrCreateChatRoom = async (user1Id, user2Id, productId) => {
   try {
     const response = await axios.post(`${BASE_URL}/chat/rooms`, null, {
       params: {
         user1Id: user1Id,
-        user2Id: user2Id
+        user2Id: user2Id,
+        productId: productId
       }
     })
     return response.data // roomId 반환

@@ -48,8 +48,9 @@ public class ChatController {
     // REST API: 채팅방 생성 또는 찾기
     @PostMapping("/rooms")
     public ResponseEntity<Long> findOrCreateChatRoom(@RequestParam String user1Id, 
-                                                    @RequestParam String user2Id) {
-        Long roomId = chatService.findOrCreateChatRoom(user1Id, user2Id);
+                                                    @RequestParam String user2Id,
+                                                    @RequestParam Long productId) {
+        Long roomId = chatService.findOrCreateChatRoom(user1Id, user2Id, productId);
         return ResponseEntity.ok(roomId);
     }
 }

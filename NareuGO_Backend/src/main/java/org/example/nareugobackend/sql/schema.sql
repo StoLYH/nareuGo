@@ -147,13 +147,15 @@ CREATE TABLE IF NOT EXISTS `chat_rooms` (
                                             `room_id` BIGINT NOT NULL AUTO_INCREMENT COMMENT '채팅방 ID',
                                             `user1_id` VARCHAR(50) NOT NULL COMMENT '사용자1 ID',
                                             `user2_id` VARCHAR(50) NOT NULL COMMENT '사용자2 ID',
+                                            `product_id` BIGINT NOT NULL COMMENT '상품 ID',
                                             `created_at` VARCHAR(255) NOT NULL COMMENT '생성 시간',
                                             `last_message_at` VARCHAR(255) NULL COMMENT '마지막 메시지 시간',
                                             `last_message` TEXT NULL COMMENT '마지막 메시지 내용',
                                             PRIMARY KEY (`room_id`),
-    UNIQUE INDEX `unique_users` (`user1_id`, `user2_id`),
+    UNIQUE INDEX `unique_users_product` (`user1_id`, `user2_id`, `product_id`),
     INDEX `idx_user1` (`user1_id`),
-    INDEX `idx_user2` (`user2_id`)
+    INDEX `idx_user2` (`user2_id`),
+    INDEX `idx_product` (`product_id`)
     ) ENGINE = InnoDB COMMENT = 'WebSocket 채팅방 정보';
 
 CREATE TABLE IF NOT EXISTS `chat_messages` (

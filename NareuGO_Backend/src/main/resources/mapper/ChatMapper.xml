@@ -17,12 +17,13 @@
         VALUES (#{user1Id}, #{user2Id}, #{productId}, #{createdAt}, #{createdAt})
     </insert>
 
-    <!-- 채팅방 찾기 (두 사용자 간) -->
+    <!-- 채팅방 찾기 (두 사용자 간, 특정 상품) -->
     <select id="findChatRoom" resultType="org.example.nareugobackend.api.controller.chat.request.ChatRoom">
         SELECT room_id, user1_id, user2_id, product_id, created_at, last_message_at, last_message
         FROM chat_rooms
-        WHERE (user1_id = #{user1Id} AND user2_id = #{user2Id})
-           OR (user1_id = #{user2Id} AND user2_id = #{user1Id})
+        WHERE ((user1_id = #{user1Id} AND user2_id = #{user2Id})
+           OR (user1_id = #{user2Id} AND user2_id = #{user1Id}))
+        AND product_id = #{productId}
         LIMIT 1
     </select>
 

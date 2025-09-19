@@ -23,9 +23,13 @@ public class ChatServiceImpl implements ChatService {
         // 현재 시간 설정
         message.setTimestamp(LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
         
-        // 채팅방이 없다면 생성
+        // 채팅방이 없다면 생성 (메시지 저장 시에는 productId가 필수)
         if (message.getRoomId() == null) {
-            Long roomId = findOrCreateChatRoom(message.getSenderId(), message.getReceiverId());
+            // 메시지에 productId가 없으면 예외 처리
+            if (message.getProductId() == null) {
+                throw new IllegalArgumentException("메시지 저장 시 productId는 필수입니다.");
+            }
+            Long roomId = findOrCreateChatRoom(message.getSenderId(), message.getReceiverId(), message.getProductId());
             message.setRoomId(roomId);
         }
         
@@ -37,9 +41,9 @@ public class ChatServiceImpl implements ChatService {
     }
 
     @Override
-    public Long findOrCreateChatRoom(String user1Id, String user2Id) {
-        // 기존 채팅방 찾기
-        ChatRoom existingRoom = chatMapper.findChatRoom(user1Id, user2Id);
+    public Long findOrCreateChatRoom(String user1Id, String user2Id, Long productId) {
+        // 기존 채팅방 찾기 (상품별로 구분)
+        ChatRoom existingRoom = chatMapper.findChatRoom(user1Id, user2Id, productId);
         
         if (existingRoom != null) {
             return existingRoom.getRoomId();
@@ -49,6 +53,7 @@ public class ChatServiceImpl implements ChatService {
         ChatRoom newRoom = new ChatRoom();
         newRoom.setUser1Id(user1Id);
         newRoom.setUser2Id(user2Id);
+        newRoom.setProductId(productId);
         newRoom.setCreatedAt(LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
         
         chatMapper.insertChatRoom(newRoom);

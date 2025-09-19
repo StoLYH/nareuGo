@@ -272,6 +272,7 @@ const sendMessage = () => {
     senderId: currentUserId.value.toString(),
     receiverId: otherUserId.value.toString(),
     content: newMessage.value.trim(),
+    productId: parseInt(route.query.productId) // productId 추가
   };
 
   console.log("메시지 전송:", messageData);
