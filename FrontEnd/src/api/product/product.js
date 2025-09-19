@@ -56,17 +56,19 @@ export const getProducts = async (userId) => {
   }
 }
 
-// 상품 상세 조회 API (추후 구현)
+// 상품 상세 조회 API
 export const getProductDetail = async (productId) => {
   try {
-    const response = await axios.get(`${BASE_URL}/products/${productId}`, {
+    console.log('상품 상세 조회 시도:', productId, `${BASE_URL}/products/item/${productId}`)
+    const response = await axios.get(`${BASE_URL}/products/item/${productId}`, {
       headers: {
         'Authorization': `Bearer ${localStorage.getItem('access_token')}`
       }
     })
+    console.log('상품 상세 조회 성공:', response.data)
     return response.data
   } catch (error) {
-    console.error('상품 상세 조회 실패:', error)
+    console.error('상품 상세 조회 실패:', error.response?.status, error.response?.data, error.message)
     throw error
   }
 }
