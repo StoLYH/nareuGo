@@ -165,8 +165,13 @@ const handlePaymentClick = async () => {
   try {
     console.log("결제 버튼 클릭 - 주문 생성 시작");
 
-    // 테스트용 상품 정보 (실제로는 채팅방 컨텍스트에서 가져와야 함)
-    // const productId = 18; // 채팅 중인 상품 ID
+    // 채팅방 컨텍스트에서 가져온 상품 ID 사용
+    // 주의: 기존 채팅/상품 코드들에 영향을 주지 않기 위해 별도의 상태값(productId)으로 관리합니다.
+    const pid = Number(productId.value);
+    if (!pid || Number.isNaN(pid)) {
+      alert("상품 정보 로딩 중입니다. 잠시 후 다시 시도해주세요.");
+      return;
+    }
     const buyerId = getCurrentUserId(); // 로그인한 사용자 ID
 
     // 백엔드에서 주문 생성
@@ -177,7 +182,7 @@ const handlePaymentClick = async () => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        productId: productId,
+        productId: pid,
         buyerId: buyerId,
       }),
     });
@@ -221,6 +226,23 @@ const otherUserId = ref(route.query.otherUserId);
 const otherUserName = ref(route.query.otherUserName || "상대방");
 const productTitle = ref(route.query.productTitle || "");
 const currentUserId = ref(null);
+const productId = ref(null); // 동적으로 가져올 상품 ID (기존 코드와 충돌 방지용 별도 상태)
+
+// 채팅방의 상품 ID를 백엔드에서 조회하는 함수
+// 주의: domain 폴더 및 기존 채팅/상품 코드에는 영향 주지 않도록 이 컴포넌트 내부에서만 사용합니다.
+const fetchProductIdForRoom = async () => {
+  try {
+    const baseUrl = import.meta.env.VITE_BASE_URL || "http://localhost:8080";
+    const resp = await fetch(`${baseUrl}/chat/rooms/${roomId.value}/product`);
+    if (!resp.ok) throw new Error("상품 ID 조회 실패");
+    const pid = await resp.json();
+    productId.value = pid;
+    console.log("채팅방 상품 ID 로드 완료:", pid);
+  } catch (e) {
+    console.error("채팅방 상품 ID 조회 중 오류:", e);
+    // 실패해도 화면 사용은 가능하도록 하되 결제/메시지 전송 시 가드합니다.
+  }
+};
 
 // WebSocket 관련
 let stompClient = null;
@@ -266,13 +288,20 @@ const sendMessage = () => {
   if (!newMessage.value.trim() || !stompClient || !stompClient.connected) {
     return;
   }
+  // 채팅방 상품 ID가 아직 로드되지 않았다면 전송 제한
+  const pid = Number(productId.value);
+  if (!pid || Number.isNaN(pid)) {
+    alert("상품 정보 로딩 중입니다. 잠시 후 다시 시도해주세요.");
+    return;
+  }
 
   const messageData = {
     roomId: parseInt(roomId.value),
     senderId: currentUserId.value.toString(),
     receiverId: otherUserId.value.toString(),
     content: newMessage.value.trim(),
-    productId: parseInt(route.query.productId) // productId 추가
+    // 백엔드에서 조회한 상품 ID 사용
+    productId: pid
   };
 
   console.log("메시지 전송:", messageData);
@@ -382,6 +411,9 @@ onMounted(async () => {
     otherUserName: otherUserName.value,
     productTitle: productTitle.value,
   });
+
+  // 채팅방의 상품 ID를 먼저 로드
+  await fetchProductIdForRoom();
 
   // 초기 메시지 로드
   await loadInitialMessages();
