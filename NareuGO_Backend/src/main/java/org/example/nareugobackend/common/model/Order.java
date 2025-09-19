@@ -35,4 +35,8 @@ public class Order {
     private String tossOrderId;     // 토스페이먼츠용 orderId (영문+숫자+특수문자, 6-64자)
     private LocalDateTime createdAt; // 주문 생성 시각
     private LocalDateTime updatedAt; // 상태 변경 시각
+    private Long sellerId;          // 판매자 ID (JOIN 쿼리에서 설정)
+    private String deliveryStatus;  // 배송 상태 (JOIN 쿼리에서 설정)
+    private String productTitle;    // 상품명 (JOIN 쿼리에서 설정)
+    private String buyerNickname;   // 구매자 닉네임 (JOIN 쿼리에서 설정)
 }
