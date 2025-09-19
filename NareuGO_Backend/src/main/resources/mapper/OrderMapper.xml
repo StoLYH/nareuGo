@@ -82,4 +82,11 @@
       #{orderId}
     </foreach>
   </update>
+  
+  <!-- 채팅방 ID로 상품 ID 조회 (채팅 중인 상품 정보 가져오기용) -->
+  <select id="getProductIdByRoomId" resultType="java.lang.Long">
+    SELECT product_id
+    FROM chat_rooms
+    WHERE room_id = #{roomId}
+  </select>
 </mapper>

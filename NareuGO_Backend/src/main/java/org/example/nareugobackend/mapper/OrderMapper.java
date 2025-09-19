@@ -24,4 +24,7 @@ public interface OrderMapper {
     java.util.List<Order> findExpiredPendingOrders();
 
     void expireOrders(@Param("orderIds") java.util.List<Long> orderIds);
+    
+    // 채팅방 ID로 상품 ID 조회 (채팅 중인 상품 정보 가져오기용)
+    Long getProductIdByRoomId(@Param("roomId") Long roomId);
 }

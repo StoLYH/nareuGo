@@ -18,4 +18,7 @@ public interface ChatService {
     
     // 사용자의 채팅방 목록 조회
     List<ChatRoom> getUserChatRooms(String userId);
+    
+    // 채팅방 ID로 상품 ID 조회 (채팅 중인 상품 정보 가져오기용)
+    Long getProductIdByRoomId(Long roomId);
 }

@@ -53,4 +53,11 @@ public class ChatController {
         Long roomId = chatService.findOrCreateChatRoom(user1Id, user2Id, productId);
         return ResponseEntity.ok(roomId);
     }
+    
+    // REST API: 채팅방 ID로 상품 ID 조회 (채팅 중인 상품 정보 가져오기용)
+    @GetMapping("/rooms/{roomId}/product")
+    public ResponseEntity<Long> getProductIdByRoomId(@PathVariable Long roomId) {
+        Long productId = chatService.getProductIdByRoomId(roomId);
+        return ResponseEntity.ok(productId);
+    }
 }

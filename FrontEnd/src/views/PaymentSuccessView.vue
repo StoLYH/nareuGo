@@ -82,7 +82,7 @@
                   {{ formatPrice(productInfo.price) }}원
                 </p>
                 <p class="seller-info">
-                  {{ productInfo.sellerName }} ·
+                  판매자: {{ productInfo.sellerName }} ·
                   {{ productInfo.sellerLocation }}
                 </p>
               </div>
