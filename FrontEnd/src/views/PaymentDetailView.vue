@@ -40,7 +40,10 @@
               <h3 class="product-title">{{ orderInfo.productTitle }}</h3>
               <p class="product-price">{{ formatPrice(orderInfo.price) }}원</p>
               <p class="seller-info">
-                판매자: {{ orderInfo.sellerName }} · {{ orderInfo.sellerLocation }}
+                판매자: {{ orderInfo.sellerName }}
+              </p>
+              <p class="seller-info address">
+                {{ orderInfo.sellerLocation }}
               </p>
             </div>
           </div>
@@ -660,6 +663,14 @@ export default {
   font-size: 14px;
   color: #666;
   margin: 0;
+  margin-top: 6px;
+  font-weight: 500;
+}
+
+.seller-info.address {
+  margin-top: 8px;
+  font-size: 12px;
+  font-weight: 300;
 }
 
 /* 결제 정보 카드 */

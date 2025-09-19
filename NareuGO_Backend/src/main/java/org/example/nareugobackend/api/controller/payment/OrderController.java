@@ -111,6 +111,7 @@ public class OrderController {
                 dto.setDeliveryStatus(order.getDeliveryStatus());
                 dto.setProductTitle(order.getProductTitle());
                 dto.setBuyerNickname(order.getBuyerNickname());
+                dto.setBuyerName(order.getBuyerName());
                 return dto;
             })
             .collect(Collectors.toList());

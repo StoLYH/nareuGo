@@ -139,6 +139,17 @@ firebase:
   service-account-key: firebase-service-account.json
   project-id: ${FIREBASE_PROJECT_ID:your-project-id}
 
+# ===========================================
+# ROS Bridge 설정
+# ===========================================
+# ROS2와의 WebSocket 통신을 위한 설정
+ros:
+  bridge:
+    url: ${ROS_BRIDGE_URL:ws://localhost:9090} # ROS Bridge WebSocket URL
+    timeout: ${ROS_BRIDGE_TIMEOUT:10000} # 연결 타임아웃 (ms)
+    retry-attempts: ${ROS_BRIDGE_RETRY:3} # 재시도 횟수
+    connection-pool-size: ${ROS_BRIDGE_POOL_SIZE:5} # 연결 풀 크기
+
 # Local 환경
 ---
 spring:
