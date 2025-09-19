@@ -80,7 +80,8 @@ public class OrderServiceImpl implements OrderService {
             order.getSellerId(),
             order.getDeliveryStatus(),
             order.getProductTitle(),
-            order.getBuyerNickname()
+            order.getBuyerNickname(),
+            order.getBuyerName()
         );
     }
 
@@ -101,7 +102,8 @@ public class OrderServiceImpl implements OrderService {
             order.getSellerId(),
             order.getDeliveryStatus(),
             order.getProductTitle(),
-            order.getBuyerNickname()
+            order.getBuyerNickname(),
+            order.getBuyerName()
         );
     }
 
@@ -120,7 +122,8 @@ public class OrderServiceImpl implements OrderService {
                 order.getSellerId(),
                 order.getDeliveryStatus(),
                 order.getProductTitle(),
-                order.getBuyerNickname()
+                order.getBuyerNickname(),
+                order.getBuyerName()
             ))
             .collect(Collectors.toList());
     }

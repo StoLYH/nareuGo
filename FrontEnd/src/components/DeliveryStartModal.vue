@@ -16,7 +16,7 @@
         </div>
 
         <div v-else class="product-list">
-          <h3>결제 완료된 상품을 선택하세요</h3>
+          <h3>결제 완료된 상품을 선택하세요 (1개)</h3>
           <div class="product-items">
             <label
               v-for="product in paidProducts"

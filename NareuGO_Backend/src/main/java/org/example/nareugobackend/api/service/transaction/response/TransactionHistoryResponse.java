@@ -22,7 +22,9 @@ public class TransactionHistoryResponse {
 
     // 판매내역용
     private String buyerNickname;
+    private String buyerName;
 
     // 구매내역용
     private String sellerNickname;
+    private String sellerName;
 }

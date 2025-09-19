@@ -9,8 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class RobotStatusResponse {
-    private String status;
-    private String message;
-    private String timestamp;
+public class DeliveryAddressResponse {
+    private String sellerAddress;
+    private String buyerAddress;
 }

@@ -28,20 +28,20 @@ spring:
     show-sql: true
     properties:
       hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
         format_sql: true
-    open-in-view: false
-
-  mybatis:
-    mapper-locations: classpath*:mappers/**/*.xml
-    type-aliases-package: org.example.nareugobackend.common.model
-    configuration:
-      map-underscore-to-camel-case: true
 
   data:
     redis:
       host: ${REDIS_HOST}
       port: 6379
       password: ${REDIS_PASSWORD}
+
+  webflux:
+    webclient:
+      connect-timeout: 5000
+      read-timeout: 10000
+      write-timeout: 10000
 
   security:
     oauth2:
@@ -91,11 +91,38 @@ host:
 
 mybatis:   # 위치고정
   mapper-locations: classpath*:mapper/**/*.xml
-  type-aliases-package: org.example.nareugobackend.common.model
+  type-aliases-package: org.example.nareugobackend
   configuration:
     map-underscore-to-camel-case: true
 
 
+
+# ROS2 로봇 통신 설정
+ros:
+  robot:
+    # ROS2 HTTP 서버 설정
+    http-server:
+      host: localhost
+      port: 8888
+      timeout: 5000
+      connection-pool-size: 10
+
+    # 로봇 상태 확인 설정
+    status:
+      check-interval: 10000  # 10초마다 상태 확인
+      connection-timeout: 30000  # 30초 연결 타임아웃
+      retry-attempts: 3
+
+    # 지원하는 로봇 목록
+    supported-robots:
+      - id: "1"
+        name: "NareuGO"
+        type: "turtlebot3"
+      - id: "2"
+        name: "NareuGO2"
+        type: "turtlebot3"
+
+# WebClient 설정 (ROS2 서버와 통신용)
 
 # ===========================================
 # AWS S3 설정
@@ -107,37 +134,23 @@ cloud:
       secret-key: ${CLOUD_AWS_CREDENTIALS_SECRET_KEY}
     s3:
       bucket: "a501"
-      region: ${AWS_S3_REGION}       
+      region: ${AWS_S3_REGION}
 
 # ===========================================
 # 토스페이먼츠 결제 API 설정
 # ===========================================
-# 토스페이먼츠 API 연동을 위한 설정값들
-# - secret-key: 토스페이먼츠에서 발급받은 시크릿 키 (환경 변수로 주입)
-# - confirm-url: 토스페이먼츠 결제 승인 API 엔드포인트
 payments:
   toss:
-    secret-key: ${TOSS_SECRET_KEY} # 환경 변수로 시크릿 키 주입
+    secret-key: ${TOSS_SECRET_KEY}
     confirm-url: https://api.tosspayments.com/v1/payments/confirm
 
 # ===========================================
 # Clova OCR API 설정
 # ===========================================
-# 네이버 클라우드 플랫폼 Clova OCR API 연동 설정
-# - api-url: Clova OCR API 엔드포인트
-# - secret-key: Clova OCR에서 발급받은 시크릿 키 (환경 변수로 주입)
 clova:
   ocr:
-    api-url: ${CLOVA_OCR_API_URL} # Clova OCR API URL
-    secret-key: ${CLOVA_OCR_SECRET_KEY} # 환경 변수로 시크릿 키 주입
-
-# ===========================================
-# Firebase 설정
-# ===========================================
-firebase:
-  enabled: ${FIREBASE_ENABLED:false}
-  service-account-key: firebase-service-account.json
-  project-id: ${FIREBASE_PROJECT_ID:your-project-id}
+    api-url: ${CLOVA_OCR_API_URL}
+    secret-key: ${CLOVA_OCR_SECRET_KEY}
 
 # Local 환경
 ---

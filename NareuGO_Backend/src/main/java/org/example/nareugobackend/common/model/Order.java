@@ -39,4 +39,5 @@ public class Order {
     private String deliveryStatus;  // 배송 상태 (JOIN 쿼리에서 설정)
     private String productTitle;    // 상품명 (JOIN 쿼리에서 설정)
     private String buyerNickname;   // 구매자 닉네임 (JOIN 쿼리에서 설정)
+    private String buyerName;       // 구매자 이름 (JOIN 쿼리에서 설정)
 }

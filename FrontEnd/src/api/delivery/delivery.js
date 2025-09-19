@@ -254,7 +254,7 @@ export const getPaidSalesProducts = async (userId) => {
       title: item.title || item.productTitle || '상품명 없음',
       price: item.price || item.amount || 0,
       imageUrl: null, // 이미지 URL은 별도로 처리 필요
-      buyerName: item.buyerNickname || item.buyerName || item.buyer_nickname || '구매자',
+      buyerName: item.buyerName || item.buyer_name || '구매자',
       buyerId: item.buyerId || item.buyer_id,
       orderId: item.orderId || item.order_id,
       orderStatus: item.orderStatus || item.status
