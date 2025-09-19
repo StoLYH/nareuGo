@@ -7,6 +7,7 @@ public class ChatRoom {
     private Long roomId;
     private String user1Id;
     private String user2Id;
+    private Long productId;
     private String createdAt;
     private String lastMessageAt;
     private String lastMessage;

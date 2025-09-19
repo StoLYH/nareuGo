@@ -17,8 +17,13 @@
         <h2>{{ otherUserName }}</h2>
         <span>{{ productTitle }}</span>
       </div>
-       <!-- 결제 아이콘 버튼 -->
-       <button class="payment-btn" title="결제" @click="handlePaymentClick" :disabled="isCreatingOrder">
+      <!-- 결제 아이콘 버튼 -->
+      <button
+        class="payment-btn"
+        title="결제"
+        @click="handlePaymentClick"
+        :disabled="isCreatingOrder"
+      >
         <div v-if="isCreatingOrder" class="loading-spinner-small"></div>
         <svg v-else width="20" height="20" viewBox="0 0 24 24" fill="none">
           <rect
@@ -40,7 +45,7 @@
             stroke-width="2"
           />
         </svg>
-        <span>{{ isCreatingOrder ? '주문 생성 중...' : '결제' }}</span>
+        <span>{{ isCreatingOrder ? "주문 생성 중..." : "결제" }}</span>
       </button>
     </div>
 
@@ -104,10 +109,10 @@
           />
         </svg>
       </button>
-      <input 
-        type="text" 
-        placeholder="Message" 
-        class="message-text" 
+      <input
+        type="text"
+        placeholder="Message"
+        class="message-text"
         v-model="newMessage"
         @keyup.enter="sendMessage"
       />
@@ -136,9 +141,9 @@
 <script setup>
 import { ref, onMounted, onUnmounted, nextTick } from "vue";
 import { useRoute, useRouter } from "vue-router";
-import SockJS from 'sockjs-client';
-import { Stomp } from '@stomp/stompjs';
-import { getChatMessages } from '@/api/chat/chat.js';
+import SockJS from "sockjs-client";
+import { Stomp } from "@stomp/stompjs";
+import { getChatMessages } from "@/api/chat/chat.js";
 
 const route = useRoute();
 const router = useRouter();
@@ -148,54 +153,52 @@ const messages = ref([]);
 const loading = ref(false);
 const hasMoreMessages = ref(true);
 const currentPage = ref(1);
-const newMessage = ref('');
+const newMessage = ref("");
 const isCreatingOrder = ref(false);
-
 
 // ===== 결제 버튼 클릭 처리 =====
 const handlePaymentClick = async () => {
   if (isCreatingOrder.value) return;
-  
+
   isCreatingOrder.value = true;
-  
+
   try {
-    console.log('결제 버튼 클릭 - 주문 생성 시작');
-    
+    console.log("결제 버튼 클릭 - 주문 생성 시작");
+
     // 테스트용 상품 정보 (실제로는 채팅방 컨텍스트에서 가져와야 함)
-    const productId = 18; // 채팅 중인 상품 ID
+    // const productId = 18; // 채팅 중인 상품 ID
     const buyerId = getCurrentUserId(); // 로그인한 사용자 ID
-    
+
     // 백엔드에서 주문 생성
-    const baseUrl = import.meta.env.VITE_BASE_URL || 'http://localhost:8080';
+    const baseUrl = import.meta.env.VITE_BASE_URL || "http://localhost:8080";
     const response = await fetch(`${baseUrl}/orders`, {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({
         productId: productId,
-        buyerId: buyerId
-      })
+        buyerId: buyerId,
+      }),
     });
-    
+
     if (!response.ok) {
-      throw new Error('주문 생성에 실패했습니다.');
+      throw new Error("주문 생성에 실패했습니다.");
     }
-    
+
     const orderData = await response.json();
     const orderId = orderData.orderId;
-    
-    console.log('주문 생성 완료 - orderId:', orderId);
-    
+
+    console.log("주문 생성 완료 - orderId:", orderId);
+
     // 생성된 orderId로 결제 페이지로 이동
     router.push({
-      name: 'PaymentDetail',
-      params: { orderId: orderId }
+      name: "PaymentDetail",
+      params: { orderId: orderId },
     });
-    
   } catch (error) {
-    console.error('주문 생성 실패:', error);
-    alert('주문 생성 중 오류가 발생했습니다: ' + error.message);
+    console.error("주문 생성 실패:", error);
+    alert("주문 생성 중 오류가 발생했습니다: " + error.message);
   } finally {
     isCreatingOrder.value = false;
   }
@@ -204,22 +207,19 @@ const handlePaymentClick = async () => {
 // 현재 로그인한 사용자 ID 가져오기
 const getCurrentUserId = () => {
   try {
-    const userInfo = JSON.parse(localStorage.getItem('user') || '{}');
+    const userInfo = JSON.parse(localStorage.getItem("user") || "{}");
     return userInfo.userId || 1; // 기본값 1
   } catch (error) {
-    console.error('사용자 정보 로드 실패:', error);
+    console.error("사용자 정보 로드 실패:", error);
     return 1; // 기본값
   }
 };
 
-
-
-
 // 채팅 관련 데이터
 const roomId = ref(route.params.id);
 const otherUserId = ref(route.query.otherUserId);
-const otherUserName = ref(route.query.otherUserName || '상대방');
-const productTitle = ref(route.query.productTitle || '');
+const otherUserName = ref(route.query.otherUserName || "상대방");
+const productTitle = ref(route.query.productTitle || "");
 const currentUserId = ref(null);
 
 // WebSocket 관련
@@ -228,26 +228,30 @@ let stompClient = null;
 // WebSocket 연결
 const connectWebSocket = () => {
   // 환경 변수를 사용하여 WebSocket 서버 URL 설정
-  const baseUrl = import.meta.env.VITE_BASE_URL || 'http://localhost:8080';
+  const baseUrl = import.meta.env.VITE_BASE_URL || "http://localhost:8080";
   const socket = new SockJS(`${baseUrl}/ws`);
   stompClient = Stomp.over(socket);
-  
-  stompClient.connect({}, (frame) => {
-    console.log('Connected: ' + frame);
-    
-    // 자신의 큐를 구독하여 메시지 수신
-    stompClient.subscribe(`/queue/user.${currentUserId.value}`, (message) => {
-      const receivedMessage = JSON.parse(message.body);
-      console.log('받은 메시지:', receivedMessage);
-      
-      // 현재 채팅방의 메시지인지 확인
-      if (receivedMessage.roomId.toString() === roomId.value) {
-        addMessageToChat(receivedMessage, 'received');
-      }
-    });
-  }, (error) => {
-    console.error('WebSocket 연결 실패:', error);
-  });
+
+  stompClient.connect(
+    {},
+    (frame) => {
+      console.log("Connected: " + frame);
+
+      // 자신의 큐를 구독하여 메시지 수신
+      stompClient.subscribe(`/queue/user.${currentUserId.value}`, (message) => {
+        const receivedMessage = JSON.parse(message.body);
+        console.log("받은 메시지:", receivedMessage);
+
+        // 현재 채팅방의 메시지인지 확인
+        if (receivedMessage.roomId.toString() === roomId.value) {
+          addMessageToChat(receivedMessage, "received");
+        }
+      });
+    },
+    (error) => {
+      console.error("WebSocket 연결 실패:", error);
+    }
+  );
 };
 
 // WebSocket 연결 해제
@@ -267,19 +271,19 @@ const sendMessage = () => {
     roomId: parseInt(roomId.value),
     senderId: currentUserId.value.toString(),
     receiverId: otherUserId.value.toString(),
-    content: newMessage.value.trim()
+    content: newMessage.value.trim(),
   };
 
-  console.log('메시지 전송:', messageData);
+  console.log("메시지 전송:", messageData);
 
   // WebSocket을 통해 메시지 전송
-  stompClient.send('/app/chat.send', {}, JSON.stringify(messageData));
+  stompClient.send("/app/chat.send", {}, JSON.stringify(messageData));
 
   // 내가 보낸 메시지를 즉시 화면에 추가
-  addMessageToChat(messageData, 'sent');
-  
+  addMessageToChat(messageData, "sent");
+
   // 입력창 초기화
-  newMessage.value = '';
+  newMessage.value = "";
 };
 
 // 채팅에 메시지 추가
@@ -288,11 +292,11 @@ const addMessageToChat = (messageData, type) => {
     id: Date.now() + Math.random(),
     text: messageData.content,
     type: type,
-    timestamp: messageData.timestamp || new Date().toISOString()
+    timestamp: messageData.timestamp || new Date().toISOString(),
   };
-  
+
   messages.value.push(message);
-  
+
   // 스크롤을 맨 아래로
   nextTick(() => {
     if (chatMessages.value) {
@@ -306,17 +310,18 @@ const loadInitialMessages = async () => {
   try {
     loading.value = true;
     const chatHistory = await getChatMessages(roomId.value);
-    
-    messages.value = chatHistory.map(msg => ({
+
+    messages.value = chatHistory.map((msg) => ({
       id: msg.messageId || Date.now() + Math.random(),
       text: msg.content,
-      type: msg.senderId === currentUserId.value.toString() ? 'sent' : 'received',
-      timestamp: msg.timestamp
+      type:
+        msg.senderId === currentUserId.value.toString() ? "sent" : "received",
+      timestamp: msg.timestamp,
     }));
-    
+
     hasMoreMessages.value = false; // 일단 페이징 없이
   } catch (error) {
-    console.error('메시지 로드 실패:', error);
+    console.error("메시지 로드 실패:", error);
     messages.value = []; // 빈 배열로 초기화
   } finally {
     loading.value = false;
@@ -360,21 +365,21 @@ const handleScroll = () => {
 
 onMounted(async () => {
   // 현재 사용자 정보 가져오기
-  const userInfo = JSON.parse(localStorage.getItem('user'));
+  const userInfo = JSON.parse(localStorage.getItem("user"));
   if (!userInfo || !userInfo.userId) {
-    alert('로그인이 필요합니다.');
-    router.push('/login');
+    alert("로그인이 필요합니다.");
+    router.push("/login");
     return;
   }
-  
+
   currentUserId.value = userInfo.userId;
-  
-  console.log('채팅 정보:', {
+
+  console.log("채팅 정보:", {
     roomId: roomId.value,
     currentUserId: currentUserId.value,
     otherUserId: otherUserId.value,
     otherUserName: otherUserName.value,
-    productTitle: productTitle.value
+    productTitle: productTitle.value,
   });
 
   // 초기 메시지 로드
