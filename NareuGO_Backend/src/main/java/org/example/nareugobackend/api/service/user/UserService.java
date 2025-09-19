@@ -56,10 +56,12 @@ public class UserService {
         return LoginServiceResponse.failure("등록되지 않은 이메일입니다.");
       }
 
-      return LoginServiceResponse.success(
+      // 닉네임까지 포함하여 응답 (기존 필드 유지 + nickname 추가)
+      return LoginServiceResponse.successWithNickname(
           user.getId(),
           user.getEmail(),
-          user.getName()
+          user.getName(),
+          user.getNickname()
       );
 
     } catch (Exception e) {

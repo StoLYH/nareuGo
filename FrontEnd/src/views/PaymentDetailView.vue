@@ -40,7 +40,7 @@
               <h3 class="product-title">{{ orderInfo.productTitle }}</h3>
               <p class="product-price">{{ formatPrice(orderInfo.price) }}원</p>
               <p class="seller-info">
-                {{ orderInfo.sellerName }} · {{ orderInfo.sellerLocation }}
+                판매자: {{ orderInfo.sellerName }} · {{ orderInfo.sellerLocation }}
               </p>
             </div>
           </div>
@@ -463,6 +463,7 @@ export default {
       if (!response.ok) {
         throw new Error("주문 생성에 실패했습니다.");
       }
+
 
       return await response.json();
     },
