@@ -2,6 +2,8 @@ package org.example.nareugobackend.api.service.payment;
 
 import org.example.nareugobackend.api.controller.payment.response.OrderSummary;
 
+import java.util.List;
+
 /**
  * 주문 관련 비즈니스 로직을 처리하는 서비스 인터페이스
  *
@@ -51,6 +53,15 @@ public interface OrderService {
      * @throws IllegalArgumentException 주문이 존재하지 않는 경우
      */
     OrderSummary getOrderByTossOrderId(String tossOrderId);
+
+    /**
+     * 판매자의 주문 목록을 조회합니다.
+     *
+     * @param sellerId 판매자 ID
+     * @param status 주문 상태 (선택적, null이면 모든 상태)
+     * @return 주문 목록
+     */
+    List<OrderSummary> getOrdersBySeller(Long sellerId, String status);
 }
 
 

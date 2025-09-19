@@ -29,16 +29,6 @@
             </div>
             <div :class="['progress-line', getLineClass('RECEIPT_COMPLETED', delivery.status)]"></div>
 
-            <!-- 배달시작 -->
-            <div :class="['progress-step', getStepClass('DELIVERY_BEGIN', delivery.status)]">
-              <div v-if="delivery.status === 'DELIVERY_BEGIN'" class="step-time">
-                {{ formatDateTime(delivery.completeTime) }}
-              </div>
-              <div class="step-dot"></div>
-              <div class="step-label">배달시작</div>
-            </div>
-            <div :class="['progress-line', getLineClass('DELIVERY_BEGIN', delivery.status)]"></div>
-
             <!-- 배달중 -->
             <div :class="['progress-step', getStepClass('IN_DELIVERY', delivery.status)]">
               <div v-if="delivery.status === 'IN_DELIVERY'" class="step-time">
@@ -133,19 +123,17 @@ const isLoading = ref(false);
 const isModalVisible = ref(false);
 const selectedDelivery = ref(null);
 
-// 배송 상태별 순서 정의
+// 배송 상태별 순서 정의 (3단계로 수정)
 const statusOrder = {
   'RECEIPT_COMPLETED': 0,
-  'DELIVERY_BEGIN': 1,
-  'IN_DELIVERY': 2,
-  'DELIVERY_COMPLETED': 3,
+  'IN_DELIVERY': 1,
+  'DELIVERY_COMPLETED': 2,
   'CANCELLED': -1
 };
 
-// 배송 상태 텍스트 매핑
+// 배송 상태 텍스트 매핑 (DELIVERY_BEGIN 제거)
 const statusTexts = {
   'RECEIPT_COMPLETED': '접수완료',
-  'DELIVERY_BEGIN': '배달시작',
   'IN_DELIVERY': '배달중',
   'DELIVERY_COMPLETED': '배송완료',
   'CANCELLED': '취소됨'
