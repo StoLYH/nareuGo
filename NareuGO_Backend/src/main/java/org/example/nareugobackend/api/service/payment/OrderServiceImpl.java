@@ -3,7 +3,9 @@ package org.example.nareugobackend.api.service.payment;
 import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.example.nareugobackend.common.model.Order;
 import org.example.nareugobackend.common.model.OrderStatus;
@@ -74,7 +76,11 @@ public class OrderServiceImpl implements OrderService {
             order.getBuyerId(),
             order.getStatus().name(),
             order.getAmount(),
-            order.getTossOrderId()
+            order.getTossOrderId(),
+            order.getSellerId(),
+            order.getDeliveryStatus(),
+            order.getProductTitle(),
+            order.getBuyerNickname()
         );
     }
 
@@ -91,8 +97,32 @@ public class OrderServiceImpl implements OrderService {
             order.getBuyerId(),
             order.getStatus().name(),
             order.getAmount(),
-            order.getTossOrderId()
+            order.getTossOrderId(),
+            order.getSellerId(),
+            order.getDeliveryStatus(),
+            order.getProductTitle(),
+            order.getBuyerNickname()
         );
+    }
+
+    @Override
+    public List<OrderSummary> getOrdersBySeller(Long sellerId, String status) {
+        List<Order> orders = orderMapper.findOrdersBySeller(sellerId, status);
+
+        return orders.stream()
+            .map(order -> new OrderSummary(
+                order.getOrderId(),
+                order.getProductId(),
+                order.getBuyerId(),
+                order.getStatus().name(),
+                order.getAmount(),
+                order.getTossOrderId(),
+                order.getSellerId(),
+                order.getDeliveryStatus(),
+                order.getProductTitle(),
+                order.getBuyerNickname()
+            ))
+            .collect(Collectors.toList());
     }
 
     // ===== 토스페이먼츠 규격 orderId 생성 (결제용) =====

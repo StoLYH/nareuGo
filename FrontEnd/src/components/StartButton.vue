@@ -1,20 +1,38 @@
 <template>
   <div class="start-button-container">
-    <button class="start-button" @click="startMyNarGo">
+    <button class="start-button" @click="openDeliveryModal">
       나르고 시작하기
     </button>
+
+    <!-- 배송 시작 모달 -->
+    <DeliveryStartModal
+      :isVisible="showModal"
+      @close="closeModal"
+      @delivery-started="handleDeliveryStarted"
+    />
   </div>
 </template>
 
 <script setup>
-import { useRouter } from 'vue-router';
+import { ref } from 'vue'
+import DeliveryStartModal from './DeliveryStartModal.vue'
 
-const router = useRouter();
+const showModal = ref(false)
 
-const startMyNarGo = () => {
-  console.log('나르고 시작하기 - ItemList로 이동');
-  router.push('/items');
-};
+const openDeliveryModal = () => {
+  console.log('🔍 [DEBUG] 나르고 시작하기 버튼 클릭됨')
+  showModal.value = true
+  console.log('🔍 [DEBUG] 모달 상태 변경:', showModal.value)
+}
+
+const closeModal = () => {
+  showModal.value = false
+}
+
+const handleDeliveryStarted = (product) => {
+  console.log('배송이 시작되었습니다:', product)
+  showModal.value = false
+}
 </script>
 
 <style scoped>

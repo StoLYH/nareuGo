@@ -12,7 +12,11 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * 주문 관련 REST API 컨트롤러
@@ -86,6 +90,32 @@ public class OrderController {
         res.setAmount(summary.getAmount());
         res.setTossOrderId(summary.getTossOrderId());
         return ResponseEntity.ok(res);
+    }
+
+    @GetMapping("/seller/{sellerId}")
+    public ResponseEntity<List<OrderResponseDto>> getOrdersBySeller(
+        @PathVariable Long sellerId,
+        @RequestParam(required = false) String status) {
+
+        List<OrderSummary> orders = orderService.getOrdersBySeller(sellerId, status);
+        List<OrderResponseDto> responseList = orders.stream()
+            .map(order -> {
+                OrderResponseDto dto = new OrderResponseDto();
+                dto.setOrderId(order.getOrderId());
+                dto.setProductId(order.getProductId());
+                dto.setBuyerId(order.getBuyerId());
+                dto.setStatus(order.getStatus());
+                dto.setAmount(order.getAmount());
+                dto.setTossOrderId(order.getTossOrderId());
+                dto.setSellerId(order.getSellerId());
+                dto.setDeliveryStatus(order.getDeliveryStatus());
+                dto.setProductTitle(order.getProductTitle());
+                dto.setBuyerNickname(order.getBuyerNickname());
+                return dto;
+            })
+            .collect(Collectors.toList());
+
+        return ResponseEntity.ok(responseList);
     }
 }
 

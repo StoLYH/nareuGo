@@ -115,7 +115,7 @@ CREATE TABLE IF NOT EXISTS `payments` (
 CREATE TABLE IF NOT EXISTS `robots` (
                                         `robot_id` BIGINT NOT NULL AUTO_INCREMENT COMMENT '로봇 ID',
                                         `robot_name` VARCHAR(50) NOT NULL COMMENT '로봇 식별 이름',
-    `status` ENUM('IDLE', 'IN_DELIVERY', 'MAINTENANCE') NOT NULL DEFAULT 'IDLE' COMMENT '로봇 상태',
+    `status` ENUM('VALID', 'INVALID') NOT NULL DEFAULT 'VALID' COMMENT '로봇 상태',
     PRIMARY KEY (`robot_id`),
     UNIQUE INDEX `robot_name_UNIQUE` (`robot_name` ASC)
     ) ENGINE = InnoDB COMMENT = '자율주행 로봇 정보';

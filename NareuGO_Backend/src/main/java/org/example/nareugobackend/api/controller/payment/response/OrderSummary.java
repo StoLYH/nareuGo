@@ -23,4 +23,8 @@ public class OrderSummary {
     private String status;          // 주문 상태 (문자열)
     private BigDecimal amount;      // 주문 금액
     private String tossOrderId;     // 토스페이먼츠용 orderId
+    private Long sellerId;          // 판매자 ID
+    private String deliveryStatus;  // 배송 상태
+    private String productTitle;    // 상품명
+    private String buyerNickname;   // 구매자 닉네임
 }

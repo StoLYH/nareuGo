@@ -18,6 +18,9 @@ build-frontend:
     - npm install
     - npm run build
     - echo "====== [Frontend] 빌드 결과물(dist)을 artifacts로 저장합니다. ======"
+    # ✅ 디버깅용: 생성된 .env.production 파일 확인
+    - echo "====== [Frontend] 최종 .env.production 내용 ======"
+    - cat .env.production
   artifacts:
     paths:
       - FrontEnd/dist/
