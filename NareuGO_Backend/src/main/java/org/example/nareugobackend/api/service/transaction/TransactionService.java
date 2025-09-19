@@ -41,6 +41,7 @@ public class TransactionService {
                     .orderCreatedAt(latestOrder != null ? latestOrder.getCreatedAt() : null)
                     .amount(latestOrder != null ? latestOrder.getAmount() : null)
                     .buyerNickname(latestOrder != null ? latestOrder.getBuyer().getNickname() : null)
+                    .buyerName(latestOrder != null ? latestOrder.getBuyer().getName() : null)
                     .build();
             })
             .collect(Collectors.toList());
@@ -66,6 +67,7 @@ public class TransactionService {
                     .orderCreatedAt(order.getCreatedAt())
                     .amount(order.getAmount())
                     .sellerNickname(product != null ? product.getSeller().getNickname() : null)
+                    .sellerName(product != null ? product.getSeller().getName() : null)
                     .build();
             })
             .collect(Collectors.toList());
