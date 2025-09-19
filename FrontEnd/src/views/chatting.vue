@@ -48,7 +48,7 @@
           @click="handleChatClick(chat.id)"
         >
           <div class="profile-image">
-            <img :src="chat.profileImage" :alt="chat.name" />
+            <img :src="chat.productImage" :alt="chat.productTitle" />
           </div>
           <div class="chat-info">
             <h3 class="chat-name">{{ chat.name }}</h3>
@@ -80,10 +80,36 @@ import { useRouter } from "vue-router";
 import AppHeader from "../components/AppHeader.vue";
 import BottomNavigation from "../components/BottomNavigation.vue";
 import { getUserChatRooms } from "@/api/chat/chat.js";
+import { getProductDetail } from "@/api/product/product.js";
+import { getUserInfo } from "@/api/user/user.js";
 
 const router = useRouter();
 const chats = ref([]);
 const loading = ref(false);
+
+// 상품 정보 가져오기 함수
+const fetchProductInfo = async (productId) => {
+  try {
+    if (!productId) return null;
+    const productInfo = await getProductDetail(productId);
+    return productInfo;
+  } catch (error) {
+    console.error("상품 정보 조회 실패:", error);
+    return null;
+  }
+};
+
+// 사용자 정보 가져오기 함수
+const fetchUserInfo = async (userId) => {
+  try {
+    if (!userId) return null;
+    const userInfo = await getUserInfo(userId);
+    return userInfo;
+  } catch (error) {
+    console.error("사용자 정보 조회 실패:", error);
+    return null;
+  }
+};
 
 // 채팅방 목록 로드
 const loadChatRooms = async () => {
@@ -105,27 +131,39 @@ const loadChatRooms = async () => {
 
     console.log("받은 채팅방 목록:", chatRooms);
 
-    // 채팅방 데이터를 UI 형식으로 변환
-    chats.value = chatRooms.map((room) => {
-      // 상대방 ID 찾기 (내가 user1이면 user2가 상대방, 반대도 마찬가지)
-      const otherUserId =
-        room.user1Id === userInfo.userId.toString()
-          ? room.user2Id
-          : room.user1Id;
+    // 채팅방 데이터를 UI 형식으로 변환하고 상품 정보, 사용자 정보 추가
+    const chatRoomsWithProductInfo = await Promise.all(
+      chatRooms.map(async (room) => {
+        // 상대방 ID 찾기 (내가 user1이면 user2가 상대방, 반대도 마찬가지)
+        const otherUserId =
+          room.user1Id === userInfo.userId.toString()
+            ? room.user2Id
+            : room.user1Id;
 
-      return {
-        id: room.roomId,
-        roomId: room.roomId,
-        name: `사용자 ${otherUserId}`, // 실제로는 사용자 정보를 조회해야 함
-        location: "위치 정보", // 실제로는 사용자 위치 정보를 조회해야 함
-        profileImage: "/images/social/사용자더미.png", // 기본 프로필 이미지
-        lastMessage: room.lastMessage || "메시지가 없습니다.",
-        lastMessageAt: room.lastMessageAt || room.createdAt,
-        otherUserId: otherUserId,
-        productId: room.productId, // productId 추가
-        hasUnread: false // 추후 읽음 상태 관리 추가 가능
-      }
-    })
+        // 상품 정보와 사용자 정보 병렬로 가져오기
+        const [productInfo, otherUserInfo] = await Promise.all([
+          fetchProductInfo(room.productId),
+          fetchUserInfo(otherUserId)
+        ]);
+
+        return {
+          id: room.roomId,
+          roomId: room.roomId,
+          name: otherUserInfo ? otherUserInfo.nickname : `사용자 ${otherUserId}`, // 상대방 닉네임 표시
+          location: productInfo ? `${productInfo.buildingDong}-${productInfo.buildingHo}` : "위치 정보 없음", // 동호수 표시
+          profileImage: productInfo ? productInfo.imageUrls : "/images/social/사용자더미.png", // 상품 이미지를 프로필 이미지 자리에 표시
+          lastMessage: room.lastMessage || "메시지가 없습니다.",
+          lastMessageAt: room.lastMessageAt || room.createdAt,
+          otherUserId: otherUserId,
+          productId: room.productId,
+          productImage: productInfo ? productInfo.imageUrls : "/images/social/상품더미1.png", // 상품 이미지
+          productTitle: productInfo ? productInfo.title : "상품 정보 없음", // 상품 제목
+          hasUnread: false // 추후 읽음 상태 관리 추가 가능
+        }
+      })
+    );
+
+    chats.value = chatRoomsWithProductInfo;
     
   } catch (error) {
     console.error("채팅방 목록 로드 실패:", error);
@@ -190,8 +228,10 @@ const handleChatClick = (chatId) => {
       query: {
         otherUserId: chatRoom.otherUserId,
         otherUserName: chatRoom.name,
-        productTitle: '', // 채팅방 목록에서는 상품 정보가 없을 수 있음
-        productId: chatRoom.productId // productId 추가
+        productTitle: chatRoom.productTitle, // 상품 제목 전달
+        productId: chatRoom.productId, // productId 추가
+        productImage: chatRoom.productImage, // 상품 이미지 전달
+        location: chatRoom.location // 동호수 정보 전달
       }
     })
   }
@@ -324,9 +364,9 @@ const handleNavigation = (tab) => {
 
 .chat-location {
   font-size: 13px;
-  color: #666;
+  color: #007bff;
   margin: 0;
-  font-weight: 400;
+  font-weight: 500;
   line-height: 1.3;
   letter-spacing: -0.005em;
 }
@@ -428,5 +468,18 @@ const handleNavigation = (tab) => {
 
 .more-menu:hover {
   background-color: #f0f0f0;
+}
+
+/* 상품 제목 스타일 */
+.product-title {
+  font-size: 13px;
+  color: #007bff;
+  margin: 0;
+  font-weight: 500;
+  line-height: 1.3;
+  letter-spacing: -0.005em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 </style>
