@@ -10,8 +10,11 @@ import org.example.nareugobackend.common.model.PaymentStatus;
 import org.example.nareugobackend.mapper.OrderMapper;
 import org.example.nareugobackend.mapper.PaymentMapper;
 import org.example.nareugobackend.mapper.ProductMapper;
+import org.example.nareugobackend.mapper.DeliveryMapper;
+import org.example.nareugobackend.mapper.UserMapper;
 import org.example.nareugobackend.common.model.ProductStatus;
 import org.example.nareugobackend.api.controller.payment.response.TossPaymentConfirmResponseDto;
+import org.example.nareugobackend.common.model.UserEntity;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,6 +25,7 @@ import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.Base64;
 import java.util.Objects;
+import java.util.Random;
 
 @Slf4j
 @Service
@@ -33,6 +37,8 @@ public class PaymentServiceImpl implements PaymentService {
     private final OrderMapper orderMapper;
     private final PaymentMapper paymentMapper;
     private final ProductMapper productMapper;
+    private final DeliveryMapper deliveryMapper;
+    private final UserMapper userMapper;
 
     // WebClient는 빌더를 주입받아 필요할 때 생성해서 사용하는 것이 좋습니다.
     private final WebClient.Builder webClientBuilder;
@@ -44,6 +50,16 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Value("${payments.toss.confirm-url}")
     private String tossConfirmUrl;
+
+    // 12자리 숫자 운송장 번호 생성 (결제 완료 시 배송 초기 레코드에 저장)
+private String generateRandomTrackingNumber() {
+    Random random = new Random();
+    StringBuilder sb = new StringBuilder(12);
+    for (int i = 0; i < 12; i++) {
+        sb.append(random.nextInt(10));
+    }
+    return sb.toString();
+}
 
     /**
      * 결제 승인 요청을 처리하는 핵심 비즈니스 로직입니다.
@@ -143,6 +159,39 @@ public class PaymentServiceImpl implements PaymentService {
             log.info("[Payments] Updating product status to SOLD - productId={}", order.getProductId());
             productMapper.updateStatus(order.getProductId(), ProductStatus.SOLD);
 
+            // --- 6. 배송 초기 레코드 생성 (RECEIPT_COMPLETED) ---
+            try {
+                UserEntity buyer = userMapper.findById(order.getBuyerId());
+                StringBuilder addr = new StringBuilder();
+                if (buyer != null) {
+                    if (buyer.getApartmentName() != null && !buyer.getApartmentName().isEmpty()) {
+                        addr.append(buyer.getApartmentName());
+                    }
+                    if (buyer.getBuildingDong() != null) {
+                        if (addr.length() > 0) addr.append(" ");
+                        addr.append(buyer.getBuildingDong()).append("동");
+                    }
+                    if (buyer.getBuildingHo() != null) {
+                        if (addr.length() > 0) addr.append(" ");
+                        addr.append(buyer.getBuildingHo()).append("호");
+                    }
+                }
+                String deliveryAddress = addr.toString();
+                String trackingNumber = generateRandomTrackingNumber();
+                log.info("[Payments] Inserting initial delivery - orderId={}, address='{}', status=RECEIPT_COMPLETED",
+                        order.getOrderId(), deliveryAddress);
+                deliveryMapper.insertInitialDelivery(
+                        order.getOrderId(),
+                        deliveryAddress,
+                        "RECEIPT_COMPLETED",
+                        trackingNumber
+                );
+            } catch (Exception de) {
+                // 배송 생성 실패는 결제 자체를 실패시키지 않음. 로깅만 수행.
+                log.error("[Payments] Failed to create initial delivery record for orderId={}: {}",
+                        order.getOrderId(), de.getMessage(), de);
+            }
+
             log.info("[Payments] confirmPayment SUCCESS - tossOrderId={}", requestDto.getOrderId());
         } catch (RuntimeException ex) {
             // 런타임 예외 로깅 후 재던짐(트랜잭션 롤백)
@@ -150,4 +199,5 @@ public class PaymentServiceImpl implements PaymentService {
             throw ex;
         }
     }
+    
 }
