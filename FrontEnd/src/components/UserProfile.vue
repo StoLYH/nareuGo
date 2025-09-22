@@ -11,6 +11,7 @@
     <div class="profile-info">
       <div class="name-section">
         <h2 class="user-name">{{ userInfo.name }}</h2>
+        <p v-if="localName" class="user-real-name">{{ localName }}</p>
       </div>
 
       <div class="location-section">
@@ -46,6 +47,7 @@ const defaultProfileImage = 'https://images.unsplash.com/photo-1507003211169-0a1
 const authStore = useAuthStore();
 const router = useRouter();
 const myPageData = ref(null);
+const localName = ref('');
 
 onMounted(async () => {
   if (!authStore.user && authStore.accessToken) {
@@ -63,6 +65,21 @@ onMounted(async () => {
     } catch (error) {
       console.error('마이페이지 정보 조회 실패:', error);
     }
+  }
+
+  // 로컬스토리지에서 이름 불러오기 (키 후보들을 유연하게 체크)
+  try {
+    const storedUser = localStorage.getItem('user') || localStorage.getItem('auth_user');
+    if (storedUser) {
+      const parsed = JSON.parse(storedUser);
+      localName.value = parsed.name || parsed.realName || '';
+    } else {
+      // 혹시 개별로 저장된 경우도 대비
+      localName.value = localStorage.getItem('name') || '';
+    }
+  } catch (e) {
+    // 파싱 에러 시 무시하고 넘어감
+    localName.value = localStorage.getItem('name') || '';
   }
 });
 
@@ -110,11 +127,11 @@ const handleLogout = async () => {
   flex-direction: column;
   align-items: center;
   background: var(--surface, #fff);
-  padding: 32px 20px; /* 상하 패딩 증가 */
+  padding: 28px 20px; /* 카드 패딩 조정 */
   border-radius: 16px;
-  box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.08);
   font-family: 'Pretendard', sans-serif;
-  gap: 16px; /* 전체 요소 간격 */
+  gap: 14px; /* 전체 요소 간격 */
   text-align: center;
 }
 
@@ -124,6 +141,7 @@ const handleLogout = async () => {
   border-radius: 50%;
   overflow: hidden;
   border: 3px solid #e6edf3;
+  box-shadow: inset 0 0 0 2px rgba(70,130,180,0.06);
 }
 
 .profile-image {
@@ -145,6 +163,17 @@ const handleLogout = async () => {
   margin: 0;
 }
 
+.user-real-name {
+  margin: 10px 0 0 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--primary, #4682b4);
+  background: rgba(70,130,180,0.08);
+  padding: 6px 10px;
+  border-radius: 999px;
+  display: inline-block;
+}
+
 .location-section {
   display: flex;
   align-items: center;
@@ -159,6 +188,11 @@ const handleLogout = async () => {
   font-size: 14px;
   color: var(--muted, #6b7280);
   font-weight: 500;
+}
+
+/* subtle divider */
+.name-section + .location-section {
+  margin-top: 6px;
 }
 
 /* 간소화된 버튼 영역 */
