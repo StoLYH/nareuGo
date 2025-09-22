@@ -17,4 +17,10 @@ public interface DeliveryRepository extends JpaRepository<Delivery, Long> {
 
     @Query("SELECT d FROM Delivery d JOIN d.order o WHERE o.buyer.id = :userId")
     List<Delivery> findDeliveriesByUserId(@Param("userId") Long userId);
+
+    @Query("SELECT d FROM Delivery d " +
+           "JOIN FETCH d.order o " +
+           "JOIN FETCH o.buyer " +
+           "WHERE d.id = :deliveryId")
+    Optional<Delivery> findByIdWithOrderAndBuyer(@Param("deliveryId") Long deliveryId);
 }
