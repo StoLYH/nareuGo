@@ -1,8 +1,8 @@
 package org.example.nareugobackend.api.service.auth.info;
 
 import static org.example.nareugobackend.domain.user.ProviderType.NAVER;
-import static org.example.nareugobackend.domain.user.Sex.MAN;
-import static org.example.nareugobackend.domain.user.Sex.WOMAN;
+import static org.example.nareugobackend.domain.user.Sex.MALE;
+import static org.example.nareugobackend.domain.user.Sex.FEMALE;
 
 import org.apache.commons.lang3.StringUtils;
 import org.example.nareugobackend.domain.user.ProviderType;
@@ -30,7 +30,7 @@ public record NaverUserInfo(
 
   @Override
   public Sex getGender() {
-    return StringUtils.equals(gender, "M") ? MAN : WOMAN;
+    return StringUtils.equals(gender, "M") ? MALE : FEMALE;
   }
 
   @Override
