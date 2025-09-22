@@ -98,18 +98,18 @@ export const getPaidSalesProducts = async (userId) => {
     let salesResponse = null
     let salesData = []
 
-    // 여러 가능한 엔드포인트를 시도
+    // 여러 가능한 엔드포인트를 시도 (실제 작동하는 것 우선)
     const possibleEndpoints = [
-      `/api/orders/seller/${userId}?status=PAYMENT_COMPLETED`, // 백엔드에서 products와 orders 조인
-      `/api/products/${userId}/orders?status=PAYMENT_COMPLETED`, // 사용자가 판매한 상품의 주문들
-      `/orders?sellerId=${userId}&status=PAYMENT_COMPLETED`,
-      `/orders/seller/${userId}`,
-      `/orders?sellerId=${userId}`,
-      `/orders/sales/${userId}`,
-      `/transactions/sales/${userId}`,
-      `/mypage/sales/${userId}`,
-      `/orders?status=PAYMENT_COMPLETED`,
-      `/orders`
+      `/orders/seller/${userId}?status=PAYMENT_COMPLETED`, // ✅ 실제 백엔드 API (작동함)
+      `/transactions/sales/${userId}`, // ✅ 실제 백엔드 API (작동함)
+      `/orders/seller/${userId}`, // ✅ 실제 백엔드 API (상태 필터 없이)
+      `/api/orders/seller/${userId}?status=PAYMENT_COMPLETED`, // ❌ 잘못된 경로 (api prefix)
+      `/api/products/${userId}/orders?status=PAYMENT_COMPLETED`, // ❌ 존재하지 않음
+      `/orders?sellerId=${userId}&status=PAYMENT_COMPLETED`, // ❌ 존재하지 않음
+      `/orders/sales/${userId}`, // ❌ 존재하지 않음
+      `/mypage/sales/${userId}`, // ❌ 존재하지 않음
+      `/orders?status=PAYMENT_COMPLETED`, // ❌ 존재하지 않음
+      `/orders` // ❌ 존재하지 않음
     ]
 
     for (const endpoint of possibleEndpoints) {
