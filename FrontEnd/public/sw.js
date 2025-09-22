@@ -1,7 +1,7 @@
 // Service Worker for NareuGO PWA
-const CACHE_NAME = 'nareugo-v1';
-const STATIC_CACHE_NAME = 'nareugo-static-v1';
-const DYNAMIC_CACHE_NAME = 'nareugo-dynamic-v1';
+const CACHE_NAME = 'nareugo-v2';
+const STATIC_CACHE_NAME = 'nareugo-static-v2';
+const DYNAMIC_CACHE_NAME = 'nareugo-dynamic-v2';
 
 // 캐시할 정적 파일들
 const STATIC_FILES = [
@@ -72,6 +72,16 @@ self.addEventListener('fetch', (event) => {
   const { request } = event;
   const url = new URL(request.url);
 
+  // WebSocket 연결 및 개발 서버 관련 요청은 Service Worker가 처리하지 않음
+  if (url.protocol === 'ws:' || url.protocol === 'wss:' || 
+      url.pathname === '/@vite/client' || 
+      url.searchParams.has('token') ||
+      url.pathname.includes('/@fs/') ||
+      url.pathname.includes('/@id/') ||
+      url.pathname.includes('/node_modules/')) {
+    return; // Service Worker가 처리하지 않고 브라우저가 직접 처리
+  }
+
   // HTML 페이지 요청 처리
   if (request.headers.get('accept').includes('text/html')) {
     event.respondWith(
@@ -99,6 +109,12 @@ self.addEventListener('fetch', (event) => {
   // API 요청 처리
   const isApiRequest = API_CACHE_PATTERNS.some(pattern => pattern.test(request.url));
   if (isApiRequest) {
+    // POST, PUT, DELETE 요청은 캐시하지 않음
+    if (request.method !== 'GET') {
+      event.respondWith(fetch(request));
+      return;
+    }
+    
     event.respondWith(
       // Network First 전략 (최신 데이터 우선)
       fetch(request)
@@ -138,6 +154,12 @@ self.addEventListener('fetch', (event) => {
   }
 
   // 정적 파일 요청 처리 (이미지, CSS, JS 등)
+  // GET 요청이 아닌 경우 캐시하지 않고 바로 fetch
+  if (request.method !== 'GET') {
+    event.respondWith(fetch(request));
+    return;
+  }
+  
   event.respondWith(
     // Cache First 전략 (캐시 우선)
     caches.match(request)
