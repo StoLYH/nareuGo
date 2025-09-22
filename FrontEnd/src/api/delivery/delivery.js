@@ -277,11 +277,11 @@ export const getPaidSalesProducts = async (userId) => {
 // 로봇 상태 확인 API
 export const getRobotStatus = async (robotId) => {
   try {
-    const response = await axios.post(`${BASE_URL}/robot/status`, {
-      robotId: robotId
-    }, {
+    const response = await axios.get(`${BASE_URL}/robot/status`, {
+      params: {
+        robotId: robotId
+      },
       headers: {
-        'Content-Type': 'application/json',
         'Authorization': `Bearer ${localStorage.getItem('access_token')}`
       }
     })

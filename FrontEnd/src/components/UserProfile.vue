@@ -68,12 +68,12 @@ const userInfo = computed(() => {
   console.log('UserProfile userInfo computed - myPageData:', myPageData.value);
   console.log('UserProfile userInfo computed - authStore.user:', authStore.user);
 
-  // 로컬스토리지에서 nickname 가져오기
+  // 로컬스토리지에서 name 가져오기
   let displayName = '사용자';
   try {
     const userData = JSON.parse(localStorage.getItem('user') || '{}');
-    displayName = userData.nickname || userData.name || '사용자';
-    console.log('UserProfile - 로컬스토리지 nickname:', userData.nickname);
+    displayName = userData.name || userData.nickname || '사용자';
+    console.log('UserProfile - 로컬스토리지 name:', userData.name);
   } catch (error) {
     console.error('UserProfile - 로컬스토리지 파싱 실패:', error);
   }
@@ -81,7 +81,7 @@ const userInfo = computed(() => {
   // 마이페이지 API 데이터 우선 사용
   if (myPageData.value) {
     const result = {
-      name: displayName, // 로컬스토리지의 nickname 사용
+      name: displayName, // 로컬스토리지의 name 사용
       profileImage: null, // MyPageResponse에 프로필 이미지 없음
       location: {
         city: myPageData.value.siGunGu || '',
@@ -98,7 +98,7 @@ const userInfo = computed(() => {
   // 기존 스토어 데이터 fallback
   const u = authStore.user || {};
   const result = {
-    name: displayName, // 로컬스토리지의 nickname 사용
+    name: displayName, // 로컬스토리지의 name 사용
     profileImage: u.profileImageUrl || u.profileImage || null,
     location: {
       city: u.siGunGu || '',
