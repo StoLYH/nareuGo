@@ -1,5 +1,5 @@
 <template>
-  <div class="user-profile">
+  <div class="user-profile-card">
     <div class="profile-image-container">
       <img 
         :src="userInfo.profileImage || defaultProfileImage" 
@@ -7,82 +7,88 @@
         class="profile-image"
       />
     </div>
-    <div class="user-info">
-      <h2 class="user-name">{{ userInfo.name }}</h2>
-      <div class="location-info">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M12 2C8.13 2 5 5.13 5 9C5 14.25 12 22 12 22S19 14.25 19 9C19 5.13 15.87 2 12 2ZM12 11.5C10.62 11.5 9.5 10.38 9.5 9C9.5 7.62 10.62 6.5 12 6.5C13.38 6.5 14.5 7.62 14.5 9C14.5 10.38 13.38 11.5 12 11.5Z" fill="currentColor" stroke="currentColor" stroke-width="0.5"/>
+
+    <div class="profile-info">
+      <div class="name-section">
+        <h2 class="user-name">{{ userInfo.name }}</h2>
+        <p v-if="localName" class="user-real-name">{{ localName }}</p>
+      </div>
+
+      <div class="location-section">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+          <path d="M12 2C8.13 2 5 5.13 5 9C5 14.25 12 22 12 22S19 14.25 19 9C19 5.13 15.87 2 12 2ZM12 11.5C10.62 11.5 9.5 10.38 9.5 9C9.5 7.62 10.62 6.5 12 6.5C13.38 6.5 14.5 7.62 14.5 9C14.5 10.38 13.38 11.5 12 11.5Z" fill="currentColor" />
         </svg>
         <span class="location-text">
-          {{ userInfo.location.city }}, {{ userInfo.location.district }} {{ userInfo.location.apartmentName }}
+          {{ userInfo.location.city }} {{ userInfo.location.district }}
         </span>
       </div>
-      <div class="apartment-info">
-        {{ userInfo.location.building }}동 {{ userInfo.location.unit }}호
+
+      <div class="apartment-section">
+        {{ userInfo.location.apartmentName }} {{ userInfo.location.building }}동 {{ userInfo.location.unit }}호
       </div>
     </div>
+    
+    <!-- <div class="profile-actions-minimal">
+        <a href="#" class="action-link">프로필 수정</a>
+        <span class="link-divider">|</span>
+        <a href="#" class="action-link" @click.prevent="handleLogout">로그아웃</a>
+    </div> -->
   </div>
 </template>
 
 <script setup>
-import { computed, onMounted, ref } from 'vue';
+import { computed, ref, onMounted } from 'vue';
 import { useAuthStore } from '@/stores/auth';
+import { useRouter } from 'vue-router';
 import apiClient from '@/api/client';
 
-// 기본 프로필 이미지
 const defaultProfileImage = 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face';
 
 const authStore = useAuthStore();
+const router = useRouter();
 const myPageData = ref(null);
+const localName = ref('');
 
 onMounted(async () => {
-  console.log('UserProfile onMounted - authStore.user:', authStore.user);
-  console.log('UserProfile onMounted - authStore.accessToken:', authStore.accessToken);
-
   if (!authStore.user && authStore.accessToken) {
     try {
       await authStore.getUserInfo();
-      console.log('UserProfile - getUserInfo 후 user:', authStore.user);
     } catch (e) {
       console.error('UserProfile - getUserInfo 실패:', e);
     }
   }
 
-  // 마이페이지 API 호출
   if (authStore.user?.userId) {
-    console.log('UserProfile - API 호출 시도, userId:', authStore.user.userId);
     try {
       const response = await apiClient.get(`/mypage/user/${authStore.user.userId}`);
-      console.log('UserProfile - API 응답:', response.data);
       myPageData.value = response.data;
     } catch (error) {
       console.error('마이페이지 정보 조회 실패:', error);
     }
-  } else {
-    console.log('UserProfile - userId가 없어서 API 호출 안함');
+  }
+
+  // 로컬스토리지에서 이름 불러오기 (키 후보들을 유연하게 체크)
+  try {
+    const storedUser = localStorage.getItem('user') || localStorage.getItem('auth_user');
+    if (storedUser) {
+      const parsed = JSON.parse(storedUser);
+      localName.value = parsed.name || parsed.realName || '';
+    } else {
+      // 혹시 개별로 저장된 경우도 대비
+      localName.value = localStorage.getItem('name') || '';
+    }
+  } catch (e) {
+    // 파싱 에러 시 무시하고 넘어감
+    localName.value = localStorage.getItem('name') || '';
   }
 });
 
-// 스토어 사용자 정보를 화면 표시용으로 매핑
 const userInfo = computed(() => {
-  console.log('UserProfile userInfo computed - myPageData:', myPageData.value);
-  console.log('UserProfile userInfo computed - authStore.user:', authStore.user);
-
-  // 로컬스토리지에서 nickname 가져오기
-  let displayName = '사용자';
-  try {
-    const userData = JSON.parse(localStorage.getItem('user') || '{}');
-    displayName = userData.nickname || userData.name || '사용자';
-    console.log('UserProfile - 로컬스토리지 nickname:', userData.nickname);
-  } catch (error) {
-    console.error('UserProfile - 로컬스토리지 파싱 실패:', error);
-  }
-
-  // 마이페이지 API 데이터 우선 사용
+  const u = authStore.user || {};
   if (myPageData.value) {
-    const result = {
-      name: displayName, // 로컬스토리지의 nickname 사용
-      profileImage: null, // MyPageResponse에 프로필 이미지 없음
+    return {
+      name: u.nickname || u.name || '사용자',
+      profileImage: null,
       location: {
         city: myPageData.value.siGunGu || '',
         district: myPageData.value.eupMyeonDong || '',
@@ -91,14 +97,9 @@ const userInfo = computed(() => {
         unit: myPageData.value.buildingHo || ''
       }
     };
-    console.log('UserProfile userInfo - API 데이터 사용:', result);
-    return result;
   }
-
-  // 기존 스토어 데이터 fallback
-  const u = authStore.user || {};
-  const result = {
-    name: displayName, // 로컬스토리지의 nickname 사용
+  return {
+    name: u.nickname || u.name || '사용자',
     profileImage: u.profileImageUrl || u.profileImage || null,
     location: {
       city: u.siGunGu || '',
@@ -108,67 +109,114 @@ const userInfo = computed(() => {
       unit: u.buildingHo || ''
     }
   };
-  console.log('UserProfile userInfo - 스토어 데이터 사용:', result);
-  return result;
 });
+
+const handleLogout = async () => {
+  try {
+    await authStore.logout();
+    router.push('/login');
+  } catch (error) {
+    console.error('로그아웃 실패:', error);
+  }
+};
 </script>
 
 <style scoped>
-.user-profile {
+.user-profile-card {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  padding: 24px 20px;
-  background-color: #fff;
-  gap: 16px;
+  background: var(--surface, #fff);
+  padding: 28px 20px; /* 카드 패딩 조정 */
+  border-radius: 16px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+  font-family: 'Pretendard', sans-serif;
+  gap: 14px; /* 전체 요소 간격 */
+  text-align: center;
 }
 
 .profile-image-container {
-  flex-shrink: 0;
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 3px solid #e6edf3;
+  box-shadow: inset 0 0 0 2px rgba(70,130,180,0.06);
 }
 
 .profile-image {
-  width: 64px;
-  height: 64px;
-  border-radius: 50%;
+  width: 100%;
+  height: 100%;
   object-fit: cover;
-  border: 2px solid #f0f0f0;
 }
 
-.user-info {
-  flex: 1;
-  min-width: 0;
+.profile-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
 }
 
 .user-name {
-  font-size: 20px;
-  font-weight: 500;
-  color: #333;
-  margin: 0 0 8px 0;
-  
+  font-size: 24px; /* 폰트 크기 증가 */
+  font-weight: 700;
+  color: var(--secondary, #2c3e50);
+  margin: 0;
 }
 
-.location-info {
+.user-real-name {
+  margin: 10px 0 0 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--primary, #4682b4);
+  background: rgba(70,130,180,0.08);
+  padding: 6px 10px;
+  border-radius: 999px;
+  display: inline-block;
+}
+
+.location-section {
   display: flex;
   align-items: center;
-  gap: 6px;
-  margin-bottom: 4px;
-}
-
-.location-info svg {
-  color: #666;
-  flex-shrink: 0;
-}
-
-.location-text {
+  justify-content: center;
+  gap: 4px;
+  color: var(--muted, #6b7280);
   font-size: 14px;
-  color: #666;
-  line-height: 1.4;
-}
-
-.apartment-info {
-  font-size: 14px;
-  color: #666;
   font-weight: 500;
-  margin-left: 30px;
+}
+
+.apartment-section {
+  font-size: 14px;
+  color: var(--muted, #6b7280);
+  font-weight: 500;
+}
+
+/* subtle divider */
+.name-section + .location-section {
+  margin-top: 6px;
+}
+
+/* 간소화된 버튼 영역 */
+.profile-actions-minimal {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 8px; /* 위쪽 여백 */
+    gap: 8px;
+}
+
+.action-link {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--primary, #4682b4);
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+.action-link:hover {
+    color: var(--primary-600, #3a6b9a);
+}
+
+.link-divider {
+    color: #a0a0a0;
 }
 </style>
