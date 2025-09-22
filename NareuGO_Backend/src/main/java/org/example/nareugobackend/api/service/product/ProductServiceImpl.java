@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import org.example.nareugobackend.api.controller.product.response.ProductDetailResponse;
 import org.example.nareugobackend.api.service.product.request.ProductServiceRequest;
-import org.example.nareugobackend.api.service.product.request.UserInfoRequest;
+import org.example.nareugobackend.api.service.product.response.UserInfoResponse;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.GetObjectRequest;
 import software.amazon.awssdk.services.s3.presigner.S3Presigner;
@@ -56,7 +56,7 @@ public class ProductServiceImpl implements ProductService {
 
         // 사용자 정보 조회
         Long userId = productRequest.getSellerId();
-        UserInfoRequest userInfoRequest = productMapper.selectUserInfo(userId);
+        UserInfoResponse userInfoRequest = productMapper.selectUserInfo(userId);
 
         ProductServiceRequest productServiceRequest = new ProductServiceRequest(
             productRequest.getProductId(), productRequest.getSellerId(), productRequest.getTitle(),
@@ -103,6 +103,13 @@ public class ProductServiceImpl implements ProductService {
         return new ProductCreateResponse();
     }
 
+    /**
+     * AWS S3 UPLOAD URL 생성
+     * product/{productId}/{numbering}
+     *
+     * @param s3Key
+     * @return String
+     */
     private String generatePresignedUploadUrl(String s3Key) {
         try {
             // S3Presigner를 리전과 함께 생성
@@ -134,27 +141,16 @@ public class ProductServiceImpl implements ProductService {
     }
 
     /**
-     * 상품 삭제
+     * 아파트 별 상품 목록 조회
      *
-     * @param productId
-     */
-//    @Transactional
-//    @Override
-//    public void deleteProduct(long productId) {
-//        // TODO 사용자 검증
-//        productMapper.deleteProduct(productId);
-//    }
-
-
-    /**
-     * 메인페이지 상품 목록 조회
-     *
+     * @param userId
+     * @return List<ProductDetailResponse>
      */
     @Transactional
     @Override
     public List<ProductDetailResponse> selectProduct(long userId) {
 
-        UserInfoRequest userInfoRequest = productMapper.selectUserInfo(userId);
+        UserInfoResponse userInfoRequest = productMapper.selectUserInfo(userId);
 
         List<ProductDetailResponse> result =  productMapper.selectProduct(userInfoRequest);
 
@@ -178,12 +174,13 @@ public class ProductServiceImpl implements ProductService {
 
 
     /**
-     * Presigend download urls
+     * AWS S3 Download URL 생성
      *
+     * @param s3Key
+     * @return String
      */
     private String generatePresignedDownloadUrl(String s3Key) {
         try {
-            // S3Presigner를 리전과 함께 생성
             S3Presigner presigner = S3Presigner.builder()
                 .region(software.amazon.awssdk.regions.Region.of(region))
                 .credentialsProvider(software.amazon.awssdk.auth.credentials.StaticCredentialsProvider.create(
@@ -214,8 +211,9 @@ public class ProductServiceImpl implements ProductService {
 
     /**
      * 단일 상품 조회
-     * ProductDetailResponse selectOneProduct (long productId);
      *
+     * @param productId
+     * @return ProductDetailResponse
      */
     @Override
     public ProductDetailResponse selectOneProduct(long productId) {

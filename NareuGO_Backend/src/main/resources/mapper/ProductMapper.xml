@@ -22,7 +22,7 @@
     WHERE product_id = #{productId}
   </delete>
 
-  <select id="selectUserInfo" parameterType="long" resultType="org.example.nareugobackend.api.service.product.request.UserInfoRequest">
+  <select id="selectUserInfo" parameterType="long" resultType="org.example.nareugobackend.api.service.product.response.UserInfoResponse">
     SELECT
     si_do,
     si_gun_gu,
@@ -32,7 +32,7 @@
     WHERE user_id = #{userId}
   </select>
 
-  <select id="selectProduct" parameterType="org.example.nareugobackend.api.service.product.request.UserInfoRequest" resultType="org.example.nareugobackend.api.controller.product.response.ProductDetailResponse">
+  <select id="selectProduct" parameterType="org.example.nareugobackend.api.service.product.response.UserInfoResponse" resultType="org.example.nareugobackend.api.controller.product.response.ProductDetailResponse">
     SELECT
     p.product_id,
     p.seller_id,
