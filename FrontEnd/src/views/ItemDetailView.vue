@@ -2,34 +2,30 @@
   <div class="item-detail-view">
     <!-- 상단 뒤로가기 / 더보기 헤더 -->
     <header class="detail-header">
+      <!-- Back: solid chevron left -->
       <svg
         @click="goBack"
         xmlns="http://www.w3.org/2000/svg"
         width="24"
         height="24"
         viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        stroke-width="2"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        fill="currentColor"
+        aria-label="뒤로가기"
       >
-        <polyline points="15 18 9 12 15 6"></polyline>
+        <path d="M15.41 7.41 14 6l-6 6 6 6 1.41-1.41L10.83 12z"/>
       </svg>
+      <!-- More: solid kebab horizontal -->
       <svg
         xmlns="http://www.w3.org/2000/svg"
         width="24"
         height="24"
         viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        stroke-width="2"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        fill="currentColor"
+        aria-label="더보기"
       >
-        <circle cx="12" cy="12" r="1"></circle>
-        <circle cx="19" cy="12" r="1"></circle>
-        <circle cx="5" cy="12" r="1"></circle>
+        <circle cx="12" cy="12" r="2"></circle>
+        <circle cx="19" cy="12" r="2"></circle>
+        <circle cx="5" cy="12" r="2"></circle>
       </svg>
     </header>
 
@@ -101,12 +97,13 @@
           <p class="item-meta">{{ item.category }} · {{ item.postedAt }}</p>
           <p class="item-description" v-html="item.description"></p>
           <p class="item-stats">
-            관심 {{ item.likes }} · 조회 {{ item.views }}
+            <!-- 관심 {{ item.likes }} · 조회 {{ item.views }} -->
+            관심 7 · 조회 13
           </p>
         </section>
 
         <!-- 판매자의 다른 상품 -->
-        <section class="other-items">
+         <section class="other-items">
           <div class="section-header">
             <h2>{{ item.seller.name }}님의 판매 상품</h2>
             <svg
@@ -133,7 +130,7 @@
             </div>
           </div>
         </section>
-      </div>
+       </div>
     </main>
 
     <!-- 하단 고정 액션 바 -->
@@ -144,15 +141,10 @@
           width="24"
           height="24"
           viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
+          fill="currentColor"
+          aria-label="좋아요"
         >
-          <path
-            d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"
-          ></path>
+          <path d="M12.1 21.35c-.07.05-.13.08-.2.08s-.13-.03-.2-.08C7.14 17.24 4 14.39 4 10.9 4 8.5 5.9 6.6 8.3 6.6c1.25 0 2.45.57 3.2 1.49.75-.92 1.95-1.49 3.2-1.49 2.4 0 4.3 1.9 4.3 4.3 0 3.49-3.14 6.34-6.9 10.45Z"/>
         </svg>
       </div>
       <div class="price-info">
@@ -434,27 +426,44 @@ export default {
 
 /* 상단 헤더 */
 .detail-header {
-  position: absolute;
+  position: fixed;
   top: 0;
-  left: 0;
-  right: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 390px;
   display: flex;
   justify-content: space-between;
-  padding: 16px;
-  z-index: 10;
-  color: white;
+  align-items: center;
+  height: 64px; /* 헤더 고정 높이 */
+  padding: 12px 16px;
+  z-index: 50;
+  color: #ffffff;
+  background-color: #4682B4;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.12);
 }
 .detail-header svg {
-  width: 28px;
-  height: 28px;
+  width: 24px;
+  height: 24px;
+  color: #ffffff; /* 아이콘 색상 명시 */
+}
+/* 아이콘 버튼 감성으로 보이도록 배경/라운드 부여 */
+.detail-header svg {
   cursor: pointer;
-  filter: drop-shadow(0px 1px 2px rgba(0, 0, 0, 0.5));
+  border-radius: 50%;
+  background-color: rgba(255,255,255,0.18);
+  transition: background-color 0.2s ease, transform 0.2s ease;
+}
+.detail-header svg:hover {
+  background-color: rgba(255,255,255,0.28);
 }
 
 /* 메인 스크롤 영역 */
 .content-area {
   flex-grow: 1;
   overflow-y: auto;
+  /* 고정 헤더 높이만큼 상단 여백 확보 */
+  padding-top: 64px; /* 헤더 높이에 맞춤 */
   padding-bottom: 80px;
 }
 
@@ -655,7 +664,7 @@ export default {
 .like-button {
   padding-right: 16px;
   border-right: 1px solid #f0f0f0;
-  color: #555;
+  color: #ff6b9a;
   cursor: pointer;
 }
 .price-info {
@@ -771,11 +780,13 @@ export default {
 
 /* 하단 고정 액션 바 */
 .action-bar {
-  position: absolute; /* [수정] fixed -> absolute */
+  position: fixed;
   bottom: 0;
-  left: 0;
-  right: 0;
-  /* max-width와 margin은 부모를 따라가므로 더 이상 필요 없습니다. */
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 390px;
+  z-index: 50;
   height: 80px;
   display: flex;
   align-items: center;
@@ -787,7 +798,7 @@ export default {
 .like-button {
   padding-right: 16px;
   border-right: 1px solid #f0f0f0;
-  color: #555;
+  color: #ff6b9a;
   cursor: pointer;
 }
 .price-info {

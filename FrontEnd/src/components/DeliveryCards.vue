@@ -247,11 +247,13 @@ const handleAddressChange = (delivery) => {
 
 <style scoped>
 .delivery-cards {
-  padding: 24px 20px;
+  padding: 40px 20px 0px;
   background-color: white;
-  margin-top: -10px;
-  border-radius: 24px 24px 0 0;
-  min-height: calc(100vh - 320px);
+  /* 헤더가 컴팩트해졌으므로 상단 겹침 보정 제거 */
+  margin-top: 0;
+  border-radius: 16px 16px 0 0;
+  /* 높이는 부모 컨테이너의 flex 레이아웃에 따름 */
+  min-height: auto;
 }
 
 .section-title {

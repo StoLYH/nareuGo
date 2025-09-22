@@ -59,17 +59,54 @@ const handleNavigation = (tab) => {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  background-color: #f8f9fa;
+  /* Brand palette */
+  --primary: #4682b4;
+  --primary-600: #3a6b9a;
+  --secondary: #2c3e50;
+  --muted: #6b7280;
+  --surface: #ffffff;
+  --surface-2: #f3f6fa;
+
+  background-color: var(--surface-2);
 }
 
-/* 전체 페이지 스타일링 */
-.mypage > * {
-  background-color: white;
+/* 콘텐츠 영역 내부 카드들만 흰 배경 적용 (헤더/바텀내브는 제외) */
+.mypage-content > * {
+  background-color: var(--surface);
 }
 
 /* 콘텐츠 영역은 남는 공간을 차지하여 하단 네비가 바닥에 고정되도록 함 */
 .mypage-content {
   flex: 1;
   overflow-y: auto;
+  /* 상단 고정 헤더 높이만큼 여백 확보 */
+  padding-top: 80px;
+  /* 좌우 여백 통일 */
+  padding-left: 16px;
+  padding-right: 16px;
+  /* 하단 네비게이션 영역 확보 */
+  padding-bottom: calc(96px + env(safe-area-inset-bottom));
+  /* 섹션 간 간격 통일 */
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  background-color: var(--surface-2);
 }
+
+/* 자식 섹션들의 외부 마진 제거 (페이지 레이아웃에서 간격 관리) */
+.mypage-content > * {
+  margin: 0;
+}
+
+/* 컴포넌트 내부의 중복 여백/마진을 정리하여 일관성 유지 */
+:deep(.top-buttons-card) {
+  margin: 0 !important;
+}
+
+:deep(.bottom-buttons) {
+  padding: 0 !important;
+}
+
+/* 필요시 다른 내부 섹션도 동일하게 정리 가능 */
+/* :deep(.some-section) { margin: 0 !important; } */
 </style>

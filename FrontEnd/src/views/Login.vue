@@ -1,23 +1,21 @@
 <template>
   <div class="login-page">
-    <!-- 상단 파란색 섹션 -->
     <div class="top-section">
       <div class="logo-container">
-        <img src="/images/logo.png" alt="NareuGO 로고" class="robot-logo" />
+        <img src="/images/logo.png" alt="NareuGO 로고" class="robot-logo splash-logo" />
         <div class="logo-text-group">
-          <h1 class="app-title">NareuGO</h1>
-          <p class="app-tagline">Pasti Aman, Cepat, Mudah</p>
+          <h1 class="app-title splash-text">NareuGO</h1>
+          <p class="app-tagline splash-text">From Your Neighbor, To Your Door</p>
         </div>
       </div>
     </div>
 
-    <!-- 하단 흰색 카드 섹션 -->
     <div class="login-form-card">
       <div class="input-group">
         <input 
           type="email" 
           placeholder="이메일" 
-          class="login-input" 
+          class="login-input animate-fade-in delay-1" 
           v-model="loginForm.email"
           @keyup.enter="handleLogin"
         />
@@ -26,23 +24,22 @@
         <input 
           type="password" 
           placeholder="비밀번호" 
-          class="login-input" 
+          class="login-input animate-fade-in delay-2" 
           v-model="loginForm.password"
           @keyup.enter="handleLogin"
         />
       </div>
       
-      <div v-if="errorMessage" class="error-message">
+      <div v-if="errorMessage" class="error-message animate-fade-in delay-3">
         {{ errorMessage }}
       </div>
       
-      <button class="login-btn" @click="handleLogin" :disabled="isLoading">
+      <button class="login-btn animate-fade-in delay-4" @click="handleLogin" :disabled="isLoading">
         {{ isLoading ? '로그인 중...' : '로그인' }}
       </button>
-      <button class="signup-btn">회원가입</button>
+      <button class="signup-btn animate-fade-in delay-5">회원가입</button>
       
-      <!-- 소셜 로그인 -->
-      <div class="social-login">
+      <div class="social-login animate-fade-in delay-6">
         <button class="social-btn kakao" @click="loginWithKakao">
           <img src="/images/social/kakao-login.png" alt="카카오 로그인" class="social-icon" />
         </button>
@@ -63,6 +60,7 @@
 </template>
 
 <script setup>
+// 기존 스크립트 코드 유지
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
@@ -71,28 +69,23 @@ import axios from 'axios'
 const router = useRouter()
 const authStore = useAuthStore()
 
-// 로그인 폼 데이터
 const loginForm = ref({
   email: '',
   password: ''
 })
 
-// 상태 관리
 const isLoading = ref(false)
 const errorMessage = ref('')
 
-// API 기본 URL
 const getApiBaseUrl = () => {
   return import.meta.env.VITE_BASE_URL || 'http://localhost:8080'
 }
 
-// 기본 로그인 함수
 const handleLogin = async () => {
   if (!loginForm.value.email) {
     errorMessage.value = '이메일을 입력해주세요.'
     return
   }
-
   if (!loginForm.value.password) {
     errorMessage.value = '비밀번호를 입력해주세요.'
     return
@@ -107,34 +100,27 @@ const handleLogin = async () => {
     })
 
     if (response.data.success) {
-      // 로그인 성공
       console.log('로그인 성공:', response.data)
       
-      // authStore에 사용자 정보 저장 (토큰 없이)
       authStore.setUser({
         userId: response.data.userId,
         email: response.data.email,
         name: response.data.name,
-        // 닉네임 저장 (백엔드에서 추가된 필드)
         nickname: response.data.nickname
       })
       
-      // 더미 토큰 설정 (라우터 가드 통과용)
       authStore.setTokens('basic-login-token')
       
-      // localStorage에 사용자 정보도 별도 저장
       localStorage.setItem('user', JSON.stringify({
         userId: response.data.userId,
         email: response.data.email,
         name: response.data.name,
-        // 닉네임을 함께 저장하여 이후 화면에서 표시 가능
         nickname: response.data.nickname
       }))
       
       console.log('localStorage 저장 확인:', localStorage.getItem('user'))
       console.log('authStore 토큰 확인:', authStore.accessToken)
       
-      // ItemList 페이지로 이동
       router.push('/items')
     } else {
       errorMessage.value = response.data.message || '로그인에 실패했습니다.'
@@ -150,21 +136,20 @@ const handleLogin = async () => {
     isLoading.value = false
   }
 }
-
-
 </script>
 
 <style scoped>
 .login-page {
   width: 100%;
   height: 100vh;
-  background-color: #B0E0E6; /* 파우더 블루 */
+  background: linear-gradient(180deg, #4682B4 40%, #F5F9FC 100%);
   display: flex;
   flex-direction: column;
   font-family: "Pretendard-Regular", sans-serif;
+  overflow: hidden;
 }
 
-/* 상단 파란색 섹션 */
+/* ================== 상단 로고 영역 ================== */
 .top-section {
   flex: 1;
   display: flex;
@@ -196,7 +181,7 @@ const handleLogin = async () => {
 .app-title {
   font-size: 32px;
   font-weight: 700;
-  color: white;
+  color: #ffffff;
   margin: 0;
   letter-spacing: -0.02em;
 }
@@ -204,21 +189,56 @@ const handleLogin = async () => {
 .app-tagline {
   font-size: 14px;
   font-weight: 400;
-  color: white;
+  color: #E3F2FD;
   margin: 4px 0 0 0;
   letter-spacing: -0.01em;
 }
 
-/* 하단 흰색 카드 섹션 */
+/* Splash 애니메이션 */
+.splash-logo {
+  opacity: 0;
+  transform: translateY(-20px);
+  animation: logo-fade-in 1s ease-out forwards;
+}
+
+.splash-text {
+  opacity: 0;
+  transform: translateY(20px);
+  animation: text-fade-in 1s ease-out 0.2s forwards;
+}
+
+@keyframes logo-fade-in {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes text-fade-in {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ================== 로그인 카드 ================== */
 .login-form-card {
-  background-color: white;
-  border-top-left-radius: 20px;
-  border-top-right-radius: 20px;
-  padding: 40px 20px;
-  box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.05);
+  background-color: #ffffff;
+  border-top-left-radius: 24px;
+  border-top-right-radius: 24px;
+  padding: 40px 24px;
+  box-shadow: 0 -6px 16px rgba(0, 0, 0, 0.08);
   display: flex;
   flex-direction: column;
   align-items: center;
+  transform: translateY(100%);
+  animation: slide-up 0.8s ease-out 0.5s forwards;
+}
+
+@keyframes slide-up {
+  to {
+    transform: translateY(0);
+  }
 }
 
 .input-group {
@@ -226,42 +246,88 @@ const handleLogin = async () => {
   margin-bottom: 16px;
 }
 
+/* ================== 입력창 ================== */
 .login-input {
   width: 100%;
   padding: 14px 16px;
-  border: 1px solid #e0e0e0;
+  border: 1px solid #dfe6ee;
   border-radius: 12px;
   font-size: 15px;
-  color: #333;
+  color: #2C3E50;
+  background-color: #F9FBFD;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  opacity: 0;
+}
+
+.login-input:focus {
+  border-color: #4682B4;
+  box-shadow: 0 0 0 3px rgba(70, 130, 180, 0.2);
   outline: none;
-  box-sizing: border-box;
 }
 
 .login-input::placeholder {
-  color: #ccc;
+  color: #a0acb9;
 }
 
+/* ================== 버튼 ================== */
 .login-btn {
   width: 100%;
   padding: 16px;
-  background-color: #6A93C7; /* 상단과 동일한 뮤트 블루 */
-  color: white;
+  background: linear-gradient(90deg, #4682B4, #6EC6CA);
+  color: #fff;
   border: none;
   border-radius: 12px;
   font-size: 16px;
   font-weight: 600;
   cursor: pointer;
   margin-bottom: 12px;
-  transition: background-color 0.3s ease;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.3s ease;
+  opacity: 0;
 }
 
 .login-btn:hover {
-  background-color: #5A83B7;
+  background: linear-gradient(90deg, #5A9BD6, #7FD7DA);
+  box-shadow: 0 4px 12px rgba(70, 130, 180, 0.25);
+  transform: translateY(-2px);
 }
 
 .login-btn:disabled {
-  background-color: #ccc;
+  background: #b0bec5;
   cursor: not-allowed;
+}
+
+.signup-btn {
+  width: 100%;
+  padding: 16px;
+  background-color: #ffffff;
+  color: #4682B4;
+  border: 1px solid #dfe6ee;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-bottom: 30px;
+  transition: all 0.3s ease;
+  opacity: 0;
+}
+
+.signup-btn:hover {
+  background-color: #FFB347;
+  border-color: #FFB347;
+  color: #fff;
+}
+
+/* ================== 에러 메시지 ================== */
+.error-message {
+  color: #e74c3c;
+  font-size: 14px;
+  margin-bottom: 12px;
+  text-align: center;
+  padding: 10px;
+  background-color: #fdecea;
+  border: 1px solid #f5c6cb;
+  border-radius: 10px;
+  opacity: 0;
 }
 
 .error-message {
@@ -273,6 +339,8 @@ const handleLogin = async () => {
   background-color: #fdf2f2;
   border: 1px solid #fecaca;
   border-radius: 8px;
+  /* Initial state for fade-in animation */
+  opacity: 0;
 }
 
 .signup-btn {
@@ -287,6 +355,8 @@ const handleLogin = async () => {
   cursor: pointer;
   margin-bottom: 30px;
   transition: all 0.2s;
+  /* Initial state for fade-in animation */
+  opacity: 0;
 }
 
 .signup-btn:hover {
@@ -299,6 +369,8 @@ const handleLogin = async () => {
   justify-content: center;
   gap: 16px;
   width: 100%;
+  /* Initial state for fade-in animation */
+  opacity: 0;
 }
 
 .social-btn {
@@ -342,5 +414,46 @@ const handleLogin = async () => {
 .social-btn.naver {
   background-color: transparent;
   box-shadow: none;
+}
+
+/* Staggered fade-in animation classes */
+.animate-fade-in {
+  animation: fade-in 0.5s ease-out forwards;
+}
+
+.delay-1 {
+  animation-delay: 1.3s;
+}
+
+.delay-2 {
+  animation-delay: 1.4s;
+}
+
+.delay-3 {
+  animation-delay: 1.5s;
+}
+
+.delay-4 {
+  animation-delay: 1.6s;
+}
+
+.delay-5 {
+  animation-delay: 1.7s;
+}
+
+.delay-6 {
+  animation-delay: 1.8s;
+}
+
+/* Fade-in keyframes */
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 </style>

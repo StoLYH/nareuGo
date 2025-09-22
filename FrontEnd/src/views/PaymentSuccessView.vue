@@ -83,8 +83,6 @@
                 </p>
                 <p class="seller-info">
                   판매자: {{ productInfo.sellerName }}
-                </p>
-                <p class="seller-info address">        
                   {{ productInfo.sellerLocation }}
                 </p>
               </div>
@@ -305,21 +303,13 @@ export default {
         this.productInfo.title = productData.title;
         this.productInfo.price = productData.price;
 
-        // 이미지 URL 처리 (단일 필드 또는 배열 모두 대응)
-        const candidates = [];
-        if (productData.imageUrl) candidates.push(productData.imageUrl);
-        if (Array.isArray(productData.imageUrls) && productData.imageUrls.length > 0) {
-          candidates.push(productData.imageUrls[0]);
-        }
-        if (productData.thumbnailUrl) candidates.push(productData.thumbnailUrl);
-        if (productData.image) candidates.push(productData.image);
-
-        const chosen = candidates.find(u => typeof u === 'string' && u.length > 0);
-        if (chosen) {
-          this.productInfo.image = chosen.startsWith('http') ? chosen : `${baseUrl}${chosen}`;
-        } else {
-          // 서버에서 이미지 경로를 주지 않는 경우, placeholder 유지
-          this.productInfo.image = this.productInfo.image || 'https://placehold.co/300x300/333333/FFF?text=No+Image';
+        // 이미지 URL 처리
+        if (productData.imageUrl) {
+          const baseUrl =
+            import.meta.env.VITE_BASE_URL || "http://localhost:8080";
+          this.productInfo.image = productData.imageUrl.startsWith("http")
+            ? productData.imageUrl
+            : `${baseUrl}${productData.imageUrl}`;
         }
 
         // 판매자 정보 로드
@@ -417,20 +407,34 @@ export default {
   flex-direction: column;
   height: 100vh;
   background-color: #f8f9fa;
+  /* 고정 헤더 높이만큼 상단 여백 확보 */
+  padding-top: 64px;
 }
 
 /* 헤더 */
 .success-header {
-  padding: 16px 20px;
-  background-color: white;
-  border-bottom: 1px solid #f0f0f0;
-  text-align: center;
+  position: fixed;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 390px;
+  z-index: 50;
+  padding: 12px 16px;
+  height: 64px;
+  background-color: #4682B4;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+  border-bottom: none;
 }
 
 .header-title {
   font-size: 18px;
   font-weight: 600;
-  color: #333;
+  color: #fff;
   margin: 0;
 }
 
@@ -558,23 +562,14 @@ export default {
 .product-price {
   font-size: 18px;
   font-weight: 700;
-  color: #4682b4;
+  color: #2C7A7B;
   margin: 0 0 4px 0;
 }
 
 .seller-info {
   font-size: 14px;
   color: #666;
-  font-weight: 500;
   margin: 0;
-  margin-top: 4px;
-}
-
-.seller-info.address {
-  font-size: 12px;
-  font-weight: 300;
-  margin: 0;
-  margin-top: 4px;
 }
 
 /* 다음 단계 */
