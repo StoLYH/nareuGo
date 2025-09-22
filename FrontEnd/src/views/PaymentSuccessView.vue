@@ -83,7 +83,10 @@
                 </p>
                 <p class="seller-info">
                   판매자: {{ productInfo.sellerName }}
-                  {{ productInfo.sellerLocation }}
+                  
+                </p>
+                <p class="seller-info address">
+                  주소: {{ productInfo.sellerLocation }}
                 </p>
               </div>
             </div>
@@ -173,10 +176,8 @@
 
       <!-- 하단 버튼들 -->
       <footer class="success-footer">
-        <!-- <button class="secondary-button" @click="goToOrderList">
-          주문 내역 보기
-        </button> -->
-        <button class="primary-button" @click="goToHome">홈으로 가기</button>
+        <button class="secondary-button" @click="goToHome">홈으로 가기</button>
+        <button class="primary-button" @click="goToDeliveryStatus">택배 현황</button>
       </footer>
     </div>
   </div>
@@ -388,6 +389,10 @@ export default {
       // 홈 페이지로 이동
       this.$router.push("/home");
     },
+    goToDeliveryStatus() {
+      // 택배 현황 페이지로 이동
+      this.$router.push("/delivery-status");
+    },
   },
 };
 </script>
@@ -568,9 +573,18 @@ export default {
 
 .seller-info {
   font-size: 14px;
-  color: #666;
   margin: 0;
+  margin-top: 6px;
+  color: #333;
+ 
 }
+
+.seller-info.address {
+  margin-top: 6px;
+  color: #666;
+  font-size: 11.5px;
+}
+
 
 /* 다음 단계 */
 .steps-list {
