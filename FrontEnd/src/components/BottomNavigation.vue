@@ -37,7 +37,7 @@
         </svg>
         <div class="active-line" v-if="activeTab === 'profile'"></div>
       </div>
-      <span>마이 페이지</span>
+      <span>마이</span>
     </button>
   </nav>
 </template>
