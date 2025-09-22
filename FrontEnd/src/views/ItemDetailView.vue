@@ -158,6 +158,7 @@
 <script>
 import { getProducts } from '@/api/product/product.js'
 import { findOrCreateChatRoom } from '@/api/chat/chat.js'
+import { getUserInfo } from '@/api/user/user.js'
 
 export default {
   name: "ItemDetailView",
@@ -176,7 +177,7 @@ export default {
         price: 0,
         location: "",
         seller: {
-          name: "201동 행복주민",
+          name: "판매자",
           location: "",
           avatarUrl: "/images/social/사용자더미.png",
         },
@@ -214,7 +215,7 @@ export default {
         if (storedItemData) {
           console.log('sessionStorage에서 상품 정보 가져옴');
           const itemData = JSON.parse(storedItemData);
-          this.setItemData(itemData);
+          await this.setItemData(itemData);
           return;
         }
         
@@ -222,7 +223,7 @@ export default {
         const routerState = history.state;
         if (routerState && routerState.itemData) {
           console.log('라우터에서 전달받은 상품 정보:', routerState.itemData);
-          this.setItemData(routerState.itemData);
+          await this.setItemData(routerState.itemData);
           return;
         }
         
@@ -236,15 +237,40 @@ export default {
       }
     },
 
-    setItemData(itemData) {
+    async setItemData(itemData) {
       // 받은 데이터 전체를 콘솔에 출력
       console.log('=== ItemDetail에서 받은 상품 데이터 전체 ===');
       console.log('itemData:', itemData);
       console.log('itemData.description:', itemData.description);
       console.log('itemData.allImages:', itemData.allImages);
       console.log('itemData.image:', itemData.image);
+      console.log('itemData.sellerId:', itemData.sellerId);
       console.log('itemData 키들:', Object.keys(itemData));
       console.log('=======================================');
+
+      // 판매자 정보 가져오기
+      let sellerInfo = {
+        name: "201동 행복주민", // 기본값
+        location: `${itemData.location} ${itemData.apartmentName || ''}`.trim(),
+        avatarUrl: "/images/social/사용자더미.png",
+      };
+
+      if (itemData.sellerId) {
+        try {
+          console.log('판매자 정보 조회 중... sellerId:', itemData.sellerId);
+          const sellerData = await getUserInfo(itemData.sellerId);
+          console.log('판매자 정보 조회 성공:', sellerData);
+          
+          sellerInfo = {
+            name: sellerData.nickname || sellerData.name || "판매자",
+            location: `${itemData.location} ${itemData.apartmentName || ''}`.trim(),
+            avatarUrl: "/images/social/사용자더미.png", // 프로필 이미지가 있다면 sellerData.profileImage 사용
+          };
+        } catch (error) {
+          console.error('판매자 정보 조회 실패:', error);
+          // 에러 발생 시 기본값 사용
+        }
+      }
 
       // ItemList에서 받은 데이터를 ItemDetail 형식으로 변환
       this.item = {
@@ -259,11 +285,7 @@ export default {
         price: itemData.price,
         location: itemData.location,
         sellerId: itemData.sellerId, // 채팅을 위해 필요한 판매자 ID 추가
-        seller: {
-          name: "201동 행복주민", // 고정값
-          location: `${itemData.location} ${itemData.apartmentName || ''}`.trim(), // 구+동 + 아파트명
-          avatarUrl: "/images/social/사용자더미.png",
-        },
+        seller: sellerInfo, // 동적으로 로드된 판매자 정보
       };
 
       // 변환된 데이터도 출력
@@ -271,6 +293,7 @@ export default {
       console.log('this.item:', this.item);
       console.log('this.item.description:', this.item.description);
       console.log('this.item.imageUrls:', this.item.imageUrls);
+      console.log('this.item.seller:', this.item.seller);
       console.log('============================');
     },
 
@@ -290,19 +313,18 @@ export default {
               time: this.formatTimeAgo(product.createdAt),
               price: product.price,
               image: product.imageUrls && product.imageUrls.length > 0 ? product.imageUrls[0] : null,
-              // 추가 정보들
               allImages: product.imageUrls || [],
               description: product.description || "",
-              sellerId: product.sellerId, // 채팅을 위해 필요한 판매자 ID
+              sellerId: product.sellerId,
               siDo: product.siDo,
               siGunGu: product.siGunGu,
               eupMyeonDong: product.eupMyeonDong,
-              apartmentName: product.apartmentName, // 아파트명 포함
+              apartmentName: product.apartmentName,
               status: product.status,
               createdAt: product.createdAt,
               updatedAt: product.updatedAt
             };
-            this.setItemData(itemData);
+            await this.setItemData(itemData);
           }
         }
       } catch (error) {

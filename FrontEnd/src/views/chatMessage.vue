@@ -69,13 +69,6 @@
         </div>
       </div>
 
-      <!-- 더 이상 메시지가 없을 때 -->
-      <div
-        v-if="!hasMoreMessages && messages.length > 0"
-        class="no-more-messages"
-      >
-        <span>더 이상 메시지가 없습니다</span>
-      </div>
     </div>
 
     <!-- 메시지 입력 영역 -->
@@ -632,15 +625,6 @@ onUnmounted(() => {
   }
 }
 
-/* 더 이상 메시지가 없을 때 */
-.no-more-messages {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 16px;
-  color: #999;
-  font-size: 12px;
-}
 
 .payment-btn {
   position: absolute;

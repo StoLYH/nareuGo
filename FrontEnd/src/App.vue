@@ -103,7 +103,7 @@ body {
   line-height: 1;
   /* 전체 페이지 배경: 헤더/로그인 버튼 그라디언트와 조화되는 라이트 블루 톤 */
   background: linear-gradient(180deg, #EAF3FB 0%, #F5F9FC 100%);
-  font-family: "Pretendard-Regular";
+  font-family: "Pretendard-Regular", "Noto Sans KR", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 }
 ol,
 ul {
@@ -123,6 +123,8 @@ table {
   border-collapse: collapse;
   border-spacing: 0;
 } /* 폰트 & CSS 변수 */
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700&display=swap');
+
 @font-face {
   font-family: "Pretendard-Regular";
   src: url("https://cdn.jsdelivr.net/gh/Project-Noonnu/noonfonts_2107@1.1/Pretendard-Regular.woff")
@@ -139,7 +141,7 @@ table {
 }
 * {
   box-sizing: border-box;
-  font-family: "Pretendard-Regular";
+  font-family: "Pretendard-Regular", "Noto Sans KR", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 }
 a {
   text-decoration: none;

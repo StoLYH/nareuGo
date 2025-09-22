@@ -1,13 +1,12 @@
-package org.example.nareugobackend.api.service.product.request;
+package org.example.nareugobackend.api.service.product.response;
 
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
-public class UserInfoRequest {
+public class UserInfoResponse {
 
     @Override
     public String toString() {
