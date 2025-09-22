@@ -180,11 +180,15 @@ const startDelivery = async () => {
     const robotStatus = await getRobotStatus(1)
 
     if (robotStatus.status === 'INVALID') {
-      alert('배송 불가: 로봇이 현재 사용할 수 없는 상태입니다.')
+      alert('나르고가 다른일을 처리중입니다.')
       return
     }
 
     if (robotStatus.status === 'VALID') {
+      // 나르고 시작 가능 모달 표시
+      alert('나르고 시작 가능 !')
+
+      // 동시에 로봇에게 주소 정보 전송
       const deliveryData = {
         deliveryId: selectedProduct.value.deliveryId,
         productId: selectedProduct.value.id,
@@ -195,7 +199,8 @@ const startDelivery = async () => {
 
       const result = await startDeliveryAPI(deliveryData)
       console.log('나르고 시작 결과:', result)
-      alert(`나르고 시작!\n판매자: ${result.addresses.sellerAddress}\n구매자: ${result.addresses.buyerAddress}`)
+      console.log('로봇에게 전송된 주소:', result.addresses)
+
       emit('delivery-started', selectedProduct.value)
       closeModal()
     }
