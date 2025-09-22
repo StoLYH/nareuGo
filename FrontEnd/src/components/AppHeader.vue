@@ -1,6 +1,8 @@
 <template>
   <header class="header">
-    <div class="location">{{ location }}</div>
+    <div class="location">
+      <span class="location-text">{{ location }}</span>
+    </div>
     <div class="header-icons">
       <button class="icon-btn" @click="$emit('edit')">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
@@ -28,7 +30,6 @@ defineProps({
     default: 'OO마을 12단지'
   }
 })
-
 defineEmits(['edit', 'search', 'notification'])
 </script>
 
@@ -38,20 +39,21 @@ defineEmits(['edit', 'search', 'notification'])
   justify-content: space-between;
   align-items: center;
   padding: 16px 20px;
-  background-color: white;
+  /* background: linear-gradient(90deg, #4682B4, #6EC6CA); */
+  background-color: #4682B4;
+  border-bottom: none;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+  position: relative;
 }
-
 .location {
   font-size: 18px;
-  font-weight: 600;
-  color: #333;
+  font-weight: 700;
+  color: #ffffff;
 }
-
 .header-icons {
   display: flex;
-  gap: 16px;
+  gap: 8px;
 }
-
 .icon-btn {
   display: flex;
   align-items: center;
@@ -59,12 +61,30 @@ defineEmits(['edit', 'search', 'notification'])
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  background-color: #f8f8f8;
-  color: #666;
-  transition: background-color 0.2s;
+  background-color: rgba(255,255,255,0.16);
+  color: #ffffff;
+  transition: background-color 0.2s, color 0.2s, transform 0.2s;
+}
+.icon-btn:hover {
+  background-color: rgba(255,255,255,0.28);
+  color: #ffffff;
+  transform: translateY(-1px);
 }
 
-.icon-btn:hover {
-  background-color: #f0f0f0;
+.header::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -8px;
+  height: 12px;
+  background: linear-gradient(180deg, rgba(70,130,180,0.25), rgba(110,198,202,0));
+  pointer-events: none;
+}
+
+.location {
+  font-size: 20px;
+  font-weight: 600;
+  color: #ffffff;
 }
 </style>
