@@ -186,14 +186,16 @@ const startDelivery = async () => {
 
     if (robotStatus.status === 'VALID') {
       const deliveryData = {
+        deliveryId: selectedProduct.value.deliveryId,
         productId: selectedProduct.value.id,
         buyerId: selectedProduct.value.buyerId,
         sellerId: getUserId(),
         robotId: 1
       }
 
-      await startDeliveryAPI(deliveryData)
-      alert('배송을 시작했습니다!')
+      const result = await startDeliveryAPI(deliveryData)
+      console.log('나르고 시작 결과:', result)
+      alert(`나르고 시작!\n판매자: ${result.addresses.sellerAddress}\n구매자: ${result.addresses.buyerAddress}`)
       emit('delivery-started', selectedProduct.value)
       closeModal()
     }
@@ -242,7 +244,7 @@ onMounted(() => {
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 1000;
+  z-index: 9999;
 }
 
 .modal-container {

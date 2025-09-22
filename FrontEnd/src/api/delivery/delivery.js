@@ -98,13 +98,13 @@ export const getPaidSalesProducts = async (userId) => {
     let salesResponse = null
     let salesData = []
 
-    // 여러 가능한 엔드포인트를 시도 (새로운 백엔드 API 우선)
+    // 여러 가능한 엔드포인트를 시도
     const possibleEndpoints = [
-      `/orders/seller/${userId}?status=PAYMENT_COMPLETED`, // 새로 구현한 백엔드 API
-      `/orders/seller/${userId}`, // 상태 필터 없이 판매자 주문 조회
-      `/api/orders/seller/${userId}?status=PAYMENT_COMPLETED`, // API prefix 포함
+      `/api/orders/seller/${userId}?status=PAYMENT_COMPLETED`, // 백엔드에서 products와 orders 조인
       `/api/products/${userId}/orders?status=PAYMENT_COMPLETED`, // 사용자가 판매한 상품의 주문들
       `/orders?sellerId=${userId}&status=PAYMENT_COMPLETED`,
+      `/orders/seller/${userId}`,
+      `/orders?sellerId=${userId}`,
       `/orders/sales/${userId}`,
       `/transactions/sales/${userId}`,
       `/mypage/sales/${userId}`,
@@ -225,39 +225,38 @@ export const getPaidSalesProducts = async (userId) => {
       console.log('🔍 [DEBUG] 배송 상태:', deliveryStatus)
       console.log('🔍 [DEBUG] RECEIPT_COMPLETED와 비교:', deliveryStatus === 'RECEIPT_COMPLETED')
 
-      // /transactions/sales API는 이미 현재 사용자의 판매 상품만 반환하므로 판매자 확인 불필요
+      // 판매자 확인 (products 테이블과 조인된 경우)
       const sellerId = item.sellerId || item.seller_id
-      console.log('🔍 [DEBUG] 아이템의 sellerId:', sellerId)
-      console.log('🔍 [DEBUG] 현재 로그인한 userId:', userId)
+      // 테스트 데이터의 경우 판매자 확인을 생략하고, 실제 API 응답의 경우에만 확인
+      const isSeller = sellerId ? sellerId == userId : true
+      console.log('🔍 [DEBUG] 판매자 확인:', isSeller)
 
-      // transactions/sales API는 이미 해당 사용자의 판매 상품만 반환하므로 항상 true
-      const isSeller = true
-      console.log('🔍 [DEBUG] 판매자 확인 결과 (transactions API):', isSeller)
-
-      // 주문 상태만 확인 (transactions API에는 deliveryStatus가 없으므로 제외)
+      // 주문이 결제 완료되고 배송이 접수 완료된 상태인 경우만 표시
       const isPaymentCompleted = orderStatus === 'PAYMENT_COMPLETED'
+      const isReceiptCompleted = deliveryStatus === 'RECEIPT_COMPLETED'
 
       console.log('🔍 [DEBUG] 최종 필터링 결과:', {
         isPaymentCompleted,
+        isReceiptCompleted,
         isSeller,
-        note: 'deliveryStatus 조건 제외 (transactions API)',
-        result: isPaymentCompleted && isSeller
+        result: isPaymentCompleted && isReceiptCompleted && isSeller
       })
 
-      return isPaymentCompleted && isSeller
+      return isPaymentCompleted && isReceiptCompleted && isSeller
     })
     console.log('💳 [DEBUG] 결제 완료된 주문들:', paidOrders)
 
-    // 3. 프론트엔드에서 사용할 형태로 변환 (transactions API 구조에 맞춤)
+    // 3. 프론트엔드에서 사용할 형태로 변환
     const transformedProducts = paidOrders.map(item => ({
-      id: item.productId || item.product_id,
+      id: item.product_id || item.productId,
       title: item.title || item.productTitle || '상품명 없음',
-      price: item.price || item.amount || 0,
+      price: item.amount || item.price || 0,
       imageUrl: null, // 이미지 URL은 별도로 처리 필요
-      buyerName: item.buyerName || item.buyer_name || '구매자',
-      buyerId: item.buyerId || item.buyer_id,
-      orderId: item.orderId || item.order_id,
-      orderStatus: item.orderStatus || item.status
+      buyerName: item.buyerName || item.buyerNickname || '구매자',
+      buyerId: item.buyer_id || item.buyerId,
+      orderId: item.order_id || item.orderId,
+      deliveryId: item.delivery_id || item.deliveryId || item.order_id || item.orderId, // deliveryId 추가 (임시로 orderId 사용)
+      orderStatus: item.status || item.orderStatus
     }))
     console.log('🔄 [DEBUG] 변환된 최종 상품들:', transformedProducts)
 
@@ -277,11 +276,11 @@ export const getPaidSalesProducts = async (userId) => {
 // 로봇 상태 확인 API
 export const getRobotStatus = async (robotId) => {
   try {
-    const response = await axios.post(`${BASE_URL}/robot/status`, {
-      robotId: robotId
-    }, {
+    const response = await axios.get(`${BASE_URL}/robot/status`, {
+      params: {
+        robotId: robotId
+      },
       headers: {
-        'Content-Type': 'application/json',
         'Authorization': `Bearer ${localStorage.getItem('access_token')}`
       }
     })
@@ -292,18 +291,57 @@ export const getRobotStatus = async (robotId) => {
   }
 }
 
-// 배송 시작 API
+// 나르고 시작 API (주소 조회 후 로봇 이동 시작)
 export const startDelivery = async (deliveryData) => {
   try {
-    const response = await axios.post(`${BASE_URL}/delivery/start`, deliveryData, {
+    // 1. 배송 주소 정보 조회
+    const addressResponse = await axios.get(`${BASE_URL}/robot/delivery/${deliveryData.deliveryId}/addresses`, {
       headers: {
-        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${localStorage.getItem('access_token')}`
+      }
+    })
+    console.log('주소 정보 조회 완료:', addressResponse.data)
+
+    // 2. 로봇에게 판매자 주소로 이동 명령 전송 (백엔드에서 자동 처리)
+    // TODO: 필요시 로봇 이동 시작 API 호출 추가
+
+    // 3. 결과 반환
+    return {
+      addresses: addressResponse.data,
+      message: '나르고가 시작되었습니다!'
+    }
+  } catch (error) {
+    console.error('나르고 시작 실패:', error)
+    throw error
+  }
+}
+
+// 배송 픽업 확인 API
+export const confirmPickup = async (deliveryId) => {
+  try {
+    const response = await axios.post(`${BASE_URL}/robot/delivery/${deliveryId}/pickup`, {}, {
+      headers: {
         'Authorization': `Bearer ${localStorage.getItem('access_token')}`
       }
     })
     return response.data
   } catch (error) {
-    console.error('배송 시작 실패:', error)
+    console.error('픽업 확인 실패:', error)
+    throw error
+  }
+}
+
+// 배송 주소 조회 API
+export const getDeliveryAddresses = async (deliveryId) => {
+  try {
+    const response = await axios.get(`${BASE_URL}/robot/delivery/${deliveryId}/addresses`, {
+      headers: {
+        'Authorization': `Bearer ${localStorage.getItem('access_token')}`
+      }
+    })
+    return response.data
+  } catch (error) {
+    console.error('배송 주소 조회 실패:', error)
     throw error
   }
 }
