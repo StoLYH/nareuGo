@@ -961,19 +961,28 @@ export default {
   flex-direction: column;
   height: 100vh;
   background-color: #f8f9fa;
+  /* 고정 헤더 높이만큼 상단 여백 확보 */
+  padding-top: 64px;
 }
 
 /* 헤더 스타일 */
 .verification-header {
+  position: fixed;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 390px;
+  z-index: 50;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 16px 20px;
-  background-color: white;
-  border-bottom: 1px solid #f0f0f0;
-  position: sticky;
-  top: 0;
-  z-index: 10;
+  padding: 12px 16px;
+  height: 64px;
+  background-color: #4682B4;
+  color: #fff;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+  border-bottom: none;
 }
 
 .back-button {
@@ -983,21 +992,21 @@ export default {
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  background-color: #f8f8f8;
-  color: #666;
-  transition: background-color 0.2s;
+  background-color: rgba(255,255,255,0.18);
+  color: #fff;
+  transition: background-color 0.2s ease;
   border: none;
   cursor: pointer;
 }
 
 .back-button:hover {
-  background-color: #f0f0f0;
+  background-color: rgba(255,255,255,0.28);
 }
 
 .header-title {
   font-size: 18px;
   font-weight: 600;
-  color: #333;
+  color: #fff;
   margin: 0;
 }
 

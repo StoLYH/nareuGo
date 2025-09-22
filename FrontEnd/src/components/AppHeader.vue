@@ -39,13 +39,16 @@ defineEmits(['edit', 'search', 'notification'])
   justify-content: space-between;
   align-items: center;
   padding: 16px 20px;
-  background-color: white;
-  border-bottom: 1px solid #e0e0e0;
+  /* background: linear-gradient(90deg, #4682B4, #6EC6CA); */
+  background-color: #4682B4;
+  border-bottom: none;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+  position: relative;
 }
 .location {
   font-size: 18px;
   font-weight: 700;
-  color: #333;
+  color: #ffffff;
 }
 .header-icons {
   display: flex;
@@ -58,49 +61,30 @@ defineEmits(['edit', 'search', 'notification'])
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  background-color: transparent;
-  color: #666;
-  transition: background-color 0.2s, color 0.2s;
+  background-color: rgba(255,255,255,0.16);
+  color: #ffffff;
+  transition: background-color 0.2s, color 0.2s, transform 0.2s;
 }
 .icon-btn:hover {
-  background-color: #f0f0f0;
-  color: #333;
+  background-color: rgba(255,255,255,0.28);
+  color: #ffffff;
+  transform: translateY(-1px);
 }
 
-.header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 16px 20px;
-  background: linear-gradient(90deg, #f9f9f9, #ffffff);
-  border-bottom: 1px solid #e0e0e0;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
-  /* border-radius: 0 0 16px 16px;  */
-}
-.icon-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
-  background-color: #f5f6fa;
-  color: #555;
-  transition: all 0.2s;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+.header::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -8px;
+  height: 12px;
+  background: linear-gradient(180deg, rgba(70,130,180,0.25), rgba(110,198,202,0));
+  pointer-events: none;
 }
 
-.icon-btn:hover {
-  background-color: #e0e4e8;
-  color: #2c3e50;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(0,0,0,0.12);
-}
 .location {
   font-size: 20px;
   font-weight: 600;
-  color: #2c3e50;
+  color: #ffffff;
 }
-
-
 </style>

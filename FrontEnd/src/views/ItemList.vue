@@ -1,13 +1,14 @@
 <template>
   <div class="page-container">
     <AppHeader
-      location="삼성동"
+      :location="headerLocation"
       @edit="handleEdit"
       @search="handleSearch"
       @notification="handleNotification"
     />
 
     <main class="item-list-container">
+      <!-- <h2 class="section-title">우리 동네 최신 상품</h2> -->
       <ItemCard v-for="item in items" :key="item.id" :item="item" />
 
       <div v-if="isLoading" class="status-indicator">
@@ -41,6 +42,7 @@ const router = useRouter()
 // State
 const items = ref([])
 const isLoading = ref(false)
+const headerLocation = ref('')
 
 // Time formatting function (remains the same)
 const formatTimeAgo = (dateString) => {
@@ -92,6 +94,16 @@ const loadProductData = async () => {
         updatedAt: product.updatedAt
       }
     })
+    // 헤더 위치를 첫 상품의 읍면동으로 표시 (없으면 시군구 또는 기본값)
+    if (items.value.length > 0) {
+      const first = items.value[0]
+      const dong = first.eupMyeonDong || ''
+      const apt = first.apartmentName || ''
+      const composed = [dong, apt].filter(Boolean).join(' ')
+      headerLocation.value = composed || first.siGunGu || '내 동네'
+    } else {
+      headerLocation.value = '내 동네'
+    }
   } catch (error) {
     console.error('상품 목록 조회 실패:', error)
     items.value = []
@@ -125,7 +137,7 @@ onMounted(() => {
   height: 100vh;
   display: flex;
   flex-direction: column;
-  background-color: #f7f7f7;
+  background: linear-gradient(180deg, #F5F9FC 0%, #FFFFFF 60%);
   font-family: 'Pretendard', sans-serif;
 }
 
@@ -138,10 +150,21 @@ onMounted(() => {
   gap: 16px;
   scrollbar-width: none;
   -ms-overflow-style: none;
+  background: linear-gradient(180deg, #F7FAFE 0%, #FFFFFF 65%);
+  border-top: 1px solid #eef2f6;
 }
 
 .item-list-container::-webkit-scrollbar {
   display: none;
+}
+
+.section-title {
+  grid-column: 1 / -1;
+  margin: 4px 0 8px 0;
+  font-size: 18px;
+  font-weight: 700;
+  color: #3a6b9a;
+  letter-spacing: -0.2px;
 }
 
 .status-indicator {

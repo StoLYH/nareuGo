@@ -1,34 +1,47 @@
 <template>
   <div class="bottom-buttons">
-    <button class="bottom-button" @click="openNeighborhoodAuth">
-      <!-- Location Pin (solid) -->
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-        <path d="M12 2C8.14 2 5 5.14 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.86-3.14-7-7-7Zm0 9.5A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5Z"/>
-      </svg>
+    <button class="bottom-button verify" @click="openNeighborhoodAuth">
+      <div class="icon-circle">
+        <!-- Shield Check -->
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <path d="M12 2l7 3v6c0 5-3.5 9-7 11-3.5-2-7-6-7-11V5l7-3Z" fill="currentColor"/>
+          <path d="M9.5 12.2l2 2 3.5-4" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
       <span>동네 인증하기</span>
     </button>
     
-    <button class="bottom-button" @click="openSalesHistory">
-      <!-- Sell Tag (solid) -->
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-        <path d="M21.41 11.58 12.42 2.59A2.004 2.004 0 0 0 11 2H6c-1.1 0-2 .9-2 2v5c0 .53.21 1.04.59 1.41l8.99 8.99c.78.78 2.05.78 2.83 0l4-4c.79-.78.79-2.05 0-2.83ZM7.5 7.5A1.5 1.5 0 1 1 9 6a1.5 1.5 0 0 1-1.5 1.5Z"/>
-      </svg>
+    <button class="bottom-button sales" @click="openSalesHistory">
+      <div class="icon-circle">
+        <!-- Receipt -->
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <path d="M7 3h10a2 2 0 0 1 2 2v14l-2-1-2 1-2-1-2 1-2-1-2 1V5a2 2 0 0 1 2-2Z" fill="currentColor"/>
+          <path d="M9 8h6M9 12h6" stroke="#fff" stroke-width="1.6" stroke-linecap="round"/>
+        </svg>
+      </div>
       <span>판매내역</span>
     </button>
     
-    <button class="bottom-button" @click="openPurchaseHistory">
-      <!-- Shopping Bag (solid) -->
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-        <path d="M18 6h-2.25A3.75 3.75 0 0 0 12 2.25 3.75 3.75 0 0 0 8.25 6H6c-1.1 0-2 .9-2 2v9c0 1.66 1.34 3 3 3h10c1.66 0 3-1.34 3-3V8c0-1.1-.9-2-2-2Zm-6-1.5c1.24 0 2.25 1.01 2.25 2.25H9.75C9.75 5.51 10.76 4.5 12 4.5Z"/>
-      </svg>
+    <button class="bottom-button purchase" @click="openPurchaseHistory">
+      <div class="icon-circle">
+        <!-- Wallet -->
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <path d="M4 7.5C4 6.12 5.12 5 6.5 5H17a2 2 0 1 1 0 4H6.5A2.5 2.5 0 0 1 4 6.5v1Z" fill="currentColor"/>
+          <rect x="3" y="8" width="18" height="10" rx="2" fill="currentColor"/>
+          <circle cx="17" cy="13" r="1.5" fill="#fff"/>
+        </svg>
+      </div>
       <span>구매내역</span>
     </button>
     
-    <button class="bottom-button" @click="openWishlistBottom">
-      <!-- Heart (solid) -->
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-        <path d="M12.1 21.35c-.07.05-.13.08-.2.08s-.13-.03-.2-.08C7.14 17.24 4 14.39 4 10.9 4 8.5 5.9 6.6 8.3 6.6c1.25 0 2.45.57 3.2 1.49.75-.92 1.95-1.49 3.2-1.49 2.4 0 4.3 1.9 4.3 4.3 0 3.49-3.14 6.34-6.9 10.45Z"/>
-      </svg>
+    <button class="bottom-button wishlist" @click="openWishlistBottom">
+      <div class="icon-circle">
+        <!-- Bookmark Heart -->
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <path d="M6 3h12a1 1 0 0 1 1 1v17l-7-3-7 3V4a1 1 0 0 1 1-1Z" fill="currentColor"/>
+          <path d="M12 11.8s-2.2-1.4-2.2-3A1.8 1.8 0 0 1 12 7.2a1.8 1.8 0 0 1 2.2 1.6c0 1.6-2.2 3-2.2 3Z" fill="#fff"/>
+        </svg>
+      </div>
       <span>관심목록</span>
     </button>
   </div>
@@ -80,11 +93,28 @@ const openWishlistBottom = () => {
   transform: translateY(-1px);
 }
 
-.bottom-button svg {
-  color: var(--muted, #6b7280);
-  margin-right: 16px;
-  flex-shrink: 0;
+.icon-circle {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 14px;
 }
+
+/* 색상 차별화로 네비게이션 아이콘과 구분감 제공 */
+.bottom-button.verify .icon-circle { background: rgba(72, 187, 120, 0.15); }
+.bottom-button.verify .icon-circle svg { color: #2F855A; }
+
+.bottom-button.sales .icon-circle { background: rgba(246, 173, 85, 0.18); }
+.bottom-button.sales .icon-circle svg { color: #C05621; }
+
+.bottom-button.purchase .icon-circle { background: rgba(99, 179, 237, 0.18); }
+.bottom-button.purchase .icon-circle svg { color: #2B6CB0; }
+
+.bottom-button.wishlist .icon-circle { background: rgba(245, 101, 101, 0.16); }
+.bottom-button.wishlist .icon-circle svg { color: #C53030; }
 
 .bottom-button span {
   font-size: 16px;

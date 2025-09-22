@@ -65,9 +65,9 @@ defineEmits(['navigate'])
   justify-content: space-around;
   align-items: center;
   padding: 8px 0 calc(8px + env(safe-area-inset-bottom));
-  background-color: #fff;
-  border-top: 1px solid #e0e0e0;
-  box-shadow: 0 -1px 4px rgba(0,0,0,0.05);
+  background-color: #ffffff;
+  border-top: 1px solid rgba(70,130,180,0.18);
+  box-shadow: 0 -6px 18px rgba(0,0,0,0.08);
 }
 
 .nav-item {
@@ -77,13 +77,17 @@ defineEmits(['navigate'])
   gap: 4px;
   padding: 6px 12px;
   border-radius: 12px;
-  color: #999;
+  color: #5f6b78;
   transition: all 0.2s ease;
 }
 
 .nav-item.active {
   color: #4682b4; /* 강조 색상 */
-  background-color: rgba(70,130,180,0.1); /* 활성 배경 */
+  background-color: rgba(70,130,180,0.12); /* 활성 배경 */
+}
+
+.nav-item:hover:not(.active) {
+  background-color: rgba(70,130,180,0.08);
 }
 
 .nav-item span {

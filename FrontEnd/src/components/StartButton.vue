@@ -45,6 +45,7 @@ const handleDeliveryStarted = (product) => {
   width: 100%;
   padding: 16px 24px;
   background: linear-gradient(90deg, #4682B4, #6EC6CA);
+  /* background: linear-gradient(90deg, #5A9BD6, #7FD7DA); */
   color: white;
   border: none;
   border-radius: 12px;

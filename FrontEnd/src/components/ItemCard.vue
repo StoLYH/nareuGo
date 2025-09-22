@@ -15,9 +15,20 @@
       </div>
     </div>
     <div class="item-info">
-      <h3 class="item-title">{{ item.title }}</h3>
+      <div class="title-row">
+        <h3 class="item-title">{{ item.title }}</h3>
+        <span
+          v-if="isForSale(item.status)"
+          class="status-inline"
+          aria-label="판매중"
+        >
+          판매중
+        </span>
+      </div>
       <p class="item-location">{{ item.location }} · {{ item.time }}</p>
-      <p class="item-price">{{ item.price.toLocaleString() }}원</p>
+      <div class="card-footer">
+        <span class="item-price-badge">{{ item.price.toLocaleString() }}원</span>
+      </div>
     </div>
   </div>
 </template>
@@ -55,6 +66,12 @@ const handleImageError = (event) => {
 const handleImageLoad = () => {
   console.log('이미지 로드 성공:', props.item.image)
 }
+
+// FOR_SALE 상태 판단 (백엔드 표기 변형 대응)
+const isForSale = (status) => {
+  const s = (status || '').toString().toLowerCase()
+  return s === 'for_sale' || s === 'for-sale' || s === 'forsale' || s === 'available'
+}
 </script>
 
 <style scoped>
@@ -62,11 +79,12 @@ const handleImageLoad = () => {
 .item-card {
   display: flex;
   align-items: flex-start;
-  padding: 16px;
-  margin-bottom: 12px;
+  padding: 18px;
+  margin-bottom: 14px;
   border-radius: 12px;
   background: #fff;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  border: 1px solid #e6edf5;
   gap: 14px;
   cursor: pointer;
   transition: transform 0.2s ease, box-shadow 0.3s ease, background-color 0.3s;
@@ -74,7 +92,8 @@ const handleImageLoad = () => {
 
 .item-card:hover {
   transform: translateY(-3px);
-  box-shadow: 0 6px 16px rgba(70,130,180,0.2);
+  box-shadow: 0 6px 18px rgba(70,130,180,0.22);
+  border-color: #b9d1e6;
   background-color: #f9fbfd;
 }
 
@@ -94,6 +113,7 @@ const handleImageLoad = () => {
   align-items: center;
   justify-content: center;
   transition: transform 0.3s ease;
+  border: 1px solid #e6edf5;
 }
 
 .item-card:hover .item-image {
@@ -131,6 +151,7 @@ const handleImageLoad = () => {
   display: flex;
   flex-direction: column;
   justify-content: center;
+  gap: 8px;
   min-width: 0;
 }
 
@@ -149,22 +170,57 @@ const handleImageLoad = () => {
   transition: color 0.2s ease;
 }
 
-.item-card:hover .item-title {
-  /* color: #4682b4; */
+.title-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
 }
+
+.status-inline {
+  margin-left: auto;
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  height: 22px;
+  border-radius: 9999px;
+  font-size: 12px;
+  font-weight: 700;
+  color: rgb(244, 120, 82); /* 코랄 포인트 */
+  background: rgba(250, 208, 136, 0.12);
+  border: 1px solid rgba(209, 77, 114, 0.24);
+}
+
+
 
 /* 위치 */
 .item-location {
   font-size: 14px;
-  color: #7b8a97;
-  margin: 0 0 10px 0;
+  color: #6f7d8a;
+  margin: 2px 0 6px 0;
+  letter-spacing: -0.1px;
 }
 
-/* 가격 */
-.item-price {
-  font-size: 18px;
-  font-weight: 700;
-  color: #4682b4;
-  margin: 0;
+/* 카드 푸터 */
+.card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  border-top: 1px solid #f0f4f8;
+  margin-top: 4px;
+  padding-top: 8px;
+}
+
+.item-price-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 10px 16px;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 800;
+  color: #4682b4; /* Option C: soft indigo */
+  /* background: rgba(220, 226, 246, 0.12); */
+  /* border: 1px solid rgba(103, 136, 235, 0.24); */
+  /* box-shadow: 0 2px 8px rgba(0,0,0,0.06); */
 }
 </style>

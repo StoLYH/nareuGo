@@ -38,19 +38,28 @@ const openSettings = () => console.log('설정 열기');
 
 <style scoped>
 .mypage-header {
+  position: fixed;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 390px;
+  z-index: 50;
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 16px 20px;
-  background-color: var(--surface, #fff);
-  border-bottom: 1px solid rgba(0,0,0,0.06);
+  background-color: #4682B4;
+  color: #ffffff;
+  border-bottom: none;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.12);
 }
 
 /* 타이틀 */
 .header-title {
-  font-size: 16px;
+  font-size: 18px;
   font-weight: 700;
-  color: var(--secondary, #2c3e50);
+  color: #ffffff;
   margin: 0;
   text-align: center;
   flex: 1;
@@ -71,15 +80,15 @@ const openSettings = () => console.log('설정 열기');
   height: 36px;
   border-radius: 50%;
   border: none;
-  background-color: transparent;
-  color: var(--muted, #6b7280);
+  background-color: rgba(255,255,255,0.16);
+  color: #ffffff;
   cursor: pointer;
   transition: all 0.2s ease;
 }
 
 .icon-btn:hover {
-  background-color: var(--surface-2, #f3f6fa);
-  color: var(--primary, #4682b4);
+  background-color: rgba(255,255,255,0.28);
+  color: #ffffff;
 }
 
 .icon-btn:active {
