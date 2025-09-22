@@ -91,7 +91,7 @@ host:
 
 mybatis:   # 위치고정
   mapper-locations: classpath*:mapper/**/*.xml
-  type-aliases-package: org.example.nareugobackend
+  type-aliases-package: org.example.nareugobackend.common.model
   configuration:
     map-underscore-to-camel-case: true
 
