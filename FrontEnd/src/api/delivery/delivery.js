@@ -255,6 +255,7 @@ export const getPaidSalesProducts = async (userId) => {
       buyerName: item.buyerName || item.buyerNickname || '구매자',
       buyerId: item.buyer_id || item.buyerId,
       orderId: item.order_id || item.orderId,
+      deliveryId: item.delivery_id || item.deliveryId || item.order_id || item.orderId, // deliveryId 추가 (임시로 orderId 사용)
       orderStatus: item.status || item.orderStatus
     }))
     console.log('🔄 [DEBUG] 변환된 최종 상품들:', transformedProducts)
@@ -290,18 +291,57 @@ export const getRobotStatus = async (robotId) => {
   }
 }
 
-// 배송 시작 API
+// 나르고 시작 API (주소 조회 후 로봇 이동 시작)
 export const startDelivery = async (deliveryData) => {
   try {
-    const response = await axios.post(`${BASE_URL}/delivery/start`, deliveryData, {
+    // 1. 배송 주소 정보 조회
+    const addressResponse = await axios.get(`${BASE_URL}/robot/delivery/${deliveryData.deliveryId}/addresses`, {
       headers: {
-        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${localStorage.getItem('access_token')}`
+      }
+    })
+    console.log('주소 정보 조회 완료:', addressResponse.data)
+
+    // 2. 로봇에게 판매자 주소로 이동 명령 전송 (백엔드에서 자동 처리)
+    // TODO: 필요시 로봇 이동 시작 API 호출 추가
+
+    // 3. 결과 반환
+    return {
+      addresses: addressResponse.data,
+      message: '나르고가 시작되었습니다!'
+    }
+  } catch (error) {
+    console.error('나르고 시작 실패:', error)
+    throw error
+  }
+}
+
+// 배송 픽업 확인 API
+export const confirmPickup = async (deliveryId) => {
+  try {
+    const response = await axios.post(`${BASE_URL}/robot/delivery/${deliveryId}/pickup`, {}, {
+      headers: {
         'Authorization': `Bearer ${localStorage.getItem('access_token')}`
       }
     })
     return response.data
   } catch (error) {
-    console.error('배송 시작 실패:', error)
+    console.error('픽업 확인 실패:', error)
+    throw error
+  }
+}
+
+// 배송 주소 조회 API
+export const getDeliveryAddresses = async (deliveryId) => {
+  try {
+    const response = await axios.get(`${BASE_URL}/robot/delivery/${deliveryId}/addresses`, {
+      headers: {
+        'Authorization': `Bearer ${localStorage.getItem('access_token')}`
+      }
+    })
+    return response.data
+  } catch (error) {
+    console.error('배송 주소 조회 실패:', error)
     throw error
   }
 }
