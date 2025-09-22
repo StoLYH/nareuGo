@@ -122,7 +122,24 @@ q::after {
 table {
   border-collapse: collapse;
   border-spacing: 0;
-} /* 폰트 & CSS 변수 */
+}
+/* === Global caret and selection rules to avoid stray carets on non-inputs === */
+/* 기본적으로 전체 페이지에서 캐럿을 숨기고, 실제 입력 가능한 요소에서만 표시합니다. */
+html, body {
+  caret-color: transparent;
+}
+input, textarea, [contenteditable="true"] {
+  caret-color: auto; /* 입력창에서는 정상 표시 */
+}
+/* 비인터랙티브 요소에 포커스가 가는 경우의 외곽선 제거 (접근성 영향 없음: 버튼/링크에는 적용하지 않음) */
+:where(p, span, img, svg, strong, em, h1, h2, h3, h4, h5, h6):focus {
+  outline: none;
+}
+/* UI 컨트롤에서 텍스트 드래그 방지 (불필요한 선택 방지) */
+button, .nav-item, .slider-nav, .like-button, .chat-button {
+  user-select: none;
+}
+/* 폰트 & CSS 변수 */
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700&display=swap');
 
 @font-face {
