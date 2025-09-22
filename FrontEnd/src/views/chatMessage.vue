@@ -578,7 +578,7 @@ onUnmounted(() => {
 }
 
 /* Distinct accents (soft tones that complement #4682B4) */
-.emoji-btn { color: #f7c55a; border-color: #f7c55a; }
+.emoji-btn { color: #4682b4; border-color: #4682b4; }
 .emoji-btn:hover { background: #EEF5FA; color: #5E819D; border-color: #B8CBDC; }
 
 .send-btn { color: #4682B4; border-color: #4682B4; }
