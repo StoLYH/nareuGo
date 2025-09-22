@@ -45,7 +45,7 @@
             stroke-width="2"
           />
         </svg>
-        <span>{{ isCreatingOrder ? "주문 생성 중..." : "결제" }}</span>
+        <span>{{ isCreatingOrder ? "주문 생성 중..." : "결제 승인" }}</span>
       </button>
     </div>
 
@@ -116,25 +116,37 @@
         v-model="newMessage"
         @keyup.enter="sendMessage"
       />
-      <button class="camera-btn">
+      <button class="send-btn" @click="sendMessage" title="전송">
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-          <path
-            d="M23 19C23 19.5304 22.7893 20.0391 22.4142 20.4142C22.0391 20.7893 21.5304 21 21 21H3C2.46957 21 1.96086 20.7893 1.58579 20.4142C1.21071 20.0391 1 19.5304 1 19V8C1 7.46957 1.21071 6.96086 1.58579 6.58579C1.96086 6.21071 2.46957 6 3 6H7L9 4H15L17 6H21C21.5304 6 22.0391 6.21071 22.4142 6.58579C22.7893 6.96086 23 7.46957 23 8V19Z"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          />
-          <circle
-            cx="12"
-            cy="13"
-            r="4"
-            stroke="currentColor"
-            stroke-width="2"
-          />
+          <path d="M22 2L11 13" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M22 2L15 22L11 13L2 9L22 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
       </button>
     </div>
+    
+    <!-- 결제 확인 모달 -->
+    <transition name="fade-zoom">
+      <div v-if="showPaymentConfirm" class="modal-overlay" @click.self="cancelPayment">
+        <div class="modal-card">
+          <div class="modal-header-row">
+            <div class="modal-icon" aria-hidden="true">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M18 8a6 6 0 10-12 0c0 7-3 9-3 9h18s-3-2-3-9" stroke="#E3A008" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M13.73 21a2 2 0 01-3.46 0" stroke="#E3A008" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+            <h3>판매자에게 결제 승인을 요청할까요?</h3>
+          </div>
+          <p class="modal-desc">*빠른 시연을 위해 결제 페이지로 바로 이동합니다*</p>
+          <div class="modal-actions">
+            <button class="btn-secondary" @click="cancelPayment">취소</button>
+            <button class="btn-primary" @click="confirmPayment" :disabled="isCreatingOrder">
+              {{ isCreatingOrder ? '진행 중...' : '요청하기' }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </transition>
   </div>
 </template>
 
@@ -155,58 +167,54 @@ const hasMoreMessages = ref(true);
 const currentPage = ref(1);
 const newMessage = ref("");
 const isCreatingOrder = ref(false);
+const showPaymentConfirm = ref(false);
 
 // ===== 결제 버튼 클릭 처리 =====
-const handlePaymentClick = async () => {
+const handlePaymentClick = () => {
   if (isCreatingOrder.value) return;
+  showPaymentConfirm.value = true;
+};
 
+const cancelPayment = () => {
+  if (isCreatingOrder.value) return;
+  showPaymentConfirm.value = false;
+};
+
+const confirmPayment = async () => {
+  if (isCreatingOrder.value) return;
   isCreatingOrder.value = true;
-
   try {
-    console.log("결제 버튼 클릭 - 주문 생성 시작");
-
-    // 채팅방 컨텍스트에서 가져온 상품 ID 사용
-    // 주의: 기존 채팅/상품 코드들에 영향을 주지 않기 위해 별도의 상태값(productId)으로 관리합니다.
-    const pid = Number(productId.value);
-    if (!pid || Number.isNaN(pid)) {
-      alert("상품 정보 로딩 중입니다. 잠시 후 다시 시도해주세요.");
-      return;
-    }
-    const buyerId = getCurrentUserId(); // 로그인한 사용자 ID
-
-    // 백엔드에서 주문 생성
-    const baseUrl = import.meta.env.VITE_BASE_URL || "http://localhost:8080";
-    const response = await fetch(`${baseUrl}/orders`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        productId: pid,
-        buyerId: buyerId,
-      }),
-    });
-
-    if (!response.ok) {
-      throw new Error("주문 생성에 실패했습니다.");
-    }
-
-    const orderData = await response.json();
-    const orderId = orderData.orderId;
-
-    console.log("주문 생성 완료 - orderId:", orderId);
-
-    // 생성된 orderId로 결제 페이지로 이동
-    router.push({
-      name: "PaymentDetail",
-      params: { orderId: orderId },
-    });
-  } catch (error) {
-    console.error("주문 생성 실패:", error);
-    alert("주문 생성 중 오류가 발생했습니다: " + error.message);
+    await proceedPaymentFlow();
   } finally {
     isCreatingOrder.value = false;
+    showPaymentConfirm.value = false;
   }
+};
+
+// 실제 주문 생성 및 결제 상세로 이동
+const proceedPaymentFlow = async () => {
+  console.log("결제 버튼 확인 - 주문 생성 시작");
+
+  const pid = Number(productId.value);
+  if (!pid || Number.isNaN(pid)) {
+    alert("상품 정보 로딩 중입니다. 잠시 후 다시 시도해주세요.");
+    return;
+  }
+  const buyerId = getCurrentUserId();
+
+  const baseUrl = import.meta.env.VITE_BASE_URL || "http://localhost:8080";
+  const response = await fetch(`${baseUrl}/orders`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ productId: pid, buyerId })
+  });
+  if (!response.ok) throw new Error("주문 생성에 실패했습니다.");
+
+  const orderData = await response.json();
+  const orderId = orderData.orderId;
+  console.log("주문 생성 완료 - orderId:", orderId);
+
+  router.push({ name: "PaymentDetail", params: { orderId } });
 };
 
 // 현재 로그인한 사용자 ID 가져오기
@@ -446,32 +454,57 @@ onUnmounted(() => {
   display: flex;
   flex-direction: column;
   background-color: white;
+  /* 고정 헤더 높이만큼 여백 확보 */
+  padding-top: 64px;
 }
 
 /* 헤더 */
 .chat-header {
+  position: fixed;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 390px;
+  z-index: 50;
   display: flex;
+  justify-content: center;
   align-items: center;
-  padding: 16px;
-  border-bottom: 1px solid #f0f0f0;
-  background-color: white;
+  padding: 12px 16px;
+  height: 64px;
+  background-color: #4682B4;
+  color: #fff;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+  border-bottom: none;
 }
 
 .back-btn {
-  margin-right: 16px;
-  color: #333;
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #fff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: rgba(255,255,255,0.18);
 }
+.back-btn:hover { background-color: rgba(255,255,255,0.28); }
 
+.header-info { text-align: center; }
 .header-info h2 {
   font-size: 18px;
   font-weight: 600;
   margin: 0 0 2px 0;
-  color: #333;
+  color: #fff;
 }
 
 .header-info span {
   font-size: 12px;
-  color: #666;
+  color: rgba(255,255,255,0.85);
 }
 
 /* 채팅 메시지 영역 */
@@ -505,13 +538,14 @@ onUnmounted(() => {
 }
 
 .message.received .message-bubble {
-  background-color: #f0f0f0;
-  color: #333;
+  background-color: #f3f6fa;
+  color: #2c3e50;
 }
 
 .message.sent .message-bubble {
-  background-color: #007bff;
-  color: white;
+  /* 헤더 블루와 겹치지 않도록, 어울리는 연한 민트/시안 톤 */
+  background-color: #E7F6F8;
+  color: #2c3e50;
 }
 
 /* 메시지 입력 영역 */
@@ -520,14 +554,35 @@ onUnmounted(() => {
   align-items: center;
   padding: 16px;
   background-color: white;
-  border-top: 1px solid #f0f0f0;
+  border-top: 1px solid #4682B4;
 }
 
 .emoji-btn,
-.camera-btn {
-  color: #666;
+.send-btn {
+  color: #6b7280;
   margin: 0 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 18px;
+  border: 1px solid #e5eaf0;
+  background: #fff;
+  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
 }
+.emoji-btn:hover,
+.send-btn:hover {
+  background: #f3f6fa;
+  border-color: #d7e3ef;
+}
+
+/* Distinct accents (soft tones that complement #4682B4) */
+.emoji-btn { color: #f7c55a; border-color: #f7c55a; }
+.emoji-btn:hover { background: #EEF5FA; color: #5E819D; border-color: #B8CBDC; }
+
+.send-btn { color: #4682B4; border-color: #4682B4; }
+.send-btn:hover { background: #ECF7F6; color: #5E9E9C; border-color: #BADAD9; }
 
 .message-text {
   flex: 1;
@@ -540,7 +595,7 @@ onUnmounted(() => {
 }
 
 .message-text:focus {
-  border-color: #007bff;
+  border-color: #4682b4;
   background-color: white;
 }
 
@@ -563,7 +618,7 @@ onUnmounted(() => {
   width: 16px;
   height: 16px;
   border: 2px solid #e0e0e0;
-  border-top: 2px solid #007bff;
+  border-top: 2px solid #4682b4;
   border-radius: 50%;
   animation: spin 1s linear infinite;
 }
@@ -588,23 +643,107 @@ onUnmounted(() => {
 }
 
 .payment-btn {
-  margin-left: auto;
-  display: flex;
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 6px 12px;
+  padding: 8px 8px;
+  border-radius: 9999px;
   border: none;
-  border-radius: 20px;
-  background-color: #28a745;
-  color: white;
-  font-size: 14px;
-  font-weight: 500;
+  background-color: rgba(255,255,255,0.18); /* 뒤로가기 버튼과 동일 톤 */
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
   cursor: pointer;
-  transition: background-color 0.2s, transform 0.2s;
+  transition: background-color 0.2s ease, box-shadow 0.2s ease, transform 0.15s ease;
+}
+.payment-btn:hover { background-color: rgba(255,255,255,0.28); box-shadow: 0 2px 8px rgba(0,0,0,0.12); }
+.payment-btn:disabled { opacity: 0.7; cursor: not-allowed; box-shadow: none; transform: none; }
+
+.loading-spinner-small {
+  width: 16px;
+  height: 16px;
+  border: 2px solid #e0e0e0;
+  border-top: 2px solid #4682b4;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
 }
 
-.payment-btn:hover {
-  background-color: #218838;
-  transform: scale(1.03);
+/* ===== 모달 (중앙 고정) ===== */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100; /* 헤더(50)보다 높게 */
+  backdrop-filter: blur(2px);
 }
+
+.modal-card {
+  width: calc(100% - 40px);
+  max-width: 380px;
+  background: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
+  padding: 22px;
+  border: 1px solid #eef2f6;
+}
+
+.modal-card h3 {
+  margin: 6px 0 8px 0;
+  font-size: 18px;
+  font-weight: 700;
+  color: #2c3e50;
+}
+
+.modal-header-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.modal-desc {
+  margin: 0 0 18px 0;
+  font-size: 14px;
+  color: #334155;
+  line-height: 1.5;
+  background: #f3f6fa;
+  border: 1px solid #e5eaf0;
+  border-radius: 10px;
+  padding: 12px 14px;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  padding-top: 4px;
+}
+
+.btn-secondary,
+.btn-primary {
+  padding: 10px 14px;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 700;
+  border: none;
+}
+
+.btn-secondary {
+  background: #f3f6fa;
+  color: #334155;
+}
+.btn-secondary:hover { background: #e8eef6; }
+
+.btn-primary {
+  background: #4682B4;
+  color: #fff;
+}
+.btn-primary:hover { background: #3b709a; }
 </style>

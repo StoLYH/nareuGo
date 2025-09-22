@@ -199,20 +199,34 @@ export default {
   flex-direction: column;
   height: 100vh;
   background-color: #f8f9fa;
+  /* 고정 헤더 높이만큼 상단 여백 확보 */
+  padding-top: 64px;
 }
 
 /* 헤더 */
 .fail-header {
-  padding: 16px 20px;
-  background-color: white;
-  border-bottom: 1px solid #f0f0f0;
-  text-align: center;
+  position: fixed;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 390px;
+  z-index: 50;
+  padding: 12px 16px;
+  height: 64px;
+  background-color: #4682B4;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+  border-bottom: none;
 }
 
 .header-title {
   font-size: 18px;
   font-weight: 600;
-  color: #333;
+  color: #fff;
   margin: 0;
 }
 

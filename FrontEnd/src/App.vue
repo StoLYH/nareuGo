@@ -101,7 +101,8 @@ video {
 }
 body {
   line-height: 1;
-  background-color: #fff8ed;
+  /* 전체 페이지 배경: 헤더/로그인 버튼 그라디언트와 조화되는 라이트 블루 톤 */
+  background: linear-gradient(180deg, #EAF3FB 0%, #F5F9FC 100%);
   font-family: "Pretendard-Regular";
 }
 ol,
@@ -176,7 +177,6 @@ button {
 
 .content {
   width: 100%;
-  height: 100vh; /* [추가] content가 화면 전체 높이를 차지하도록 설정 */
-
+  /* height: 100vh;  */
 }
 </style>

@@ -242,7 +242,7 @@ onMounted(() => {
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 1000;
+  z-index: 9999;
 }
 
 .modal-container {
@@ -267,7 +267,7 @@ onMounted(() => {
   margin: 0;
   font-size: 18px;
   font-weight: 600;
-  color: #333;
+  color: #2c3e50;
 }
 
 .close-button {
@@ -285,7 +285,7 @@ onMounted(() => {
 }
 
 .close-button:hover {
-  color: #333;
+  color: #4682B4;
 }
 
 .modal-body {
@@ -323,13 +323,13 @@ onMounted(() => {
 }
 
 .product-item:hover {
-  border-color: #007AFF;
-  background-color: #f8f9ff;
+  border-color: #5A9BD6;
+  background-color: #EFF6FB;
 }
 
 .product-item.selected {
-  border-color: #007AFF;
-  background-color: #f0f7ff;
+  border-color: #4682B4;
+  background-color: #EAF3FB;
 }
 
 .product-item input[type="radio"] {
@@ -358,20 +358,20 @@ onMounted(() => {
   margin: 0 0 4px 0;
   font-size: 14px;
   font-weight: 500;
-  color: #333;
+  color: #2c3e50;
 }
 
 .product-price {
   margin: 0 0 4px 0;
   font-size: 14px;
   font-weight: 600;
-  color: #007AFF;
+  color: #4682B4;
 }
 
 .product-buyer {
   margin: 0;
   font-size: 12px;
-  color: #666;
+  color: #6b7280;
 }
 
 .modal-footer {
@@ -393,25 +393,26 @@ onMounted(() => {
 }
 
 .cancel-button {
-  background-color: #f5f5f5;
-  color: #666;
+  background-color: #EEF3F8;
+  color: #5f6b78;
 }
 
 .cancel-button:hover {
-  background-color: #e5e5e5;
+  background-color: #E2EBF4;
 }
 
 .start-button {
-  background: linear-gradient(135deg, #007AFF 0%, #0051D5 100%);
+  /* App header/login button gradient */
+  background: linear-gradient(90deg, #4682B4, #6EC6CA);
   color: white;
 }
 
 .start-button:hover:not(:disabled) {
-  background: linear-gradient(135deg, #0056CC 0%, #003D99 100%);
+  background: linear-gradient(90deg, #5A9BD6, #7FD7DA);
 }
 
 .start-button:disabled {
-  background-color: #ccc;
+  background-color: #b7c7d6;
   cursor: not-allowed;
 }
 </style>
