@@ -24,7 +24,7 @@
                 </svg>
                 <span v-else>1</span>
               </div>
-              <span class="step-label">위치 인증</span>
+              <span class="step-label">현위치</span>
             </div>
             <div class="progress-line" :class="{ active: currentStep >= 2 }"></div>
             <div class="progress-step" :class="{ active: currentStep >= 2, completed: ocrVerified }">
@@ -34,7 +34,7 @@
                 </svg>
                 <span v-else>2</span>
               </div>
-              <span class="step-label">주소 인증</span>
+              <span class="step-label">주소</span>
             </div>
             <div class="progress-line" :class="{ active: currentStep >= 3 }"></div>
             <div class="progress-step" :class="{ active: currentStep >= 3, completed: apartmentVerified }">
@@ -44,7 +44,7 @@
                 </svg>
                 <span v-else>3</span>
               </div>
-              <span class="step-label">아파트 정보</span>
+              <span class="step-label">아파트</span>
             </div>
           </div>
         </section>
@@ -122,11 +122,13 @@
           </div>
 
           <div class="verification-actions">
-            <button v-if="!gpsVerified" @click="startGpsVerification" :disabled="gpsLoading" class="primary-button">
+            <!-- 오류 시: '다시 시도'만 메인 위치에 표시 -->
+            <button v-if="gpsError" @click="retryGpsVerification" class="primary-button">다시 시도</button>
+            <!-- 정상 흐름: 시작/다음 -->
+            <button v-else-if="!gpsVerified" @click="startGpsVerification" :disabled="gpsLoading" class="primary-button">
               {{ gpsLoading ? '위치 확인 중...' : '위치 인증 시작' }}
             </button>
-            <button v-if="gpsVerified" @click="nextStep" class="primary-button">다음 단계</button>
-            <button v-if="gpsError" @click="retryGpsVerification" class="secondary-button">다시 시도</button>
+            <button v-else @click="nextStep" class="primary-button">다음 단계</button>
           </div>
         </section>
 
@@ -238,7 +240,7 @@
               </div>
             </div>
 
-            <div v-if="ocrError" class="error-state">
+            <!-- <div v-if="ocrError" class="error-state">
               <div class="error-icon">
                 <svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" fill="none"/>
@@ -248,24 +250,26 @@
               </div>
               <h3>주소 인증 실패</h3>
               <p class="error-message">{{ ocrError }}</p>
-            </div>
+            </div> -->
           </div>
 
           <div class="verification-actions">
-            <button v-if="!capturedImage && !ocrVerified" @click="capturePhoto" class="primary-button">
+            <!-- 오류 시: '다시 시도'를 메인 위치에 표시 -->
+            <button v-if="ocrError" @click="retryOCR" class="primary-button">다시 시도</button>
+            <!-- 정상 흐름 버튼들 -->
+            <button v-else-if="!capturedImage && !ocrVerified" @click="capturePhoto" class="primary-button">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M23 19C23 20.1 22.1 21 21 21H3C1.9 21 1 20.1 1 19V8C1 6.9 1.9 6 3 6H7L9 4H15L17 6H21C22.1 6 23 6.9 23 8V19Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                 <circle cx="12" cy="13" r="4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
               </svg>
               신분증 촬영하기
             </button>
-            <button v-if="ocrVerified" @click="goToApartmentInfo" class="primary-button">
+            <button v-else-if="ocrVerified" @click="goToApartmentInfo" class="primary-button">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <polyline points="9 18 15 12 9 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
               </svg>
               다음
             </button>
-            <button v-if="ocrError" @click="retryOCR" class="secondary-button">다시 시도</button>
           </div>
         </section>
 
@@ -1067,6 +1071,7 @@ export default {
 }
 
 .step-label {
+
   font-size: 12px;
   color: #666;
   font-weight: 500;
