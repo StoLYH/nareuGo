@@ -48,7 +48,11 @@
           @click="handleChatClick(chat.id)"
         >
           <div class="profile-image">
-            <img :src="chat.productImage" :alt="chat.productTitle" />
+            <img 
+              :src="chat.productImage" 
+              :alt="chat.productTitle" 
+              @error="handleImageError"
+            />
           </div>
           <div class="chat-info">
             <h3 class="chat-name">{{ chat.name }}</h3>
@@ -92,6 +96,8 @@ const fetchProductInfo = async (productId) => {
   try {
     if (!productId) return null;
     const productInfo = await getProductDetail(productId);
+    console.log(`상품 ${productId} 정보:`, productInfo);
+    console.log(`상품 ${productId} 이미지 URLs:`, productInfo?.imageUrls);
     return productInfo;
   } catch (error) {
     console.error("상품 정보 조회 실패:", error);
@@ -151,12 +157,16 @@ const loadChatRooms = async () => {
           roomId: room.roomId,
           name: otherUserInfo ? otherUserInfo.nickname : `사용자 ${otherUserId}`, // 상대방 닉네임 표시
           location: productInfo ? `${productInfo.buildingDong}-${productInfo.buildingHo}` : "위치 정보 없음", // 동호수 표시
-          profileImage: productInfo ? productInfo.imageUrls : "/images/social/사용자더미.png", // 상품 이미지를 프로필 이미지 자리에 표시
+          profileImage: productInfo && productInfo.imageUrls && productInfo.imageUrls.length > 0 
+            ? productInfo.imageUrls[0] 
+            : "/images/social/사용자더미.png", // 상품 이미지의 첫 번째를 프로필 이미지로 사용
           lastMessage: room.lastMessage || "메시지가 없습니다.",
           lastMessageAt: room.lastMessageAt || room.createdAt,
           otherUserId: otherUserId,
           productId: room.productId,
-          productImage: productInfo ? productInfo.imageUrls : "/images/social/상품더미1.png", // 상품 이미지
+          productImage: productInfo && productInfo.imageUrls && productInfo.imageUrls.length > 0 
+            ? productInfo.imageUrls[0] 
+            : "/images/social/상품더미1.png", // 상품 이미지의 첫 번째 사용
           productTitle: productInfo ? productInfo.title : "상품 정보 없음", // 상품 제목
           hasUnread: false // 추후 읽음 상태 관리 추가 가능
         }
@@ -256,6 +266,12 @@ const handleNavigation = (tab) => {
     default:
       console.log("Unknown navigation tab:", tab);
   }
+};
+
+// 이미지 로드 에러 처리
+const handleImageError = (event) => {
+  console.warn("이미지 로드 실패:", event.target.src);
+  event.target.src = "/images/social/상품더미1.png"; // 기본 이미지로 대체
 };
 </script>
 
