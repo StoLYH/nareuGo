@@ -578,10 +578,10 @@ onUnmounted(() => {
 }
 
 /* Distinct accents (soft tones that complement #4682B4) */
-.emoji-btn { color: #ebb94c; border-color: #d8e54b; }
+.emoji-btn { color: #f7c55a; border-color: #f7c55a; }
 .emoji-btn:hover { background: #EEF5FA; color: #5E819D; border-color: #B8CBDC; }
 
-.send-btn { color: #6FAFAD; border-color: #CBE3E2; }
+.send-btn { color: #4682B4; border-color: #4682B4; }
 .send-btn:hover { background: #ECF7F6; color: #5E9E9C; border-color: #BADAD9; }
 
 .message-text {
