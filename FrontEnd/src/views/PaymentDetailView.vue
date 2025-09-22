@@ -678,7 +678,7 @@ export default {
 
 .seller-info.address {
   margin-top: 8px;
-  font-size: 12px;
+  font-size: 11.5px;
   font-weight: 300;
 }
 
