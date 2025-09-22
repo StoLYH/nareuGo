@@ -5,7 +5,7 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.example.nareugobackend.api.controller.product.response.ProductDetailResponse;
 import org.example.nareugobackend.api.service.product.request.ProductServiceRequest;
-import org.example.nareugobackend.api.service.product.request.UserInfoRequest;
+import org.example.nareugobackend.api.service.product.response.UserInfoResponse;
 import org.example.nareugobackend.common.model.ProductStatus;
 
 @Mapper
@@ -20,7 +20,7 @@ public interface ProductMapper {
 
 
     // 전체 (읍,면,동 기준)
-    List<ProductDetailResponse> selectProduct(UserInfoRequest userInfoRequest);
+    List<ProductDetailResponse> selectProduct(UserInfoResponse userInfoRequest);
 
 
     // 개별 단위
@@ -32,7 +32,7 @@ public interface ProductMapper {
     List<String> selectProductImages(@Param("productId") Long productId);
 
     // 사용자 Id 이용하기
-    UserInfoRequest selectUserInfo(@Param("userId") Long userId);
+    UserInfoResponse selectUserInfo(@Param("userId") Long userId);
 
     // 결제용 상품 상세 조회 (기존 코드와 분리)
     ProductDetailResponse findProductDetailById(@Param("productId") Long productId);
