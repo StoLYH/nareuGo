@@ -186,8 +186,8 @@ const isForSale = (status) => {
   border-radius: 9999px;
   font-size: 12px;
   font-weight: 700;
-  color: rgb(244, 120, 82); /* 코랄 포인트 */
-  background: rgba(250, 208, 136, 0.12);
+  color: rgb(250, 156, 128); /* 코랄 포인트 */
+  background: rgba(249, 248, 246, 0.12);
   border: 1px solid rgba(209, 77, 114, 0.24);
 }
 
