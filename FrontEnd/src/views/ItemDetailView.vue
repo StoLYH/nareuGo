@@ -95,7 +95,7 @@
         <section class="item-info">
           <h1 class="item-title">{{ item.title }}</h1>
           <p class="item-meta">{{ item.category }} · {{ item.postedAt }}</p>
-          <p class="item-description" v-html="item.description"></p>
+          <p class="item-description" v-html="descriptionHtml"></p>
           <p class="item-stats">
             <!-- 관심 {{ item.likes }} · 조회 {{ item.views }} -->
             관심 7 · 조회 13
@@ -202,6 +202,22 @@ export default {
   computed: {
     formattedPrice() {
       return this.item.price.toLocaleString("ko-KR");
+    },
+    // 줄바꿈이 보이도록 개행을 <br>로 변환(+ 안전 이스케이프)
+    descriptionHtml() {
+      let text = this.item?.description ?? "";
+      text = String(text);
+      // 백엔드에서 '\n' 문자열로 올 수도 있어 우선 실제 개행으로 정규화
+      text = text.replace(/\\r\\n|\\r|\\n/g, "\n");
+      // HTML escape (XSS 방지)
+      const escaped = text
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/\"/g, "&quot;")
+        .replace(/'/g, "&#39;");
+      // 개행을 <br>로 변환
+      return escaped.replace(/\n/g, "<br>");
     },
   },
   methods: {
@@ -629,6 +645,9 @@ export default {
   font-size: 16px;
   line-height: 1.6;
   margin-bottom: 16px;
+  white-space: pre-wrap; /* 줄바꿈(\n)과 연속 공백 보존 */
+  word-break: break-word; /* 너무 긴 단어 줄바꿈 */
+  overflow-wrap: anywhere; /* 긴 URL 등도 안전하게 줄바꿈 */
 }
 .item-stats {
   font-size: 13px;
@@ -759,6 +778,10 @@ export default {
   font-size: 16px;
   line-height: 1.6;
   margin-bottom: 16px;
+  /* 실제 게시글처럼 줄바꿈/공백을 보존하고 긴 단어/URL은 안전하게 줄바꿈 */
+  white-space: pre-wrap; /* \n, 연속 공백 보존 */
+  word-break: break-word; /* 너무 긴 단어 줄바꿈 */
+  overflow-wrap: anywhere; /* 긴 URL 등도 줄바꿈 허용 */
 }
 .item-stats {
   font-size: 13px;
