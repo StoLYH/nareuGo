@@ -1,0 +1,17 @@
+running egg_info
+writing ../../../build/delivery_interface/delivery_interface.egg-info/PKG-INFO
+writing dependency_links to ../../../build/delivery_interface/delivery_interface.egg-info/dependency_links.txt
+writing requirements to ../../../build/delivery_interface/delivery_interface.egg-info/requires.txt
+writing top-level names to ../../../build/delivery_interface/delivery_interface.egg-info/top_level.txt
+reading manifest file '../../../build/delivery_interface/delivery_interface.egg-info/SOURCES.txt'
+writing manifest file '../../../build/delivery_interface/delivery_interface.egg-info/SOURCES.txt'
+running build
+running build_py
+running install
+running install_lib
+running install_data
+running install_egg_info
+removing '/home/donggun/S13P21A501/Embedded/install/delivery_interface/lib/python3.10/site-packages/delivery_interface-0.0.0-py3.10.egg-info' (and everything under it)
+Copying ../../../build/delivery_interface/delivery_interface.egg-info to /home/donggun/S13P21A501/Embedded/install/delivery_interface/lib/python3.10/site-packages/delivery_interface-0.0.0-py3.10.egg-info
+running install_scripts
+writing list of installed files to '/home/donggun/S13P21A501/Embedded/build/delivery_interface/install.log'

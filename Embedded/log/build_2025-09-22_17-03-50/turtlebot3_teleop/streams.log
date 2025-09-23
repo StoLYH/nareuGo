@@ -1,0 +1,42 @@
+[4.240s] Invoking command in '/home/donggun/S13P21A501/Embedded/src/turtlebot3/turtlebot3_teleop': PYTHONPATH=/home/donggun/S13P21A501/Embedded/build/turtlebot3_teleop/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/donggun/S13P21A501/Embedded/install/turtlebot3_teleop/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../../build/turtlebot3_teleop build --build-base /home/donggun/S13P21A501/Embedded/build/turtlebot3_teleop/build install --record /home/donggun/S13P21A501/Embedded/build/turtlebot3_teleop/install.log --single-version-externally-managed install_data
+[5.829s] running egg_info
+[5.830s] creating ../../../build/turtlebot3_teleop/turtlebot3_teleop.egg-info
+[5.952s] writing ../../../build/turtlebot3_teleop/turtlebot3_teleop.egg-info/PKG-INFO
+[5.952s] writing dependency_links to ../../../build/turtlebot3_teleop/turtlebot3_teleop.egg-info/dependency_links.txt
+[5.952s] writing entry points to ../../../build/turtlebot3_teleop/turtlebot3_teleop.egg-info/entry_points.txt
+[5.962s] writing requirements to ../../../build/turtlebot3_teleop/turtlebot3_teleop.egg-info/requires.txt
+[5.962s] writing top-level names to ../../../build/turtlebot3_teleop/turtlebot3_teleop.egg-info/top_level.txt
+[5.962s] writing manifest file '../../../build/turtlebot3_teleop/turtlebot3_teleop.egg-info/SOURCES.txt'
+[6.175s] reading manifest file '../../../build/turtlebot3_teleop/turtlebot3_teleop.egg-info/SOURCES.txt'
+[6.175s] writing manifest file '../../../build/turtlebot3_teleop/turtlebot3_teleop.egg-info/SOURCES.txt'
+[6.177s] running build
+[6.177s] running build_py
+[6.178s] creating /home/donggun/S13P21A501/Embedded/build/turtlebot3_teleop/build
+[6.178s] creating /home/donggun/S13P21A501/Embedded/build/turtlebot3_teleop/build/lib
+[6.178s] creating /home/donggun/S13P21A501/Embedded/build/turtlebot3_teleop/build/lib/turtlebot3_teleop
+[6.182s] copying turtlebot3_teleop/__init__.py -> /home/donggun/S13P21A501/Embedded/build/turtlebot3_teleop/build/lib/turtlebot3_teleop
+[6.182s] creating /home/donggun/S13P21A501/Embedded/build/turtlebot3_teleop/build/lib/turtlebot3_teleop/script
+[6.183s] copying turtlebot3_teleop/script/teleop_keyboard.py -> /home/donggun/S13P21A501/Embedded/build/turtlebot3_teleop/build/lib/turtlebot3_teleop/script
+[6.186s] copying turtlebot3_teleop/script/__init__.py -> /home/donggun/S13P21A501/Embedded/build/turtlebot3_teleop/build/lib/turtlebot3_teleop/script
+[6.186s] running install
+[6.200s] running install_lib
+[6.238s] creating /home/donggun/S13P21A501/Embedded/install/turtlebot3_teleop/lib/python3.10/site-packages/turtlebot3_teleop
+[6.239s] copying /home/donggun/S13P21A501/Embedded/build/turtlebot3_teleop/build/lib/turtlebot3_teleop/__init__.py -> /home/donggun/S13P21A501/Embedded/install/turtlebot3_teleop/lib/python3.10/site-packages/turtlebot3_teleop
+[6.240s] creating /home/donggun/S13P21A501/Embedded/install/turtlebot3_teleop/lib/python3.10/site-packages/turtlebot3_teleop/script
+[6.241s] copying /home/donggun/S13P21A501/Embedded/build/turtlebot3_teleop/build/lib/turtlebot3_teleop/script/teleop_keyboard.py -> /home/donggun/S13P21A501/Embedded/install/turtlebot3_teleop/lib/python3.10/site-packages/turtlebot3_teleop/script
+[6.242s] copying /home/donggun/S13P21A501/Embedded/build/turtlebot3_teleop/build/lib/turtlebot3_teleop/script/__init__.py -> /home/donggun/S13P21A501/Embedded/install/turtlebot3_teleop/lib/python3.10/site-packages/turtlebot3_teleop/script
+[6.243s] byte-compiling /home/donggun/S13P21A501/Embedded/install/turtlebot3_teleop/lib/python3.10/site-packages/turtlebot3_teleop/__init__.py to __init__.cpython-310.pyc
+[6.244s] byte-compiling /home/donggun/S13P21A501/Embedded/install/turtlebot3_teleop/lib/python3.10/site-packages/turtlebot3_teleop/script/teleop_keyboard.py to teleop_keyboard.cpython-310.pyc
+[6.247s] byte-compiling /home/donggun/S13P21A501/Embedded/install/turtlebot3_teleop/lib/python3.10/site-packages/turtlebot3_teleop/script/__init__.py to __init__.cpython-310.pyc
+[6.249s] running install_data
+[6.250s] creating /home/donggun/S13P21A501/Embedded/install/turtlebot3_teleop/share/ament_index
+[6.251s] creating /home/donggun/S13P21A501/Embedded/install/turtlebot3_teleop/share/ament_index/resource_index
+[6.254s] creating /home/donggun/S13P21A501/Embedded/install/turtlebot3_teleop/share/ament_index/resource_index/packages
+[6.255s] copying resource/turtlebot3_teleop -> /home/donggun/S13P21A501/Embedded/install/turtlebot3_teleop/share/ament_index/resource_index/packages
+[6.255s] copying package.xml -> /home/donggun/S13P21A501/Embedded/install/turtlebot3_teleop/share/turtlebot3_teleop
+[6.255s] running install_egg_info
+[6.296s] Copying ../../../build/turtlebot3_teleop/turtlebot3_teleop.egg-info to /home/donggun/S13P21A501/Embedded/install/turtlebot3_teleop/lib/python3.10/site-packages/turtlebot3_teleop-2.3.3-py3.10.egg-info
+[6.297s] running install_scripts
+[6.440s] Installing teleop_keyboard script to /home/donggun/S13P21A501/Embedded/install/turtlebot3_teleop/lib/turtlebot3_teleop
+[6.443s] writing list of installed files to '/home/donggun/S13P21A501/Embedded/build/turtlebot3_teleop/install.log'
+[6.570s] Invoked command in '/home/donggun/S13P21A501/Embedded/src/turtlebot3/turtlebot3_teleop' returned '0': PYTHONPATH=/home/donggun/S13P21A501/Embedded/build/turtlebot3_teleop/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/donggun/S13P21A501/Embedded/install/turtlebot3_teleop/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../../build/turtlebot3_teleop build --build-base /home/donggun/S13P21A501/Embedded/build/turtlebot3_teleop/build install --record /home/donggun/S13P21A501/Embedded/build/turtlebot3_teleop/install.log --single-version-externally-managed install_data
