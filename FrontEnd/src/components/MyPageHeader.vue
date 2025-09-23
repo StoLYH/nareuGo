@@ -18,7 +18,7 @@
         </svg>
       </button> -->
       <button class="icon-btn" @click="goNotifications" title="알림">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" focusable="false" aria-hidden="true">
           <path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.89 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z" fill="currentColor"/>
         </svg>
       </button>
@@ -85,6 +85,10 @@ const goNotifications = () => router.push({ name: 'Notifications' });
   cursor: pointer;
   transition: all 0.2s ease;
 }
+
+/* 아이콘 렌더링 호환성 개선 (Chrome/Edge 등) */
+.icon-btn svg { display: block; }
+.icon-btn svg path { fill: currentColor !important; }
 
 .icon-btn:hover {
   background-color: rgba(255,255,255,0.28);
