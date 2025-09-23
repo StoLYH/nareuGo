@@ -1,9 +1,0 @@
-/home/donggun/S13P21A501/Embedded/build/turtlebot3_manipulation_navigation2/CMakeFiles/uninstall.dir
-/home/donggun/S13P21A501/Embedded/build/turtlebot3_manipulation_navigation2/CMakeFiles/turtlebot3_manipulation_navigation2_uninstall.dir
-/home/donggun/S13P21A501/Embedded/build/turtlebot3_manipulation_navigation2/CMakeFiles/test.dir
-/home/donggun/S13P21A501/Embedded/build/turtlebot3_manipulation_navigation2/CMakeFiles/edit_cache.dir
-/home/donggun/S13P21A501/Embedded/build/turtlebot3_manipulation_navigation2/CMakeFiles/rebuild_cache.dir
-/home/donggun/S13P21A501/Embedded/build/turtlebot3_manipulation_navigation2/CMakeFiles/list_install_components.dir
-/home/donggun/S13P21A501/Embedded/build/turtlebot3_manipulation_navigation2/CMakeFiles/install.dir
-/home/donggun/S13P21A501/Embedded/build/turtlebot3_manipulation_navigation2/CMakeFiles/install/local.dir
-/home/donggun/S13P21A501/Embedded/build/turtlebot3_manipulation_navigation2/CMakeFiles/install/strip.dir
