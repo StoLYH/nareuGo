@@ -35,7 +35,7 @@ public class RobotController {
                 .exceptionally(ex -> {
                     log.error("로봇 상태 확인 실패: {}", ex.getMessage());
                     RobotStatusResponse errorResponse = RobotStatusResponse.builder()
-                            .status("invalid")
+                            .status("INVALID")
                             .message("서버 오류로 인한 상태 확인 실패")
                             .timestamp(java.time.Instant.now().toString())
                             .build();
@@ -52,6 +52,10 @@ public class RobotController {
 
         try {
             DeliveryAddressResponse addresses = robotService.getDeliveryAddresses(deliveryId);
+            
+            // delivery.py 스크립트 실행
+            robotService.executeDeliveryScript(deliveryId);
+            
             return ResponseEntity.ok(addresses);
         } catch (Exception e) {
             log.error("배송 주소 조회 실패: {}", e.getMessage());
@@ -83,6 +87,8 @@ public class RobotController {
 
         try {
             DeliveryCompletionResponse response = robotService.completeDelivery(deliveryId);
+            log.info("배송 완료 처리 성공 - 배송 ID: {}, 상태: {}, 메시지: {}", 
+                    deliveryId, response.getUpdatedStatus(), response.getMessage());
             return ResponseEntity.ok(response);
         } catch (Exception e) {
             log.error("배송 완료 처리 실패: {}", e.getMessage());

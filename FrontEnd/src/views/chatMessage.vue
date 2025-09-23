@@ -207,7 +207,7 @@ const proceedPaymentFlow = async () => {
   const orderId = orderData.orderId;
   console.log("주문 생성 완료 - orderId:", orderId);
 
-  router.push({ name: "PaymentDetail", params: { orderId } });
+  router.push({ name: "PaymentPending", params: { orderId } });
 };
 
 // 현재 로그인한 사용자 ID 가져오기

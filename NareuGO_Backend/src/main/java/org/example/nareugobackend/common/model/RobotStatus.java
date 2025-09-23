@@ -1,8 +1,8 @@
 package org.example.nareugobackend.common.model;
 
 public enum RobotStatus {
-    VALID("valid"),
-    INVALID("invalid");
+    VALID("VALID"),
+    INVALID("INVALID");
 
     private final String value;
 

@@ -1,0 +1,50 @@
+[0.063s] Invoking command in '/home/donggun/S13P21A501/Embedded/build/turtlebot3_manipulation_navigation2': CMAKE_PREFIX_PATH=/opt/ros/humble /usr/bin/cmake /home/donggun/S13P21A501/Embedded/src/turtlebot3_manipulation/turtlebot3_manipulation_navigation2 -DCMAKE_INSTALL_PREFIX=/home/donggun/S13P21A501/Embedded/install/turtlebot3_manipulation_navigation2
+[2.677s] -- The C compiler identification is GNU 11.4.0
+[2.677s] -- The CXX compiler identification is GNU 11.4.0
+[2.677s] -- Detecting C compiler ABI info
+[2.677s] -- Detecting C compiler ABI info - done
+[2.678s] -- Check for working C compiler: /usr/bin/cc - skipped
+[2.678s] -- Detecting C compile features
+[2.678s] -- Detecting C compile features - done
+[2.678s] -- Detecting CXX compiler ABI info
+[2.678s] -- Detecting CXX compiler ABI info - done
+[2.678s] -- Check for working CXX compiler: /usr/bin/c++ - skipped
+[2.678s] -- Detecting CXX compile features
+[2.679s] -- Detecting CXX compile features - done
+[2.679s] -- Found ament_cmake: 1.3.12 (/opt/ros/humble/share/ament_cmake/cmake)
+[2.679s] -- Found Python3: /usr/bin/python3 (found version "3.10.12") found components: Interpreter 
+[2.679s] -- Configuring done
+[2.680s] -- Generating done
+[2.681s] -- Build files have been written to: /home/donggun/S13P21A501/Embedded/build/turtlebot3_manipulation_navigation2
+[2.690s] Invoked command in '/home/donggun/S13P21A501/Embedded/build/turtlebot3_manipulation_navigation2' returned '0': CMAKE_PREFIX_PATH=/opt/ros/humble /usr/bin/cmake /home/donggun/S13P21A501/Embedded/src/turtlebot3_manipulation/turtlebot3_manipulation_navigation2 -DCMAKE_INSTALL_PREFIX=/home/donggun/S13P21A501/Embedded/install/turtlebot3_manipulation_navigation2
+[2.694s] Invoking command in '/home/donggun/S13P21A501/Embedded/build/turtlebot3_manipulation_navigation2': CMAKE_PREFIX_PATH=/opt/ros/humble /usr/bin/cmake --build /home/donggun/S13P21A501/Embedded/build/turtlebot3_manipulation_navigation2 -- -j16 -l16
+[2.777s] Invoked command in '/home/donggun/S13P21A501/Embedded/build/turtlebot3_manipulation_navigation2' returned '0': CMAKE_PREFIX_PATH=/opt/ros/humble /usr/bin/cmake --build /home/donggun/S13P21A501/Embedded/build/turtlebot3_manipulation_navigation2 -- -j16 -l16
+[2.778s] Invoking command in '/home/donggun/S13P21A501/Embedded/build/turtlebot3_manipulation_navigation2': CMAKE_PREFIX_PATH=/opt/ros/humble /usr/bin/cmake --install /home/donggun/S13P21A501/Embedded/build/turtlebot3_manipulation_navigation2
+[2.793s] -- Install configuration: ""
+[2.793s] -- Installing: /home/donggun/S13P21A501/Embedded/install/turtlebot3_manipulation_navigation2/share/turtlebot3_manipulation_navigation2/launch
+[2.793s] -- Installing: /home/donggun/S13P21A501/Embedded/install/turtlebot3_manipulation_navigation2/share/turtlebot3_manipulation_navigation2/launch/navigation2_use_sim_time.launch.py
+[2.799s] -- Installing: /home/donggun/S13P21A501/Embedded/install/turtlebot3_manipulation_navigation2/share/turtlebot3_manipulation_navigation2/launch/navigation2.launch.py
+[2.800s] -- Installing: /home/donggun/S13P21A501/Embedded/install/turtlebot3_manipulation_navigation2/share/turtlebot3_manipulation_navigation2/map
+[2.800s] -- Installing: /home/donggun/S13P21A501/Embedded/install/turtlebot3_manipulation_navigation2/share/turtlebot3_manipulation_navigation2/map/turtlebot3_world.pgm
+[2.800s] -- Installing: /home/donggun/S13P21A501/Embedded/install/turtlebot3_manipulation_navigation2/share/turtlebot3_manipulation_navigation2/map/turtlebot3_world.yaml
+[2.800s] -- Installing: /home/donggun/S13P21A501/Embedded/install/turtlebot3_manipulation_navigation2/share/turtlebot3_manipulation_navigation2/param
+[2.800s] -- Installing: /home/donggun/S13P21A501/Embedded/install/turtlebot3_manipulation_navigation2/share/turtlebot3_manipulation_navigation2/param/turtlebot3_use_sim_time.yaml
+[2.800s] -- Installing: /home/donggun/S13P21A501/Embedded/install/turtlebot3_manipulation_navigation2/share/turtlebot3_manipulation_navigation2/param/turtlebot3.yaml
+[2.800s] -- Installing: /home/donggun/S13P21A501/Embedded/install/turtlebot3_manipulation_navigation2/share/turtlebot3_manipulation_navigation2/rviz
+[2.800s] -- Installing: /home/donggun/S13P21A501/Embedded/install/turtlebot3_manipulation_navigation2/share/turtlebot3_manipulation_navigation2/rviz/navigation2.rviz
+[2.800s] -- Installing: /home/donggun/S13P21A501/Embedded/install/turtlebot3_manipulation_navigation2/share/ament_index/resource_index/package_run_dependencies/turtlebot3_manipulation_navigation2
+[2.801s] -- Installing: /home/donggun/S13P21A501/Embedded/install/turtlebot3_manipulation_navigation2/share/ament_index/resource_index/parent_prefix_path/turtlebot3_manipulation_navigation2
+[2.801s] -- Installing: /home/donggun/S13P21A501/Embedded/install/turtlebot3_manipulation_navigation2/share/turtlebot3_manipulation_navigation2/environment/ament_prefix_path.sh
+[2.801s] -- Installing: /home/donggun/S13P21A501/Embedded/install/turtlebot3_manipulation_navigation2/share/turtlebot3_manipulation_navigation2/environment/ament_prefix_path.dsv
+[2.801s] -- Installing: /home/donggun/S13P21A501/Embedded/install/turtlebot3_manipulation_navigation2/share/turtlebot3_manipulation_navigation2/environment/path.sh
+[2.801s] -- Installing: /home/donggun/S13P21A501/Embedded/install/turtlebot3_manipulation_navigation2/share/turtlebot3_manipulation_navigation2/environment/path.dsv
+[2.801s] -- Installing: /home/donggun/S13P21A501/Embedded/install/turtlebot3_manipulation_navigation2/share/turtlebot3_manipulation_navigation2/local_setup.bash
+[2.801s] -- Installing: /home/donggun/S13P21A501/Embedded/install/turtlebot3_manipulation_navigation2/share/turtlebot3_manipulation_navigation2/local_setup.sh
+[2.801s] -- Installing: /home/donggun/S13P21A501/Embedded/install/turtlebot3_manipulation_navigation2/share/turtlebot3_manipulation_navigation2/local_setup.zsh
+[2.801s] -- Installing: /home/donggun/S13P21A501/Embedded/install/turtlebot3_manipulation_navigation2/share/turtlebot3_manipulation_navigation2/local_setup.dsv
+[2.801s] -- Installing: /home/donggun/S13P21A501/Embedded/install/turtlebot3_manipulation_navigation2/share/turtlebot3_manipulation_navigation2/package.dsv
+[2.802s] -- Installing: /home/donggun/S13P21A501/Embedded/install/turtlebot3_manipulation_navigation2/share/ament_index/resource_index/packages/turtlebot3_manipulation_navigation2
+[2.802s] -- Installing: /home/donggun/S13P21A501/Embedded/install/turtlebot3_manipulation_navigation2/share/turtlebot3_manipulation_navigation2/cmake/turtlebot3_manipulation_navigation2Config.cmake
+[2.802s] -- Installing: /home/donggun/S13P21A501/Embedded/install/turtlebot3_manipulation_navigation2/share/turtlebot3_manipulation_navigation2/cmake/turtlebot3_manipulation_navigation2Config-version.cmake
+[2.802s] -- Installing: /home/donggun/S13P21A501/Embedded/install/turtlebot3_manipulation_navigation2/share/turtlebot3_manipulation_navigation2/package.xml
+[2.934s] Invoked command in '/home/donggun/S13P21A501/Embedded/build/turtlebot3_manipulation_navigation2' returned '0': CMAKE_PREFIX_PATH=/opt/ros/humble /usr/bin/cmake --install /home/donggun/S13P21A501/Embedded/build/turtlebot3_manipulation_navigation2
