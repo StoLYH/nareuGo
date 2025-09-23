@@ -1,0 +1,6 @@
+[console_scripts]
+delivery_address_client = robot_web_interface.delivery_address_client:main
+robot_http_server = robot_web_interface.robot_http_server:main
+robot_status_client = robot_web_interface.robot_status_client:main
+robot_status_monitor = robot_web_interface.robot_status_monitor:main
+turtlebot_status_monitor = robot_web_interface.turtlebot_status_monitor:main

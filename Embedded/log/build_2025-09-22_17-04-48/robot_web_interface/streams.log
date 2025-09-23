@@ -1,0 +1,25 @@
+[2.982s] Invoking command in '/home/donggun/S13P21A501/Embedded/src/robot_web_interface': PYTHONPATH=/home/donggun/S13P21A501/Embedded/build/robot_web_interface/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/donggun/S13P21A501/Embedded/install/robot_web_interface/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/robot_web_interface build --build-base /home/donggun/S13P21A501/Embedded/build/robot_web_interface/build install --record /home/donggun/S13P21A501/Embedded/build/robot_web_interface/install.log --single-version-externally-managed install_data
+[3.555s] running egg_info
+[3.577s] writing ../../build/robot_web_interface/robot_web_interface.egg-info/PKG-INFO
+[3.577s] writing dependency_links to ../../build/robot_web_interface/robot_web_interface.egg-info/dependency_links.txt
+[3.577s] writing entry points to ../../build/robot_web_interface/robot_web_interface.egg-info/entry_points.txt
+[3.577s] writing requirements to ../../build/robot_web_interface/robot_web_interface.egg-info/requires.txt
+[3.577s] writing top-level names to ../../build/robot_web_interface/robot_web_interface.egg-info/top_level.txt
+[3.621s] reading manifest file '../../build/robot_web_interface/robot_web_interface.egg-info/SOURCES.txt'
+[3.622s] writing manifest file '../../build/robot_web_interface/robot_web_interface.egg-info/SOURCES.txt'
+[3.622s] running build
+[3.623s] running build_py
+[3.623s] running install
+[3.630s] running install_lib
+[3.652s] running install_data
+[3.652s] running install_egg_info
+[3.675s] removing '/home/donggun/S13P21A501/Embedded/install/robot_web_interface/lib/python3.10/site-packages/robot_web_interface-0.0.0-py3.10.egg-info' (and everything under it)
+[3.675s] Copying ../../build/robot_web_interface/robot_web_interface.egg-info to /home/donggun/S13P21A501/Embedded/install/robot_web_interface/lib/python3.10/site-packages/robot_web_interface-0.0.0-py3.10.egg-info
+[3.676s] running install_scripts
+[3.759s] Installing delivery_address_client script to /home/donggun/S13P21A501/Embedded/install/robot_web_interface/lib/robot_web_interface
+[3.759s] Installing robot_http_server script to /home/donggun/S13P21A501/Embedded/install/robot_web_interface/lib/robot_web_interface
+[3.759s] Installing robot_status_client script to /home/donggun/S13P21A501/Embedded/install/robot_web_interface/lib/robot_web_interface
+[3.759s] Installing robot_status_monitor script to /home/donggun/S13P21A501/Embedded/install/robot_web_interface/lib/robot_web_interface
+[3.760s] Installing turtlebot_status_monitor script to /home/donggun/S13P21A501/Embedded/install/robot_web_interface/lib/robot_web_interface
+[3.760s] writing list of installed files to '/home/donggun/S13P21A501/Embedded/build/robot_web_interface/install.log'
+[3.811s] Invoked command in '/home/donggun/S13P21A501/Embedded/src/robot_web_interface' returned '0': PYTHONPATH=/home/donggun/S13P21A501/Embedded/build/robot_web_interface/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/donggun/S13P21A501/Embedded/install/robot_web_interface/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/robot_web_interface build --build-base /home/donggun/S13P21A501/Embedded/build/robot_web_interface/build install --record /home/donggun/S13P21A501/Embedded/build/robot_web_interface/install.log --single-version-externally-managed install_data

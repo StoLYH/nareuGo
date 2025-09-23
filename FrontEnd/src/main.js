@@ -2,6 +2,7 @@ import { createApp } from "vue";
 import { createPinia } from "pinia";
 import App from "./App.vue";
 import router from "./router";
+import { connectToROS2 } from "./utils/ros2Communication.js";
 
 const app = createApp(App);
 const pinia = createPinia();
@@ -10,6 +11,20 @@ app.use(pinia);
 app.use(router);
 
 app.mount("#app");
+
+// ROS2 연결 초기화 (선택적)
+const initializeROS2 = async () => {
+  try {
+    console.log('🤖 [INIT] ROS2 연결 시도 중...')
+    await connectToROS2('ws://localhost:9090')
+    console.log('✅ [INIT] ROS2 연결 성공')
+  } catch (error) {
+    console.warn('⚠️ [INIT] ROS2 연결 실패 (시뮬레이션 모드로 동작):', error.message)
+  }
+}
+
+// 앱 로드 후 ROS2 연결 시도
+setTimeout(initializeROS2, 1000)
 
 // PWA Service Worker 등록
 if ('serviceWorker' in navigator) {

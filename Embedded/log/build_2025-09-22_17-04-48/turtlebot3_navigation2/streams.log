@@ -1,0 +1,37 @@
+[0.082s] Invoking command in '/home/donggun/S13P21A501/Embedded/build/turtlebot3_navigation2': CMAKE_PREFIX_PATH=/opt/ros/humble /usr/bin/cmake --build /home/donggun/S13P21A501/Embedded/build/turtlebot3_navigation2 -- -j16 -l16
+[2.026s] Invoked command in '/home/donggun/S13P21A501/Embedded/build/turtlebot3_navigation2' returned '0': CMAKE_PREFIX_PATH=/opt/ros/humble /usr/bin/cmake --build /home/donggun/S13P21A501/Embedded/build/turtlebot3_navigation2 -- -j16 -l16
+[2.028s] Invoking command in '/home/donggun/S13P21A501/Embedded/build/turtlebot3_navigation2': CMAKE_PREFIX_PATH=/opt/ros/humble /usr/bin/cmake --install /home/donggun/S13P21A501/Embedded/build/turtlebot3_navigation2
+[2.082s] -- Install configuration: ""
+[2.082s] -- Up-to-date: /home/donggun/S13P21A501/Embedded/install/turtlebot3_navigation2/share/turtlebot3_navigation2/launch
+[2.082s] -- Up-to-date: /home/donggun/S13P21A501/Embedded/install/turtlebot3_navigation2/share/turtlebot3_navigation2/launch/navigation2.launch.py
+[2.082s] -- Up-to-date: /home/donggun/S13P21A501/Embedded/install/turtlebot3_navigation2/share/turtlebot3_navigation2/map
+[2.082s] -- Up-to-date: /home/donggun/S13P21A501/Embedded/install/turtlebot3_navigation2/share/turtlebot3_navigation2/map/map.pgm
+[2.083s] -- Up-to-date: /home/donggun/S13P21A501/Embedded/install/turtlebot3_navigation2/share/turtlebot3_navigation2/map/map.yaml
+[2.083s] -- Up-to-date: /home/donggun/S13P21A501/Embedded/install/turtlebot3_navigation2/share/turtlebot3_navigation2/param
+[2.083s] -- Up-to-date: /home/donggun/S13P21A501/Embedded/install/turtlebot3_navigation2/share/turtlebot3_navigation2/param/waffle.yaml
+[2.083s] -- Up-to-date: /home/donggun/S13P21A501/Embedded/install/turtlebot3_navigation2/share/turtlebot3_navigation2/param/waffle_pi.yaml
+[2.083s] -- Up-to-date: /home/donggun/S13P21A501/Embedded/install/turtlebot3_navigation2/share/turtlebot3_navigation2/param/burger_cam.yaml
+[2.083s] -- Up-to-date: /home/donggun/S13P21A501/Embedded/install/turtlebot3_navigation2/share/turtlebot3_navigation2/param/humble
+[2.083s] -- Up-to-date: /home/donggun/S13P21A501/Embedded/install/turtlebot3_navigation2/share/turtlebot3_navigation2/param/humble/waffle.yaml
+[2.083s] -- Up-to-date: /home/donggun/S13P21A501/Embedded/install/turtlebot3_navigation2/share/turtlebot3_navigation2/param/humble/waffle_pi.yaml
+[2.083s] -- Up-to-date: /home/donggun/S13P21A501/Embedded/install/turtlebot3_navigation2/share/turtlebot3_navigation2/param/humble/burger_cam.yaml
+[2.084s] -- Up-to-date: /home/donggun/S13P21A501/Embedded/install/turtlebot3_navigation2/share/turtlebot3_navigation2/param/humble/burger.yaml
+[2.084s] -- Up-to-date: /home/donggun/S13P21A501/Embedded/install/turtlebot3_navigation2/share/turtlebot3_navigation2/param/burger.yaml
+[2.084s] -- Up-to-date: /home/donggun/S13P21A501/Embedded/install/turtlebot3_navigation2/share/turtlebot3_navigation2/rviz
+[2.084s] -- Up-to-date: /home/donggun/S13P21A501/Embedded/install/turtlebot3_navigation2/share/turtlebot3_navigation2/rviz/tb3_navigation2.rviz
+[2.084s] -- Up-to-date: /home/donggun/S13P21A501/Embedded/install/turtlebot3_navigation2/share/ament_index/resource_index/package_run_dependencies/turtlebot3_navigation2
+[2.084s] -- Up-to-date: /home/donggun/S13P21A501/Embedded/install/turtlebot3_navigation2/share/ament_index/resource_index/parent_prefix_path/turtlebot3_navigation2
+[2.084s] -- Up-to-date: /home/donggun/S13P21A501/Embedded/install/turtlebot3_navigation2/share/turtlebot3_navigation2/environment/ament_prefix_path.sh
+[2.084s] -- Up-to-date: /home/donggun/S13P21A501/Embedded/install/turtlebot3_navigation2/share/turtlebot3_navigation2/environment/ament_prefix_path.dsv
+[2.085s] -- Up-to-date: /home/donggun/S13P21A501/Embedded/install/turtlebot3_navigation2/share/turtlebot3_navigation2/environment/path.sh
+[2.085s] -- Up-to-date: /home/donggun/S13P21A501/Embedded/install/turtlebot3_navigation2/share/turtlebot3_navigation2/environment/path.dsv
+[2.085s] -- Up-to-date: /home/donggun/S13P21A501/Embedded/install/turtlebot3_navigation2/share/turtlebot3_navigation2/local_setup.bash
+[2.085s] -- Up-to-date: /home/donggun/S13P21A501/Embedded/install/turtlebot3_navigation2/share/turtlebot3_navigation2/local_setup.sh
+[2.086s] -- Up-to-date: /home/donggun/S13P21A501/Embedded/install/turtlebot3_navigation2/share/turtlebot3_navigation2/local_setup.zsh
+[2.086s] -- Up-to-date: /home/donggun/S13P21A501/Embedded/install/turtlebot3_navigation2/share/turtlebot3_navigation2/local_setup.dsv
+[2.086s] -- Up-to-date: /home/donggun/S13P21A501/Embedded/install/turtlebot3_navigation2/share/turtlebot3_navigation2/package.dsv
+[2.086s] -- Up-to-date: /home/donggun/S13P21A501/Embedded/install/turtlebot3_navigation2/share/ament_index/resource_index/packages/turtlebot3_navigation2
+[2.086s] -- Up-to-date: /home/donggun/S13P21A501/Embedded/install/turtlebot3_navigation2/share/turtlebot3_navigation2/cmake/turtlebot3_navigation2Config.cmake
+[2.086s] -- Up-to-date: /home/donggun/S13P21A501/Embedded/install/turtlebot3_navigation2/share/turtlebot3_navigation2/cmake/turtlebot3_navigation2Config-version.cmake
+[2.086s] -- Up-to-date: /home/donggun/S13P21A501/Embedded/install/turtlebot3_navigation2/share/turtlebot3_navigation2/package.xml
+[2.279s] Invoked command in '/home/donggun/S13P21A501/Embedded/build/turtlebot3_navigation2' returned '0': CMAKE_PREFIX_PATH=/opt/ros/humble /usr/bin/cmake --install /home/donggun/S13P21A501/Embedded/build/turtlebot3_navigation2

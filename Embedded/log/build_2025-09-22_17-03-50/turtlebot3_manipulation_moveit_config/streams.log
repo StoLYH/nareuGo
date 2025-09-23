@@ -1,0 +1,61 @@
+[0.114s] Invoking command in '/home/donggun/S13P21A501/Embedded/build/turtlebot3_manipulation_moveit_config': AMENT_PREFIX_PATH=/home/donggun/S13P21A501/Embedded/install/turtlebot3_manipulation_description:${AMENT_PREFIX_PATH} CMAKE_PREFIX_PATH=/home/donggun/S13P21A501/Embedded/install/turtlebot3_manipulation_description:/opt/ros/humble /usr/bin/cmake /home/donggun/S13P21A501/Embedded/src/turtlebot3_manipulation/turtlebot3_manipulation_moveit_config -DCMAKE_INSTALL_PREFIX=/home/donggun/S13P21A501/Embedded/install/turtlebot3_manipulation_moveit_config
+[0.232s] -- The C compiler identification is GNU 11.4.0
+[0.352s] -- The CXX compiler identification is GNU 11.4.0
+[0.364s] -- Detecting C compiler ABI info
+[0.484s] -- Detecting C compiler ABI info - done
+[0.500s] -- Check for working C compiler: /usr/bin/cc - skipped
+[0.500s] -- Detecting C compile features
+[0.501s] -- Detecting C compile features - done
+[0.506s] -- Detecting CXX compiler ABI info
+[0.630s] -- Detecting CXX compiler ABI info - done
+[0.645s] -- Check for working CXX compiler: /usr/bin/c++ - skipped
+[0.646s] -- Detecting CXX compile features
+[0.646s] -- Detecting CXX compile features - done
+[0.650s] -- Found ament_cmake: 1.3.12 (/opt/ros/humble/share/ament_cmake/cmake)
+[2.045s] -- Found Python3: /usr/bin/python3 (found version "3.10.12") found components: Interpreter 
+[2.843s] -- Configuring done
+[2.862s] -- Generating done
+[2.875s] -- Build files have been written to: /home/donggun/S13P21A501/Embedded/build/turtlebot3_manipulation_moveit_config
+[2.906s] Invoked command in '/home/donggun/S13P21A501/Embedded/build/turtlebot3_manipulation_moveit_config' returned '0': AMENT_PREFIX_PATH=/home/donggun/S13P21A501/Embedded/install/turtlebot3_manipulation_description:${AMENT_PREFIX_PATH} CMAKE_PREFIX_PATH=/home/donggun/S13P21A501/Embedded/install/turtlebot3_manipulation_description:/opt/ros/humble /usr/bin/cmake /home/donggun/S13P21A501/Embedded/src/turtlebot3_manipulation/turtlebot3_manipulation_moveit_config -DCMAKE_INSTALL_PREFIX=/home/donggun/S13P21A501/Embedded/install/turtlebot3_manipulation_moveit_config
+[2.907s] Invoking command in '/home/donggun/S13P21A501/Embedded/build/turtlebot3_manipulation_moveit_config': AMENT_PREFIX_PATH=/home/donggun/S13P21A501/Embedded/install/turtlebot3_manipulation_description:${AMENT_PREFIX_PATH} CMAKE_PREFIX_PATH=/home/donggun/S13P21A501/Embedded/install/turtlebot3_manipulation_description:/opt/ros/humble /usr/bin/cmake --build /home/donggun/S13P21A501/Embedded/build/turtlebot3_manipulation_moveit_config -- -j16 -l16
+[3.015s] Invoked command in '/home/donggun/S13P21A501/Embedded/build/turtlebot3_manipulation_moveit_config' returned '0': AMENT_PREFIX_PATH=/home/donggun/S13P21A501/Embedded/install/turtlebot3_manipulation_description:${AMENT_PREFIX_PATH} CMAKE_PREFIX_PATH=/home/donggun/S13P21A501/Embedded/install/turtlebot3_manipulation_description:/opt/ros/humble /usr/bin/cmake --build /home/donggun/S13P21A501/Embedded/build/turtlebot3_manipulation_moveit_config -- -j16 -l16
+[3.016s] Invoking command in '/home/donggun/S13P21A501/Embedded/build/turtlebot3_manipulation_moveit_config': AMENT_PREFIX_PATH=/home/donggun/S13P21A501/Embedded/install/turtlebot3_manipulation_description:${AMENT_PREFIX_PATH} CMAKE_PREFIX_PATH=/home/donggun/S13P21A501/Embedded/install/turtlebot3_manipulation_description:/opt/ros/humble /usr/bin/cmake --install /home/donggun/S13P21A501/Embedded/build/turtlebot3_manipulation_moveit_config
+[3.034s] -- Install configuration: ""
+[3.034s] -- Installing: /home/donggun/S13P21A501/Embedded/install/turtlebot3_manipulation_moveit_config/share/turtlebot3_manipulation_moveit_config/launch
+[3.034s] -- Installing: /home/donggun/S13P21A501/Embedded/install/turtlebot3_manipulation_moveit_config/share/turtlebot3_manipulation_moveit_config/launch/setup_assistant.launch.py
+[3.034s] -- Installing: /home/donggun/S13P21A501/Embedded/install/turtlebot3_manipulation_moveit_config/share/turtlebot3_manipulation_moveit_config/launch/moveit_fake.launch.py
+[3.035s] -- Installing: /home/donggun/S13P21A501/Embedded/install/turtlebot3_manipulation_moveit_config/share/turtlebot3_manipulation_moveit_config/launch/servo.launch.py
+[3.035s] -- Installing: /home/donggun/S13P21A501/Embedded/install/turtlebot3_manipulation_moveit_config/share/turtlebot3_manipulation_moveit_config/launch/moveit_core.launch.py
+[3.035s] -- Installing: /home/donggun/S13P21A501/Embedded/install/turtlebot3_manipulation_moveit_config/share/turtlebot3_manipulation_moveit_config/launch/static_virtual_joint_tfs.launch.py
+[3.036s] -- Installing: /home/donggun/S13P21A501/Embedded/install/turtlebot3_manipulation_moveit_config/share/turtlebot3_manipulation_moveit_config/launch/moveit_gazebo.launch.py
+[3.036s] -- Installing: /home/donggun/S13P21A501/Embedded/install/turtlebot3_manipulation_moveit_config/share/turtlebot3_manipulation_moveit_config/launch/moveit_rviz.launch.py
+[3.037s] -- Installing: /home/donggun/S13P21A501/Embedded/install/turtlebot3_manipulation_moveit_config/share/turtlebot3_manipulation_moveit_config/launch/move_group.launch.py
+[3.037s] -- Installing: /home/donggun/S13P21A501/Embedded/install/turtlebot3_manipulation_moveit_config/share/turtlebot3_manipulation_moveit_config/launch/spawn_controllers.launch.py
+[3.037s] -- Installing: /home/donggun/S13P21A501/Embedded/install/turtlebot3_manipulation_moveit_config/share/turtlebot3_manipulation_moveit_config/launch/rsp.launch.py
+[3.038s] -- Installing: /home/donggun/S13P21A501/Embedded/install/turtlebot3_manipulation_moveit_config/share/turtlebot3_manipulation_moveit_config/config
+[3.038s] -- Installing: /home/donggun/S13P21A501/Embedded/install/turtlebot3_manipulation_moveit_config/share/turtlebot3_manipulation_moveit_config/config/joint_limits.yaml
+[3.038s] -- Installing: /home/donggun/S13P21A501/Embedded/install/turtlebot3_manipulation_moveit_config/share/turtlebot3_manipulation_moveit_config/config/ompl_planning.yaml
+[3.040s] -- Installing: /home/donggun/S13P21A501/Embedded/install/turtlebot3_manipulation_moveit_config/share/turtlebot3_manipulation_moveit_config/config/turtlebot3_manipulation.srdf
+[3.047s] -- Installing: /home/donggun/S13P21A501/Embedded/install/turtlebot3_manipulation_moveit_config/share/turtlebot3_manipulation_moveit_config/config/moveit_controllers.yaml
+[3.047s] -- Installing: /home/donggun/S13P21A501/Embedded/install/turtlebot3_manipulation_moveit_config/share/turtlebot3_manipulation_moveit_config/config/initial_positions.yaml
+[3.048s] -- Installing: /home/donggun/S13P21A501/Embedded/install/turtlebot3_manipulation_moveit_config/share/turtlebot3_manipulation_moveit_config/config/kinematics.yaml
+[3.048s] -- Installing: /home/donggun/S13P21A501/Embedded/install/turtlebot3_manipulation_moveit_config/share/turtlebot3_manipulation_moveit_config/config/moveit_teleop.rviz
+[3.048s] -- Installing: /home/donggun/S13P21A501/Embedded/install/turtlebot3_manipulation_moveit_config/share/turtlebot3_manipulation_moveit_config/config/moveit.rviz
+[3.048s] -- Installing: /home/donggun/S13P21A501/Embedded/install/turtlebot3_manipulation_moveit_config/share/turtlebot3_manipulation_moveit_config/config/moveit_servo.yaml
+[3.048s] -- Installing: /home/donggun/S13P21A501/Embedded/install/turtlebot3_manipulation_moveit_config/share/turtlebot3_manipulation_moveit_config/.setup_assistant
+[3.048s] -- Installing: /home/donggun/S13P21A501/Embedded/install/turtlebot3_manipulation_moveit_config/share/ament_index/resource_index/package_run_dependencies/turtlebot3_manipulation_moveit_config
+[3.048s] -- Installing: /home/donggun/S13P21A501/Embedded/install/turtlebot3_manipulation_moveit_config/share/ament_index/resource_index/parent_prefix_path/turtlebot3_manipulation_moveit_config
+[3.048s] -- Installing: /home/donggun/S13P21A501/Embedded/install/turtlebot3_manipulation_moveit_config/share/turtlebot3_manipulation_moveit_config/environment/ament_prefix_path.sh
+[3.048s] -- Installing: /home/donggun/S13P21A501/Embedded/install/turtlebot3_manipulation_moveit_config/share/turtlebot3_manipulation_moveit_config/environment/ament_prefix_path.dsv
+[3.049s] -- Installing: /home/donggun/S13P21A501/Embedded/install/turtlebot3_manipulation_moveit_config/share/turtlebot3_manipulation_moveit_config/environment/path.sh
+[3.049s] -- Installing: /home/donggun/S13P21A501/Embedded/install/turtlebot3_manipulation_moveit_config/share/turtlebot3_manipulation_moveit_config/environment/path.dsv
+[3.049s] -- Installing: /home/donggun/S13P21A501/Embedded/install/turtlebot3_manipulation_moveit_config/share/turtlebot3_manipulation_moveit_config/local_setup.bash
+[3.049s] -- Installing: /home/donggun/S13P21A501/Embedded/install/turtlebot3_manipulation_moveit_config/share/turtlebot3_manipulation_moveit_config/local_setup.sh
+[3.049s] -- Installing: /home/donggun/S13P21A501/Embedded/install/turtlebot3_manipulation_moveit_config/share/turtlebot3_manipulation_moveit_config/local_setup.zsh
+[3.049s] -- Installing: /home/donggun/S13P21A501/Embedded/install/turtlebot3_manipulation_moveit_config/share/turtlebot3_manipulation_moveit_config/local_setup.dsv
+[3.049s] -- Installing: /home/donggun/S13P21A501/Embedded/install/turtlebot3_manipulation_moveit_config/share/turtlebot3_manipulation_moveit_config/package.dsv
+[3.049s] -- Installing: /home/donggun/S13P21A501/Embedded/install/turtlebot3_manipulation_moveit_config/share/ament_index/resource_index/packages/turtlebot3_manipulation_moveit_config
+[3.049s] -- Installing: /home/donggun/S13P21A501/Embedded/install/turtlebot3_manipulation_moveit_config/share/turtlebot3_manipulation_moveit_config/cmake/turtlebot3_manipulation_moveit_configConfig.cmake
+[3.050s] -- Installing: /home/donggun/S13P21A501/Embedded/install/turtlebot3_manipulation_moveit_config/share/turtlebot3_manipulation_moveit_config/cmake/turtlebot3_manipulation_moveit_configConfig-version.cmake
+[3.050s] -- Installing: /home/donggun/S13P21A501/Embedded/install/turtlebot3_manipulation_moveit_config/share/turtlebot3_manipulation_moveit_config/package.xml
+[3.062s] Invoked command in '/home/donggun/S13P21A501/Embedded/build/turtlebot3_manipulation_moveit_config' returned '0': AMENT_PREFIX_PATH=/home/donggun/S13P21A501/Embedded/install/turtlebot3_manipulation_description:${AMENT_PREFIX_PATH} CMAKE_PREFIX_PATH=/home/donggun/S13P21A501/Embedded/install/turtlebot3_manipulation_description:/opt/ros/humble /usr/bin/cmake --install /home/donggun/S13P21A501/Embedded/build/turtlebot3_manipulation_moveit_config

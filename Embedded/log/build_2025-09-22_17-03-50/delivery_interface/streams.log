@@ -1,0 +1,32 @@
+[4.248s] Invoking command in '/home/donggun/S13P21A501/Embedded/src/src/src': PYTHONPATH=/home/donggun/S13P21A501/Embedded/build/delivery_interface/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/donggun/S13P21A501/Embedded/install/delivery_interface/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../../build/delivery_interface build --build-base /home/donggun/S13P21A501/Embedded/build/delivery_interface/build install --record /home/donggun/S13P21A501/Embedded/build/delivery_interface/install.log --single-version-externally-managed install_data
+[5.522s] running egg_info
+[5.525s] creating ../../../build/delivery_interface/delivery_interface.egg-info
+[5.563s] writing ../../../build/delivery_interface/delivery_interface.egg-info/PKG-INFO
+[5.565s] writing dependency_links to ../../../build/delivery_interface/delivery_interface.egg-info/dependency_links.txt
+[5.566s] writing requirements to ../../../build/delivery_interface/delivery_interface.egg-info/requires.txt
+[5.567s] writing top-level names to ../../../build/delivery_interface/delivery_interface.egg-info/top_level.txt
+[5.567s] writing manifest file '../../../build/delivery_interface/delivery_interface.egg-info/SOURCES.txt'
+[5.652s] reading manifest file '../../../build/delivery_interface/delivery_interface.egg-info/SOURCES.txt'
+[5.653s] writing manifest file '../../../build/delivery_interface/delivery_interface.egg-info/SOURCES.txt'
+[5.657s] running build
+[5.658s] running build_py
+[5.660s] creating /home/donggun/S13P21A501/Embedded/build/delivery_interface/build
+[5.661s] creating /home/donggun/S13P21A501/Embedded/build/delivery_interface/build/lib
+[5.662s] creating /home/donggun/S13P21A501/Embedded/build/delivery_interface/build/lib/delivery_interface
+[5.663s] copying delivery_interface/__init__.py -> /home/donggun/S13P21A501/Embedded/build/delivery_interface/build/lib/delivery_interface
+[5.667s] running install
+[5.679s] running install_lib
+[5.719s] creating /home/donggun/S13P21A501/Embedded/install/delivery_interface/lib/python3.10/site-packages/delivery_interface
+[5.722s] copying /home/donggun/S13P21A501/Embedded/build/delivery_interface/build/lib/delivery_interface/__init__.py -> /home/donggun/S13P21A501/Embedded/install/delivery_interface/lib/python3.10/site-packages/delivery_interface
+[5.724s] byte-compiling /home/donggun/S13P21A501/Embedded/install/delivery_interface/lib/python3.10/site-packages/delivery_interface/__init__.py to __init__.cpython-310.pyc
+[5.726s] running install_data
+[5.727s] creating /home/donggun/S13P21A501/Embedded/install/delivery_interface/share/ament_index
+[5.730s] creating /home/donggun/S13P21A501/Embedded/install/delivery_interface/share/ament_index/resource_index
+[5.731s] creating /home/donggun/S13P21A501/Embedded/install/delivery_interface/share/ament_index/resource_index/packages
+[5.731s] copying resource/delivery_interface -> /home/donggun/S13P21A501/Embedded/install/delivery_interface/share/ament_index/resource_index/packages
+[5.733s] copying package.xml -> /home/donggun/S13P21A501/Embedded/install/delivery_interface/share/delivery_interface
+[5.743s] running install_egg_info
+[5.800s] Copying ../../../build/delivery_interface/delivery_interface.egg-info to /home/donggun/S13P21A501/Embedded/install/delivery_interface/lib/python3.10/site-packages/delivery_interface-0.0.0-py3.10.egg-info
+[5.801s] running install_scripts
+[5.985s] writing list of installed files to '/home/donggun/S13P21A501/Embedded/build/delivery_interface/install.log'
+[6.100s] Invoked command in '/home/donggun/S13P21A501/Embedded/src/src/src' returned '0': PYTHONPATH=/home/donggun/S13P21A501/Embedded/build/delivery_interface/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/donggun/S13P21A501/Embedded/install/delivery_interface/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../../build/delivery_interface build --build-base /home/donggun/S13P21A501/Embedded/build/delivery_interface/build install --record /home/donggun/S13P21A501/Embedded/build/delivery_interface/install.log --single-version-externally-managed install_data
