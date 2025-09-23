@@ -1,7 +1,13 @@
 <template>
   <div class="pending-container">
     <header class="pending-header">
+      <button @click="goBack" class="back-button" aria-label="뒤로가기">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="15 18 9 12 15 6"></polyline>
+        </svg>
+      </button>
       <h1 class="header-title">결제 대기</h1>
+      <div class="header-spacer"></div>
     </header>
 
     <main class="pending-content">
@@ -77,6 +83,10 @@ const goToDetail = () => {
   if (!isApproved.value) return
   router.push({ name: 'PaymentDetail', params: { orderId: orderId.value } })
 }
+
+const goBack = () => {
+  router.go(-1)
+}
 </script>
 
 <style scoped>
@@ -105,13 +115,34 @@ const goToDetail = () => {
   color: #fff;
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: space-between;
   box-shadow: 0 4px 12px rgba(0,0,0,0.12);
 }
 
 .header-title {
   font-size: 18px;
   font-weight: 600;
+  color: #fff;
+}
+
+.header-spacer {
+  width: 40px;
+}
+
+.back-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: rgba(255,255,255,0.18);
+  color: #fff;
+  transition: background-color 0.2s ease;
+}
+
+.back-button:hover {
+  background-color: rgba(255,255,255,0.28);
 }
 
 .pending-content {
