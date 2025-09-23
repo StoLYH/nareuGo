@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.example.nareugobackend.api.controller.robot.request.PickupConfirmationRequest;
 import org.example.nareugobackend.api.controller.robot.response.DeliveryAddressResponse;
 import org.example.nareugobackend.api.controller.robot.response.DeliveryCompletionResponse;
 import org.example.nareugobackend.api.controller.robot.response.PickupConfirmationResponse;
@@ -21,12 +20,8 @@ import org.example.nareugobackend.domain.product.ProductRepository;
 import org.example.nareugobackend.domain.user.User;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.web.reactive.socket.WebSocketMessage;
-import org.springframework.web.reactive.socket.client.WebSocketClient;
-import reactor.core.publisher.Mono;
+import org.springframework.web.client.RestTemplate;
 
-import java.net.URI;
-import java.time.Duration;
 import java.util.concurrent.CompletableFuture;
 
 @Slf4j
@@ -34,63 +29,43 @@ import java.util.concurrent.CompletableFuture;
 @RequiredArgsConstructor
 public class RobotService {
 
-    private final WebSocketClient webSocketClient;
     private final DeliveryRepository deliveryRepository;
     private final OrderRepository orderRepository;
     private final ProductRepository productRepository;
+    private final RestTemplate restTemplate;
     private final ObjectMapper objectMapper = new ObjectMapper();
 
-    @Value("${ros.bridge.url:ws://localhost:9090}")
-    private String rosBridgeUrl;
+    @Value("${robot.http.url:http://localhost:8888}")
+    private String robotHttpUrl;
 
     public CompletableFuture<RobotStatusResponse> checkRobotStatus(String robotId) {
         CompletableFuture<RobotStatusResponse> future = new CompletableFuture<>();
 
         try {
-            URI uri = URI.create(rosBridgeUrl);
+            String requestUrl = robotHttpUrl + "/robot/status?robotId=" + robotId;
+            log.info("로봇 상태 확인 요청: {}", requestUrl);
+            
+            // RestTemplate을 사용한 HTTP 요청
+            String response = restTemplate.getForObject(requestUrl, String.class);
+            
+            if (response != null) {
+                JsonNode jsonResponse = objectMapper.readTree(response);
+                String status = jsonResponse.path("status").asText();
+                String message = jsonResponse.path("message").asText();
+                String timestamp = jsonResponse.path("timestamp").asText();
 
-            webSocketClient.execute(uri, session -> {
-                String subscribeMessage = String.format(
-                    "{\"op\":\"call_service\",\"service\":\"/robot/%s/status\",\"args\":{}}",
-                    robotId
-                );
+                RobotStatusResponse robotResponse = RobotStatusResponse.builder()
+                    .status(status)
+                    .message(message)
+                    .timestamp(timestamp)
+                    .build();
 
-                return session.send(
-                    Mono.just(session.textMessage(subscribeMessage))
-                ).then(
-                    session.receive()
-                        .map(WebSocketMessage::getPayloadAsText)
-                        .take(1)
-                        .doOnNext(message -> {
-                            try {
-                                JsonNode response = objectMapper.readTree(message);
-                                boolean isAvailable = response.path("values").path("available").asBoolean(false);
-                                RobotStatus status = isAvailable ? RobotStatus.VALID : RobotStatus.INVALID;
-
-                                RobotStatusResponse robotResponse = RobotStatusResponse.builder()
-                                    .status(status.getValue())
-                                    .message(getStatusMessage(status))
-                                    .timestamp(java.time.Instant.now().toString())
-                                    .build();
-
-                                future.complete(robotResponse);
-                            } catch (Exception e) {
-                                log.error("ROS Bridge 응답 파싱 실패: {}", e.getMessage());
-                                future.complete(createErrorResponse());
-                            }
-                        })
-                        .doOnError(error -> {
-                            log.error("ROS Bridge 통신 실패: {}", error.getMessage());
-                            future.complete(createErrorResponse());
-                        })
-                        .then()
-                );
-            }).timeout(Duration.ofSeconds(5))
-              .doOnError(error -> {
-                  log.error("ROS Bridge 연결 실패: {}", error.getMessage());
-                  future.complete(createErrorResponse());
-              })
-              .subscribe();
+                log.info("로봇 상태 응답 성공: status={}, message={}", status, message);
+                future.complete(robotResponse);
+            } else {
+                log.error("로봇 HTTP 서버 응답이 null입니다");
+                future.complete(createErrorResponse());
+            }
 
         } catch (Exception e) {
             log.error("로봇 상태 확인 중 오류 발생: {}", e.getMessage());
@@ -121,21 +96,8 @@ public class RobotService {
 
     public void sendLocationRequest(String robotId, String destination) {
         try {
-            URI uri = URI.create(rosBridgeUrl);
-
-            webSocketClient.execute(uri, session -> {
-                String locationMessage = String.format(
-                    "{\"op\":\"publish\",\"topic\":\"/robot/%s/move_to\",\"msg\":{\"destination\":\"%s\"}}",
-                    robotId, destination
-                );
-
-                return session.send(
-                    Mono.just(session.textMessage(locationMessage))
-                ).then();
-            }).subscribe();
-
             log.info("로봇 {}에게 위치 요청 전송: {}", robotId, destination);
-
+            // HTTP 기반 로봇 제어로 변경 예정
         } catch (Exception e) {
             log.error("위치 요청 전송 실패: {}", e.getMessage());
         }
@@ -143,21 +105,8 @@ public class RobotService {
 
     public void sendPickupConfirmation(String robotId, String orderId) {
         try {
-            URI uri = URI.create(rosBridgeUrl);
-
-            webSocketClient.execute(uri, session -> {
-                String pickupMessage = String.format(
-                    "{\"op\":\"publish\",\"topic\":\"/robot/%s/pickup_confirm\",\"msg\":{\"order_id\":\"%s\"}}",
-                    robotId, orderId
-                );
-
-                return session.send(
-                    Mono.just(session.textMessage(pickupMessage))
-                ).then();
-            }).subscribe();
-
             log.info("로봇 {}에게 픽업 확인 전송: {}", robotId, orderId);
-
+            // HTTP 기반 로봇 제어로 변경 예정
         } catch (Exception e) {
             log.error("픽업 확인 전송 실패: {}", e.getMessage());
         }
@@ -165,21 +114,8 @@ public class RobotService {
 
     public void sendDeliveryComplete(String robotId, String orderId) {
         try {
-            URI uri = URI.create(rosBridgeUrl);
-
-            webSocketClient.execute(uri, session -> {
-                String deliveryMessage = String.format(
-                    "{\"op\":\"publish\",\"topic\":\"/robot/%s/delivery_complete\",\"msg\":{\"order_id\":\"%s\"}}",
-                    robotId, orderId
-                );
-
-                return session.send(
-                    Mono.just(session.textMessage(deliveryMessage))
-                ).then();
-            }).subscribe();
-
             log.info("로봇 {}에게 배송 완료 전송: {}", robotId, orderId);
-
+            // HTTP 기반 로봇 제어로 변경 예정
         } catch (Exception e) {
             log.error("배송 완료 전송 실패: {}", e.getMessage());
         }
@@ -248,32 +184,9 @@ public class RobotService {
 
     public void sendDeliveryStartCommand(String robotId, Long deliveryId, DeliveryAddressResponse addresses) {
         try {
-            URI uri = URI.create(rosBridgeUrl);
-
-            // 배송 시작 명령 구성
-            String deliveryStartMessage = String.format(
-                "{\"op\":\"publish\",\"topic\":\"/delivery/start_request\",\"msg\":{" +
-                "\"robot_id\":\"%s\"," +
-                "\"delivery_id\":%d," +
-                "\"seller_address\":\"%s\"," +
-                "\"buyer_address\":\"%s\"," +
-                "\"timestamp\":%d" +
-                "}}",
-                robotId, deliveryId,
-                addresses.getSellerAddress(),
-                addresses.getBuyerAddress(),
-                System.currentTimeMillis()
-            );
-
-            webSocketClient.execute(uri, session -> {
-                return session.send(
-                    Mono.just(session.textMessage(deliveryStartMessage))
-                ).then();
-            }).subscribe();
-
             log.info("로봇 {}에게 배송 시작 명령 전송: 배송 ID {}, 픽업 주소: {}, 배송 주소: {}",
                     robotId, deliveryId, addresses.getSellerAddress(), addresses.getBuyerAddress());
-
+            // HTTP 기반 로봇 제어로 변경 예정
         } catch (Exception e) {
             log.error("배송 시작 명령 전송 실패: {}", e.getMessage());
             throw new RobotException(RobotErrorCode.ROBOT_COMMAND_FAILED, "배송 시작 명령 전송 실패", e);
@@ -377,6 +290,51 @@ public class RobotService {
         } catch (Exception e) {
             log.error("배송 완료 처리 실패: {}", e.getMessage());
             throw new RobotException(RobotErrorCode.DELIVERY_ADDRESS_INVALID, "배송 완료 처리 중 오류 발생", e);
+        }
+    }
+
+    public void executeDeliveryScript(Long deliveryId) {
+        try {
+            log.info("배송 ID {}에 대한 delivery.py 스크립트 실행", deliveryId);
+
+            // 1. 배송 주소 정보 조회
+            DeliveryAddressResponse addresses = getDeliveryAddresses(deliveryId);
+
+            // 2. Python 스크립트 실행
+            ProcessBuilder processBuilder = new ProcessBuilder(
+                "python3", 
+                "../Embedded/src/delivery.py",
+                deliveryId.toString(),
+                addresses.getSellerAddress(),
+                addresses.getBuyerAddress()
+            );
+            
+            processBuilder.directory(new java.io.File(System.getProperty("user.dir")));
+            processBuilder.redirectErrorStream(true); // stderr을 stdout으로 리다이렉트
+            
+            Process process = processBuilder.start();
+            
+            // Python 스크립트의 출력을 읽어서 로그로 출력
+            try (java.io.BufferedReader reader = new java.io.BufferedReader(
+                    new java.io.InputStreamReader(process.getInputStream()))) {
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    log.info("delivery.py 출력: {}", line);
+                }
+            }
+            
+            // 프로세스 완료 대기
+            int exitCode = process.waitFor();
+            
+            if (exitCode == 0) {
+                log.info("delivery.py 스크립트 실행 완료: {}", deliveryId);
+            } else {
+                log.error("delivery.py 스크립트 실행 실패: exit code {}", exitCode);
+            }
+
+        } catch (Exception e) {
+            log.error("delivery.py 스크립트 실행 중 오류 발생: {}", e.getMessage());
+            throw new RobotException(RobotErrorCode.ROBOT_COMMAND_FAILED, "배송 스크립트 실행 실패", e);
         }
     }
 }

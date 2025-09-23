@@ -1,0 +1,37 @@
+[4.256s] Invoking command in '/home/donggun/S13P21A501/Embedded/src/app_navigation': PYTHONPATH=/home/donggun/S13P21A501/Embedded/build/app_navigation/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/donggun/S13P21A501/Embedded/install/app_navigation/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/app_navigation build --build-base /home/donggun/S13P21A501/Embedded/build/app_navigation/build install --record /home/donggun/S13P21A501/Embedded/build/app_navigation/install.log --single-version-externally-managed install_data
+[5.155s] running egg_info
+[5.155s] creating ../../build/app_navigation/app_navigation.egg-info
+[5.190s] writing ../../build/app_navigation/app_navigation.egg-info/PKG-INFO
+[5.191s] writing dependency_links to ../../build/app_navigation/app_navigation.egg-info/dependency_links.txt
+[5.191s] writing entry points to ../../build/app_navigation/app_navigation.egg-info/entry_points.txt
+[5.191s] writing requirements to ../../build/app_navigation/app_navigation.egg-info/requires.txt
+[5.191s] writing top-level names to ../../build/app_navigation/app_navigation.egg-info/top_level.txt
+[5.192s] writing manifest file '../../build/app_navigation/app_navigation.egg-info/SOURCES.txt'
+[5.268s] reading manifest file '../../build/app_navigation/app_navigation.egg-info/SOURCES.txt'
+[5.268s] writing manifest file '../../build/app_navigation/app_navigation.egg-info/SOURCES.txt'
+[5.268s] running build
+[5.269s] running build_py
+[5.269s] creating /home/donggun/S13P21A501/Embedded/build/app_navigation/build
+[5.269s] creating /home/donggun/S13P21A501/Embedded/build/app_navigation/build/lib
+[5.269s] creating /home/donggun/S13P21A501/Embedded/build/app_navigation/build/lib/app_navigation
+[5.269s] copying app_navigation/__init__.py -> /home/donggun/S13P21A501/Embedded/build/app_navigation/build/lib/app_navigation
+[5.269s] copying app_navigation/app_navigator.py -> /home/donggun/S13P21A501/Embedded/build/app_navigation/build/lib/app_navigation
+[5.269s] running install
+[5.284s] running install_lib
+[5.318s] creating /home/donggun/S13P21A501/Embedded/install/app_navigation/lib/python3.10/site-packages/app_navigation
+[5.318s] copying /home/donggun/S13P21A501/Embedded/build/app_navigation/build/lib/app_navigation/__init__.py -> /home/donggun/S13P21A501/Embedded/install/app_navigation/lib/python3.10/site-packages/app_navigation
+[5.318s] copying /home/donggun/S13P21A501/Embedded/build/app_navigation/build/lib/app_navigation/app_navigator.py -> /home/donggun/S13P21A501/Embedded/install/app_navigation/lib/python3.10/site-packages/app_navigation
+[5.322s] byte-compiling /home/donggun/S13P21A501/Embedded/install/app_navigation/lib/python3.10/site-packages/app_navigation/__init__.py to __init__.cpython-310.pyc
+[5.322s] byte-compiling /home/donggun/S13P21A501/Embedded/install/app_navigation/lib/python3.10/site-packages/app_navigation/app_navigator.py to app_navigator.cpython-310.pyc
+[5.322s] running install_data
+[5.322s] creating /home/donggun/S13P21A501/Embedded/install/app_navigation/share/ament_index
+[5.322s] creating /home/donggun/S13P21A501/Embedded/install/app_navigation/share/ament_index/resource_index
+[5.322s] creating /home/donggun/S13P21A501/Embedded/install/app_navigation/share/ament_index/resource_index/packages
+[5.322s] copying resource/app_navigation -> /home/donggun/S13P21A501/Embedded/install/app_navigation/share/ament_index/resource_index/packages
+[5.322s] copying package.xml -> /home/donggun/S13P21A501/Embedded/install/app_navigation/share/app_navigation
+[5.322s] running install_egg_info
+[5.361s] Copying ../../build/app_navigation/app_navigation.egg-info to /home/donggun/S13P21A501/Embedded/install/app_navigation/lib/python3.10/site-packages/app_navigation-0.0.0-py3.10.egg-info
+[5.362s] running install_scripts
+[5.581s] Installing app_navigator script to /home/donggun/S13P21A501/Embedded/install/app_navigation/bin
+[5.581s] writing list of installed files to '/home/donggun/S13P21A501/Embedded/build/app_navigation/install.log'
+[5.760s] Invoked command in '/home/donggun/S13P21A501/Embedded/src/app_navigation' returned '0': PYTHONPATH=/home/donggun/S13P21A501/Embedded/build/app_navigation/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/donggun/S13P21A501/Embedded/install/app_navigation/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/app_navigation build --build-base /home/donggun/S13P21A501/Embedded/build/app_navigation/build install --record /home/donggun/S13P21A501/Embedded/build/app_navigation/install.log --single-version-externally-managed install_data

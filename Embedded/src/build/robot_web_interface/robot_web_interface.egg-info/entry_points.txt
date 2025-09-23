@@ -1,0 +1,3 @@
+[console_scripts]
+robot_status_client = robot_web_interface.robot_status_client:main
+robot_status_monitor = robot_web_interface.robot_status_monitor:main

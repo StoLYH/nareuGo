@@ -64,7 +64,8 @@
 
 <script setup>
 import { ref, onMounted, watch } from 'vue'
-import { getPaidSalesProducts, getRobotStatus, startDelivery as startDeliveryAPI } from '../api/delivery/delivery.js'
+import { getPaidSalesProducts, startDelivery as startDeliveryAPI } from '../api/delivery/delivery.js'
+import { sendAddressesToROS2 } from '../utils/ros2Communication.js'
 
 const props = defineProps({
   isVisible: {
@@ -177,38 +178,46 @@ const startDelivery = async () => {
   try {
     deliveryStarting.value = true
 
-    const robotStatus = await getRobotStatus(1)
-
-    if (robotStatus.status === 'INVALID') {
-      alert('나르고가 다른일을 처리중입니다.')
-      return
+    // 로봇에게 주소 정보 요청 및 전송
+    const deliveryData = {
+      deliveryId: selectedProduct.value.deliveryId,
+      productId: selectedProduct.value.id,
+      buyerId: selectedProduct.value.buyerId,
+      sellerId: getUserId(),
+      robotId: 1
     }
 
-    if (robotStatus.status === 'VALID') {
-      // 나르고 시작 가능 모달 표시
-      alert('나르고 시작 가능 !')
+    console.log('🚀 [DEBUG] 배송 데이터:', deliveryData)
+    const result = await startDeliveryAPI(deliveryData)
+    console.log('🚀 [DEBUG] 나르고 시작 결과:', result)
+    console.log('🏠 [DEBUG] 로봇에게 전송된 주소:', result.addresses)
 
-      // 동시에 로봇에게 주소 정보 전송
-      const deliveryData = {
-        deliveryId: selectedProduct.value.deliveryId,
-        productId: selectedProduct.value.id,
-        buyerId: selectedProduct.value.buyerId,
-        sellerId: getUserId(),
-        robotId: 1
-      }
+    // ROS2로 주소 정보 전송
+    await sendAddressToROS2(result.addresses)
 
-      const result = await startDeliveryAPI(deliveryData)
-      console.log('나르고 시작 결과:', result)
-      console.log('로봇에게 전송된 주소:', result.addresses)
-
-      emit('delivery-started', selectedProduct.value)
-      closeModal()
-    }
+    alert('나르고가 시작되었습니다! 판매자 주소로 이동 중입니다.')
+    emit('delivery-started', selectedProduct.value)
+    closeModal()
   } catch (error) {
-    console.error('배송 시작 실패:', error)
+    console.error('❌ [ERROR] 배송 시작 실패:', error)
     alert('배송 시작에 실패했습니다. 다시 시도해주세요.')
   } finally {
     deliveryStarting.value = false
+  }
+}
+
+// ROS2로 주소 정보 전송 함수
+const sendAddressToROS2 = async (addresses) => {
+  try {
+    console.log('🤖 [DEBUG] ROS2로 주소 정보 전송 중:', addresses)
+    
+    const result = await sendAddressesToROS2(addresses)
+    console.log('🤖 [ROS2] 전송 결과:', result)
+    
+    return result
+  } catch (error) {
+    console.error('❌ [ERROR] ROS2 주소 전송 실패:', error)
+    throw error
   }
 }
 
