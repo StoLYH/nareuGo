@@ -23,8 +23,8 @@ const initializeROS2 = async () => {
   }
 }
 
-// 앱 로드 후 ROS2 연결 시도
-setTimeout(initializeROS2, 1000)
+// 앱 로드 후 ROS2 연결 시도 (비활성화)
+// setTimeout(initializeROS2, 1000)
 
 // PWA Service Worker 등록
 if ('serviceWorker' in navigator) {
