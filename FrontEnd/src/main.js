@@ -3,6 +3,7 @@ import { createPinia } from "pinia";
 import App from "./App.vue";
 import router from "./router";
 import { connectToROS2 } from "./utils/ros2Communication.js";
+import { useNotificationStore } from "./stores/notification.js";
 
 const app = createApp(App);
 const pinia = createPinia();
@@ -11,6 +12,10 @@ app.use(pinia);
 app.use(router);
 
 app.mount("#app");
+
+// 앱 마운트 후 전역 알림 이벤트 리스너 초기화
+const notificationStore = useNotificationStore();
+notificationStore.initEventListeners();
 
 // ROS2 연결 초기화 (선택적)
 const initializeROS2 = async () => {

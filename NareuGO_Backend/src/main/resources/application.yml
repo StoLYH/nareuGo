@@ -152,6 +152,14 @@ clova:
     api-url: ${CLOVA_OCR_API_URL}
     secret-key: ${CLOVA_OCR_SECRET_KEY}
 
+# ===========================================
+# Firebase 설정 (FCM 푸시 알림용)
+# ===========================================
+firebase:
+  enabled: true
+  service-account-key: firebase-service-account.json
+  project-id: nareugo  # 여기에 실제 Firebase 프로젝트 ID 입력
+
 # Local 환경
 ---
 spring:
