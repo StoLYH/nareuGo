@@ -17,23 +17,34 @@
           <path d="M12 1C13.1 1 14 1.9 14 3V7C14 8.1 13.1 9 12 9C10.9 9 10 8.1 10 7V3C10 1.9 10.9 1 12 1ZM19 10V14C19 15.1 18.1 16 17 16H15L13 18V6L15 8H17C18.1 8 19 8.9 19 10ZM5 10V14C5 15.1 5.9 16 7 16H9L11 18V6L9 8H7C5.9 8 5 8.9 5 10Z" fill="currentColor"/>
         </svg>
       </button> -->
-      <button class="icon-btn" @click="goNotifications" title="알림">
+      <button class="icon-btn notification-btn" @click="goNotifications" title="알림">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" focusable="false" aria-hidden="true">
           <path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.89 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z" fill="currentColor"/>
         </svg>
+        <div v-if="notificationStore.unreadCount > 0" class="notification-badge">{{ notificationStore.unreadCount }}</div>
       </button> 
     </div>
   </header>
 </template>
 
 <script setup>
-import { useRouter } from 'vue-router';
+import { useRouter } from 'vue-router'
+import { useNotificationStore } from '@/stores/notification'
+import { useAuthStore } from '@/stores/auth'
+import { onMounted } from 'vue'
 
-const router = useRouter();
+const router = useRouter()
+const notificationStore = useNotificationStore()
+const authStore = useAuthStore()
 
-const goBack = () => router.go(-1);
-// const openCustomerService = () => console.log('고객센터 열기');
-const goNotifications = () => router.push({ name: 'Notifications' });
+const goBack = () => router.go(-1)
+const goNotifications = () => router.push({ name: 'Notifications' })
+
+// 컴포넌트 마운트 시 알림 개수 조회
+onMounted(async () => {
+  const userId = authStore.user?.userId || 3
+  await notificationStore.fetchUnreadCount(userId)
+})
 </script>
 
 <style scoped>
@@ -99,5 +110,40 @@ const goNotifications = () => router.push({ name: 'Notifications' });
 /* 뒤로가기 버튼 별도 지정 */
 .back-btn {
   margin-right: 8px;
+}
+
+/* 알림 버튼 스타일 */
+.notification-btn {
+  position: relative;
+}
+
+.notification-badge {
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  background-color: #ff4757;
+  color: white;
+  border-radius: 50%;
+  width: 18px;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: bold;
+  border: 2px solid white;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+  }
 }
 </style>

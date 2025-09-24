@@ -3,6 +3,7 @@ import { createPinia } from "pinia";
 import App from "./App.vue";
 import router from "./router";
 import { connectToROS2 } from "./utils/ros2Communication.js";
+import { useNotificationStore } from "./stores/notification.js";
 
 const app = createApp(App);
 const pinia = createPinia();
@@ -11,6 +12,10 @@ app.use(pinia);
 app.use(router);
 
 app.mount("#app");
+
+// 앱 마운트 후 전역 알림 이벤트 리스너 초기화
+const notificationStore = useNotificationStore();
+notificationStore.initEventListeners();
 
 // ROS2 연결 초기화 (선택적)
 const initializeROS2 = async () => {
@@ -23,8 +28,8 @@ const initializeROS2 = async () => {
   }
 }
 
-// 앱 로드 후 ROS2 연결 시도
-setTimeout(initializeROS2, 1000)
+// 앱 로드 후 ROS2 연결 시도 (비활성화)
+// setTimeout(initializeROS2, 1000)
 
 // PWA Service Worker
 // 개발 모드에서는 SW가 HMR/리소스 캐시를 방해할 수 있으므로 등록하지 않고, 기존 SW/캐시를 정리합니다.
