@@ -1,5 +1,7 @@
-import { createRouter, createWebHistory } from 'vue-router'                                                                                                                       
-import { useAuthStore } from '@/stores/auth'                                                                                                                                      
+import { createRouter, createWebHistory } from 'vue-router'
+import { useAuthStore } from '@/stores/auth'
+import ItemList from '@/views/ItemList.vue'
+import NotificationListView from '@/views/NotificationListView.vue'                                                                                                                                      
 
 const routes = [
 {
@@ -11,13 +13,13 @@ const routes = [
 {
     path: '/home',
     name: 'HomePage',
-    component: () => import('@/views/ItemList.vue'),
+    component: ItemList,
     meta: { requiresAuth: true }
 },
 {
     path: '/items',
     name: 'ItemList',
-    component: () => import('@/views/ItemList.vue'),
+    component: ItemList,
     meta: { requiresAuth: true }
 },
 {
@@ -59,7 +61,7 @@ const routes = [
 {
     path: '/notifications',
     name: 'Notifications',
-    component: () => import('@/views/NotificationListView.vue'),
+    component: NotificationListView,
     meta: { requiresAuth: true }
 },
 {

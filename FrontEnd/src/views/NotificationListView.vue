@@ -13,7 +13,7 @@
 
     <!-- 알림 목록 -->
     <main class="notification-list">
-      <div v-if="notifications.length === 0" class="empty-state">
+      <div v-if="notificationStore.notifications.length === 0" class="empty-state">
         <div class="empty-icon">
           <svg width="64" height="64" viewBox="0 0 24 24" fill="none">
             <path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.89 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z" fill="#ccc"/>
@@ -24,8 +24,8 @@
       </div>
 
       <div v-else>
-        <div 
-          v-for="notification in notifications" 
+        <div
+          v-for="notification in notificationStore.notifications"
           :key="notification.id"
           class="notification-item"
           :class="{ 'unread': !notification.isRead }"
@@ -37,6 +37,10 @@
             </svg>
             <svg v-else-if="notification.type === 'PURCHASE'" width="20" height="20" viewBox="0 0 24 24" fill="none">
               <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" stroke="#34C759" stroke-width="2"/>
+            </svg>
+            <svg v-else-if="notification.type === 'DELIVERY'" width="20" height="20" viewBox="0 0 24 24" fill="none">
+              <path d="M8 6a2 2 0 012-2h4l2 2h6a2 2 0 012 2v6a2 2 0 01-2 2H6a2 2 0 01-2-2V6z" stroke="#FF9500" stroke-width="2" fill="none"/>
+              <circle cx="12" cy="11" r="3" stroke="#FF9500" stroke-width="2" fill="none"/>
             </svg>
             <svg v-else width="20" height="20" viewBox="0 0 24 24" fill="none">
               <path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.89 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z" fill="#007AFF"/>
@@ -57,11 +61,12 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
+import { useNotificationStore } from '@/stores/notification'
 
 const router = useRouter()
-const notifications = ref([])
+const notificationStore = useNotificationStore()
 
 // 샘플 데이터 (실제로는 API에서 가져올 데이터)
 const sampleNotifications = [
@@ -96,12 +101,9 @@ const goBack = () => {
 }
 
 const markAsRead = (notificationId) => {
-  const notification = notifications.value.find(n => n.id === notificationId)
-  if (notification) {
-    notification.isRead = true
-    // 여기서 실제로는 API 호출로 읽음 상태를 서버에 업데이트
-    console.log('Marked notification as read:', notificationId)
-  }
+  notificationStore.markAsRead(notificationId)
+  // 여기서 실제로는 API 호출로 읽음 상태를 서버에 업데이트
+  console.log('Marked notification as read:', notificationId)
 }
 
 const formatTime = (date) => {
@@ -122,10 +124,51 @@ const formatTime = (date) => {
   }
 }
 
+// 로봇 도착 알림 이벤트 핸들러 (알림 페이지용)
+const handleRobotArrivalOnPage = (event) => {
+  console.log('🔔 [알림페이지] 로봇 도착 이벤트 수신:', event.detail)
+
+  // Store를 통해 알림 추가 (이미 AppHeader에서도 추가되지만 중복 방지)
+  // 실시간으로 화면 업데이트됨
+
+  // 페이지 상단으로 부드럽게 스크롤
+  setTimeout(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }, 100)
+
+  // 새 알림을 하이라이트하는 효과
+  setTimeout(() => {
+    const newNotificationElement = document.querySelector('.notification-item.unread:first-child')
+    if (newNotificationElement) {
+      newNotificationElement.classList.add('new-notification')
+      // 5초 후 하이라이트 제거
+      setTimeout(() => {
+        newNotificationElement.classList.remove('new-notification')
+      }, 5000)
+    }
+  }, 200)
+
+  console.log('🔄 [알림페이지] 새 알림으로 인한 화면 업데이트 완료')
+}
+
 onMounted(() => {
   // 실제로는 여기서 API를 호출해서 알림 목록을 가져옴
-  // loadNotifications()
-  notifications.value = sampleNotifications
+  // 샘플 데이터로 초기화 (store에 없을 때만)
+  if (notificationStore.notifications.length === 0) {
+    sampleNotifications.forEach(notification => {
+      notificationStore.addNotification(notification)
+    })
+  }
+
+  // 로봇 도착 이벤트 리스너 등록 (알림 페이지용)
+  window.addEventListener('robotArrivedAtSeller', handleRobotArrivalOnPage)
+  console.log('🔔 [알림페이지] 로봇 도착 이벤트 리스너 등록됨')
+})
+
+onUnmounted(() => {
+  // 이벤트 리스너 제거
+  window.removeEventListener('robotArrivedAtSeller', handleRobotArrivalOnPage)
+  console.log('🔔 [알림페이지] 로봇 도착 이벤트 리스너 제거됨')
 })
 </script>
 
@@ -260,5 +303,53 @@ onMounted(() => {
   margin-left: 8px;
   margin-top: 6px;
   flex-shrink: 0;
+}
+
+/* 새 알림 하이라이트 효과 */
+.notification-item.new-notification {
+  background-color: #e3f2fd !important;
+  border-left: 4px solid #2196f3;
+  animation: newNotificationGlow 3s ease-in-out;
+  transform: scale(1.02);
+  box-shadow: 0 4px 12px rgba(33, 150, 243, 0.3);
+}
+
+@keyframes newNotificationGlow {
+  0% {
+    background-color: #2196f3;
+    transform: scale(1.05);
+  }
+  25% {
+    background-color: #e3f2fd;
+    transform: scale(1.02);
+  }
+  50% {
+    background-color: #2196f3;
+    transform: scale(1.03);
+  }
+  75% {
+    background-color: #e3f2fd;
+    transform: scale(1.02);
+  }
+  100% {
+    background-color: #e3f2fd;
+    transform: scale(1.02);
+  }
+}
+
+/* 새 알림 아이템 슬라이드 인 효과 */
+.notification-item:first-child.unread {
+  animation: slideInFromTop 0.5s ease-out;
+}
+
+@keyframes slideInFromTop {
+  0% {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
 }
 </style>

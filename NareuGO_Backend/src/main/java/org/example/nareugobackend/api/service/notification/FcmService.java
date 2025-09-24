@@ -31,6 +31,8 @@ public class FcmService {
     private final FcmTokenRepository fcmTokenRepository;
     private final UserRepository userRepository;
 
+    // NotificationService 의존성 주입은 순환 참조를 피하기 위해 별도 메서드로 처리
+
     @Autowired(required = false)
     private FirebaseMessaging firebaseMessaging;
 
@@ -94,6 +96,18 @@ public class FcmService {
         data.put("productTitle", productTitle);
 
         sendNotificationToUser(buyerId, title, body, data);
+    }
+
+    public void sendSellerArrivalNotification(Long sellerId, String productTitle, String buyerName) {
+        String title = "나르고가 도착했습니다!";
+        String body = String.format("'%s' 상품을 로봇에 넣어주세요. 구매자: %s", productTitle, buyerName);
+
+        Map<String, String> data = new HashMap<>();
+        data.put("type", "SELLER_ARRIVAL");
+        data.put("productTitle", productTitle);
+        data.put("buyerName", buyerName);
+
+        sendNotificationToUser(sellerId, title, body, data);
     }
 
     private void sendNotification(String token, String title, String body, Map<String, String> data) {

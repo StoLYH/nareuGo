@@ -18,7 +18,7 @@
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
           <path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.89 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z" fill="currentColor"/>
         </svg>
-        <div v-if="notificationStore.unreadCount > 0" class="notification-badge">{{ notificationStore.unreadCount }}</div>
+        <div v-if="notificationCount > 0" class="notification-badge">{{ notificationCount }}</div>
       </button>
     </div>
   </header>
@@ -42,8 +42,6 @@
 
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue'
-import { useNotificationStore } from '@/stores/notification'
-import { useAuthStore } from '@/stores/auth'
 
 defineProps({
   location: {
@@ -53,51 +51,61 @@ defineProps({
 })
 defineEmits(['edit', 'search', 'notification'])
 
-const notificationStore = useNotificationStore()
-const authStore = useAuthStore()
+const notificationCount = ref(0)
 const showNotificationAlert = ref(false)
 const lastNotificationMessage = ref('')
+
+// 알림 이벤트 리스너
+const handleRobotArrival = (event) => {
+  console.log('🔔 [헤더] 로봇 도착 알림 수신:', event.detail)
+
+  // 알림 카운트 증가
+  notificationCount.value += 1
+
+  // 알림 메시지 설정
+  lastNotificationMessage.value = event.detail.message
+
+  // 알림 팝업 표시
+  showNotificationAlert.value = true
+
+  // 5초 후 자동으로 팝업 닫기
+  setTimeout(() => {
+    showNotificationAlert.value = false
+  }, 5000)
+}
 
 // 알림 팝업 닫기
 const dismissAlert = () => {
   showNotificationAlert.value = false
 }
 
-// Store의 알림 변화를 감지해서 팝업 표시
-const handleNotificationUpdate = () => {
-  const latestNotification = notificationStore.notifications[0]
-  if (latestNotification && !latestNotification.isRead && latestNotification.type === 'DELIVERY') {
-    lastNotificationMessage.value = latestNotification.message
-    showNotificationAlert.value = true
+// 컴포넌트 마운트 시 이벤트 리스너 등록
+onMounted(() => {
+  window.addEventListener('robotArrivedAtSeller', handleRobotArrival)
 
-    // 5초 후 자동으로 팝업 닫기
-    setTimeout(() => {
-      showNotificationAlert.value = false
-    }, 5000)
+  // 백엔드에서 읽지 않은 알림 개수 조회
+  fetchUnreadNotificationCount()
+})
+
+// 컴포넌트 언마운트 시 이벤트 리스너 제거
+onUnmounted(() => {
+  window.removeEventListener('robotArrivedAtSeller', handleRobotArrival)
+})
+
+// 읽지 않은 알림 개수 조회
+const fetchUnreadNotificationCount = async () => {
+  try {
+    const response = await fetch('http://localhost:8080/notifications/unread-count?userId=3')
+    if (response.ok) {
+      const data = await response.json()
+      if (data.success) {
+        notificationCount.value = data.unreadCount
+      }
+    }
+  } catch (error) {
+    console.error('알림 개수 조회 실패:', error)
   }
 }
-
-// 컴포넌트 마운트 시 초기화
-onMounted(async () => {
-  // 백엔드에서 읽지 않은 알림 개수 조회
-  const userId = authStore.user?.userId || 3
-  await notificationStore.fetchUnreadCount(userId)
-
-  // Store 변화 감지 (notifications 배열 변화 감지)
-  const unwatch = notificationStore.$onAction(({name, after}) => {
-    if (name === 'addNotification') {
-      after((result) => {
-        console.log('🔔 [헤더] 새 알림이 추가됨:', result)
-        handleNotificationUpdate()
-      })
-    }
-  })
-
-  // 언마운트 시 watcher 제거
-  onUnmounted(() => {
-    unwatch?.()
-  })
-})
 </script>
 
 <style scoped>
