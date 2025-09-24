@@ -71,8 +71,8 @@ onMounted(() => {
     showApprovalModal.value = true
     setTimeout(() => {
       showApprovalModal.value = false
-    }, 1500)
-  }, 3000)
+    }, 2000)
+  }, 5000)
 })
 
 const closeModal = () => {
