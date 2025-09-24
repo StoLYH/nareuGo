@@ -7,6 +7,7 @@ import org.example.nareugobackend.api.controller.robot.response.DeliveryAddressR
 import org.example.nareugobackend.api.controller.robot.response.DeliveryCompletionResponse;
 import org.example.nareugobackend.api.controller.robot.response.PickupConfirmationResponse;
 import org.example.nareugobackend.api.controller.robot.response.RobotStatusResponse;
+import org.example.nareugobackend.api.controller.robot.response.SellerArrivedResponse;
 import org.example.nareugobackend.api.service.robot.RobotService;
 import org.example.nareugobackend.api.service.notification.FcmService;
 import org.springframework.http.ResponseEntity;
@@ -25,20 +26,25 @@ public class RobotController {
 
     @GetMapping("/status")
     public CompletableFuture<ResponseEntity<RobotStatusResponse>> checkRobotStatus(
-            @RequestParam String robotId) {
+            @RequestParam String robotId,
+            @RequestParam(required = false) Long delivery_id) {
 
-        log.info("로봇 상태 확인 요청 (강력한 하드코딩): {}", robotId);
+        log.info("로봇 상태 확인 요청: robotId={}, delivery_id={}", robotId, delivery_id);
 
-        // 무조건 VALID 응답 반환 (모든 예외 상황 무시)
-        RobotStatusResponse validResponse = RobotStatusResponse.builder()
-                .status("VALID")
-                .message("작업 가능")
-                .timestamp(java.time.Instant.now().toString())
-                .build();
-
-        log.info("로봇 {} 상태 응답 (강제 VALID): {}", robotId, validResponse.getStatus());
-
-        return CompletableFuture.completedFuture(ResponseEntity.ok(validResponse));
+        return robotService.checkRobotStatus(robotId, delivery_id)
+                .thenApply(response -> {
+                    log.info("RobotService 응답: {}", response);
+                    return ResponseEntity.ok(response);
+                })
+                .exceptionally(throwable -> {
+                    log.error("로봇 상태 확인 실패: {}", throwable.getMessage());
+                    RobotStatusResponse errorResponse = RobotStatusResponse.builder()
+                            .status("error")
+                            .message("로봇 통신 오류: " + throwable.getMessage())
+                            .timestamp(java.time.Instant.now().toString())
+                            .build();
+                    return ResponseEntity.ok(errorResponse);
+                });
     }
 
 
@@ -46,18 +52,39 @@ public class RobotController {
     public ResponseEntity<DeliveryAddressResponse> getDeliveryAddresses(
             @PathVariable Long deliveryId) {
 
-        log.info("로봇이 배송 {} 주소 정보 요청", deliveryId);
+        log.info("로봇이 배송 주소 정보 요청 - deliveryId: {}", deliveryId);
 
         try {
+            log.info("배송 주소 조회 시작 - deliveryId: {}", deliveryId);
+
+            // 실제 배송 정보에서 주소를 조회
             DeliveryAddressResponse addresses = robotService.getDeliveryAddresses(deliveryId);
-            
-            // delivery.py 스크립트 실행
-            robotService.executeDeliveryScript(deliveryId);
-            
+            log.info("배송 주소 조회 성공: {}", addresses);
+
+            // 로봇 서버로 주소 정보와 함께 직접 요청 (첫 번째 로직)
+            try {
+                String robotUrl = "http://localhost:8888/robot/delivery/" + deliveryId + "/addresses" +
+                        "?sellerAddress=" + addresses.getSellerAddress() +
+                        "&buyerAddress=" + addresses.getBuyerAddress();
+                log.info("로봇 서버로 직접 요청 전송: {}", robotUrl);
+                // RestTemplate 인스턴스 필요
+                org.springframework.web.client.RestTemplate restTemplate = new org.springframework.web.client.RestTemplate();
+                restTemplate.getForObject(robotUrl, String.class);
+            } catch (Exception e) {
+                log.error("로봇 서버 직접 요청 실패: {}", e.getMessage());
+            }
+
+            // 로봇 서버(8888포트)로 배송 시작 명령 전송
+            log.info("로봇 서버로 배송 시작 명령 전송 - deliveryId: {}", deliveryId);
+            robotService.sendDeliveryStartCommand("1", deliveryId, addresses);
+
+            // robot_delivery.py가 HTTP 서버로 실행 중이므로 별도 스크립트 실행 불필요
+            log.info("로봇 서버로 명령 전송 완료");
+
             return ResponseEntity.ok(addresses);
         } catch (Exception e) {
-            log.error("배송 주소 조회 실패: {}", e.getMessage());
-            return ResponseEntity.internalServerError().build();
+            log.error("배송 주소 조회 실패 - deliveryId: {}, 에러: {}, 스택트레이스:", deliveryId, e.getMessage(), e);
+            return ResponseEntity.status(400).body(null);
         }
     }
 
@@ -94,45 +121,23 @@ public class RobotController {
         }
     }
 
-    @PostMapping("/seller-arrival")
-    public ResponseEntity<String> notifySellerArrival(@RequestParam Long deliveryId) {
-        log.info("로봇이 판매자 집 도착 알림 요청 - 배송 ID: {}", deliveryId);
+    @PostMapping("/delivery/{deliveryId}/seller/arrived")
+    public ResponseEntity<SellerArrivedResponse> notifySellerArrival(@PathVariable Long deliveryId) {
+        log.info("로봇이 판매자 위치 도착 알림 요청 - 배송 ID: {}", deliveryId);
 
         try {
-            // 배송 정보 조회
             robotService.notifySellerArrival(deliveryId, fcmService);
 
-            log.info("판매자 집 도착 알림 발송 완료 - 배송 ID: {}", deliveryId);
-            return ResponseEntity.ok("알림 발송 완료");
+            SellerArrivedResponse response = SellerArrivedResponse.builder()
+                    .timestamp(java.time.Instant.now().toString())
+                    .build();
+
+            log.info("판매자 위치 도착 알림 발송 완료 - 배송 ID: {}", deliveryId);
+            return ResponseEntity.ok(response);
 
         } catch (Exception e) {
-            log.error("판매자 집 도착 알림 발송 실패 - 배송 ID: {}, 오류: {}", deliveryId, e.getMessage());
-            return ResponseEntity.internalServerError().body("알림 발송 실패: " + e.getMessage());
+            log.error("판매자 위치 도착 알림 발송 실패 - 배송 ID: {}, 오류: {}", deliveryId, e.getMessage());
+            return ResponseEntity.internalServerError().build();
         }
-    }
-
-    @PostMapping("/simulate-arrival")
-    public ResponseEntity<String> simulateSellerArrival(@RequestParam Long deliveryId,
-                                                       @RequestParam(defaultValue = "5") int delaySeconds) {
-        log.info("시뮬레이션: {}초 후 판매자 집 도착 알림 - 배송 ID: {}", delaySeconds, deliveryId);
-
-        // 비동기로 일정 시간 후 알림 발송
-        new Thread(() -> {
-            try {
-                Thread.sleep(delaySeconds * 1000L);
-                log.info("시뮬레이션: 판매자 집 도착! - 배송 ID: {}", deliveryId);
-
-                robotService.notifySellerArrival(deliveryId, fcmService);
-
-                log.info("시뮬레이션: 판매자 집 도착 알림 발송 완료 - 배송 ID: {}", deliveryId);
-
-            } catch (InterruptedException e) {
-                log.warn("시뮬레이션 중단됨 - 배송 ID: {}", deliveryId);
-            } catch (Exception e) {
-                log.error("시뮬레이션 알림 발송 실패 - 배송 ID: {}, 오류: {}", deliveryId, e.getMessage());
-            }
-        }).start();
-
-        return ResponseEntity.ok(String.format("시뮬레이션 시작: %d초 후 알림 발송", delaySeconds));
     }
 }

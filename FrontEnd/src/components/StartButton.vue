@@ -36,12 +36,12 @@ const openDeliveryModal = async () => {
     const robotStatus = await getRobotStatus(1)
     console.log('🤖 [DEBUG] 로봇 상태 응답:', robotStatus)
     
-    if (robotStatus.status === 'INVALID') {
+    if (robotStatus.status === 'INVALID' || robotStatus.status === 'invalid') {
       alert('나르고가 다른 일을 처리 중입니다. 잠시 후 다시 시도해주세요.')
       return
     }
-    
-    if (robotStatus.status === 'VALID') {
+
+    if (robotStatus.status === 'VALID' || robotStatus.status === 'valid') {
       // 로봇이 사용 가능한 상태일 때만 모달 열기
       console.log('✅ [DEBUG] 로봇 사용 가능, 모달 열기')
       showModal.value = true

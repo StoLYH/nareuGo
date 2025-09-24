@@ -192,8 +192,7 @@ const startDelivery = async () => {
     console.log('🚀 [DEBUG] 나르고 시작 결과:', result)
     console.log('🏠 [DEBUG] 로봇에게 전송된 주소:', result.addresses)
 
-    // ROS2로 주소 정보 전송
-    await sendAddressToROS2(result.addresses)
+    // 백엔드에서 로봇 서버로 자동 전송하므로 프론트엔드에서는 추가 작업 불필요
 
     alert('나르고가 시작되었습니다! 판매자 주소로 이동 중입니다.')
     emit('delivery-started', selectedProduct.value)
@@ -206,20 +205,6 @@ const startDelivery = async () => {
   }
 }
 
-// ROS2로 주소 정보 전송 함수
-const sendAddressToROS2 = async (addresses) => {
-  try {
-    console.log('🤖 [DEBUG] ROS2로 주소 정보 전송 중:', addresses)
-    
-    const result = await sendAddressesToROS2(addresses)
-    console.log('🤖 [ROS2] 전송 결과:', result)
-    
-    return result
-  } catch (error) {
-    console.error('❌ [ERROR] ROS2 주소 전송 실패:', error)
-    throw error
-  }
-}
 
 const closeModal = () => {
   selectedProductId.value = null
