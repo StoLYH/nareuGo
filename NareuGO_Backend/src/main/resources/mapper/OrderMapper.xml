@@ -58,7 +58,7 @@
   </update>
   
   <!-- 새 주문 생성 (결제 대기 상태로 생성) -->
-  <insert id="insert" parameterType="org.example.nareugobackend.common.model.Order" useGeneratedKeys="true" keyProperty="order.orderId">
+  <insert id="insert" parameterType="map" useGeneratedKeys="true" keyProperty="order.orderId">
     INSERT INTO orders (product_id, buyer_id, status, amount, toss_order_id, created_at, updated_at)
     VALUES (#{order.productId}, #{order.buyerId}, 'PAYMENT_PENDING', #{order.amount}, #{order.tossOrderId}, NOW(), NOW())
   </insert>
@@ -66,7 +66,11 @@
   <!-- 기존 주문을 결제 대기 상태로 재활성화 (미사용) -->
   <update id="repend">
     UPDATE orders
-    SET status = 'PAYMENT_PENDING', buyer_id = #{buyerId}, amount = #{amount}, updated_at = NOW()
+    SET status = 'PAYMENT_PENDING',
+        buyer_id = #{buyerId},
+        amount = #{amount},
+        toss_order_id = #{tossOrderId},
+        updated_at = NOW()
     WHERE order_id = #{orderId}
   </update>
   

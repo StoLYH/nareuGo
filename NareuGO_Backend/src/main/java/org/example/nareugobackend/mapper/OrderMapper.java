@@ -20,7 +20,8 @@ public interface OrderMapper {
 
     void repend(@Param("orderId") Long orderId,
                 @Param("buyerId") Long buyerId,
-                @Param("amount") java.math.BigDecimal amount);
+                @Param("amount") java.math.BigDecimal amount,
+                @Param("tossOrderId") String tossOrderId);
 
     java.util.List<Order> findExpiredPendingOrders();
 
