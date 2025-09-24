@@ -22,6 +22,11 @@ export default defineConfig({
     hmr: {
       port: 5173,
     },
+    // Windows/네트워크 파일시스템에서 변경 감지 안정화를 위해 폴링 워처 사용
+    watch: {
+      usePolling: true,
+      interval: 100,
+    },
   },
   define: {
     global: 'globalThis',

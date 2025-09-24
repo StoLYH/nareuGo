@@ -1,12 +1,12 @@
 <template>
   <header class="mypage-header">
     <!-- 뒤로가기 버튼 -->
-    <button class="icon-btn back-btn" @click="goBack" title="뒤로가기">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-        <path d="M15 18L9 12L15 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-      </svg>
-    </button>
-
+    <button class="icon-btn back-btn" @click="goBack" aria-label="뒤로가기">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M15 18L9 12L15 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+    
     <!-- 타이틀 -->
     <h1 class="header-title">마이나르고</h1>
 
@@ -21,7 +21,7 @@
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" focusable="false" aria-hidden="true">
           <path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.89 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z" fill="currentColor"/>
         </svg>
-      </button>
+      </button> 
     </div>
   </header>
 </template>
@@ -32,7 +32,7 @@ import { useRouter } from 'vue-router';
 const router = useRouter();
 
 const goBack = () => router.go(-1);
-const openCustomerService = () => console.log('고객센터 열기');
+// const openCustomerService = () => console.log('고객센터 열기');
 const goNotifications = () => router.push({ name: 'Notifications' });
 </script>
 
@@ -86,9 +86,6 @@ const goNotifications = () => router.push({ name: 'Notifications' });
   transition: all 0.2s ease;
 }
 
-/* 아이콘 렌더링 호환성 개선 (Chrome/Edge 등) */
-.icon-btn svg { display: block; }
-.icon-btn svg path { fill: currentColor !important; }
 
 .icon-btn:hover {
   background-color: rgba(255,255,255,0.28);
