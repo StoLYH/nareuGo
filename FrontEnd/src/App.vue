@@ -125,10 +125,12 @@ table {
 }
 /* === Global caret and selection rules to avoid stray carets on non-inputs === */
 /* 기본적으로 전체 페이지에서 캐럿을 숨기고, 실제 입력 가능한 요소에서만 표시합니다. */
-html, body {
+/* 모든 요소에 대해 기본 캐럿 숨김 처리 */
+*:not(input):not(textarea):not([contenteditable]):not([contenteditable="true"]) {
   caret-color: transparent;
 }
-input, textarea, [contenteditable="true"] {
+/* 입력 가능한 요소에 대해서만 캐럿 표시 */
+input, textarea, [contenteditable]:not([contenteditable="false"]) {
   caret-color: auto; /* 입력창에서는 정상 표시 */
 }
 /* 비인터랙티브 요소에 포커스가 가는 경우의 외곽선 제거 (접근성 영향 없음: 버튼/링크에는 적용하지 않음) */
@@ -138,6 +140,20 @@ input, textarea, [contenteditable="true"] {
 /* UI 컨트롤에서 텍스트 드래그 방지 (불필요한 선택 방지) */
 button, .nav-item, .slider-nav, .like-button, .chat-button {
   user-select: none;
+}
+/* 페이지 전반에서 비입력 요소의 텍스트 선택 및 캐럿 표시를 억제 */
+html, body, .layout, .content {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+/* 입력/에디터 영역에서는 정상적으로 텍스트 선택 및 캐럿 표시 */
+input, textarea, [contenteditable="true"], [contenteditable]:not([contenteditable="false"]) {
+  -webkit-user-select: text;
+  -moz-user-select: text;
+  -ms-user-select: text;
+  user-select: text;
 }
 /* 폰트 & CSS 변수 */
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700&display=swap');

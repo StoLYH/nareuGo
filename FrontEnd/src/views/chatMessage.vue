@@ -130,7 +130,7 @@
             </div>
             <h3>판매자에게 결제 승인을 요청할까요?</h3>
           </div>
-          <p class="modal-desc">*빠른 시연을 위해 결제 페이지로 바로 이동합니다*</p>
+          <p class="modal-desc">*결제 대기 페이지로 이동합니다*</p>
           <div class="modal-actions">
             <button class="btn-secondary" @click="cancelPayment">취소</button>
             <button class="btn-primary" @click="confirmPayment" :disabled="isCreatingOrder">
@@ -207,7 +207,7 @@ const proceedPaymentFlow = async () => {
   const orderId = orderData.orderId;
   console.log("주문 생성 완료 - orderId:", orderId);
 
-  router.push({ name: "PaymentDetail", params: { orderId } });
+  router.push({ name: "PaymentPending", params: { orderId } });
 };
 
 // 현재 로그인한 사용자 ID 가져오기
