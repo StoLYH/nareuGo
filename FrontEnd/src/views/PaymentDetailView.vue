@@ -3,11 +3,13 @@
     <div class="payment-detail-view">
       <!-- 상단 헤더 -->
       <header class="payment-header">
-        <button @click="goBack" class="back-button">
+        <div class="header-spacer"></div>
+        <h1 class="header-title">결제하기</h1>
+        <button @click="closeAndGoList" class="close-button" aria-label="닫기">
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            width="24"
-            height="24"
+            width="20"
+            height="20"
             viewBox="0 0 24 24"
             fill="none"
             stroke="currentColor"
@@ -15,11 +17,10 @@
             stroke-linecap="round"
             stroke-linejoin="round"
           >
-            <polyline points="15 18 9 12 15 6"></polyline>
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
           </svg>
         </button>
-        <h1 class="header-title">결제하기</h1>
-        <div class="header-spacer"></div>
       </header>
 
       <!-- 메인 콘텐츠 -->
@@ -262,8 +263,9 @@ export default {
     formatPrice(price) {
       return price.toLocaleString("ko-KR");
     },
-    goBack() {
-      this.$router.go(-1);
+    closeAndGoList() {
+      // 아이템 리스트(홈) 화면으로 이동
+      this.$router.push('/home');
     },
 
     // ===== orderId로 주문 정보 조회 =====
@@ -567,7 +569,7 @@ export default {
   border-bottom: none;
 }
 
-.back-button {
+.close-button {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -579,7 +581,7 @@ export default {
   transition: background-color 0.2s ease;
 }
 
-.back-button:hover {
+.close-button:hover {
   background-color: rgba(255,255,255,0.28);
 }
 

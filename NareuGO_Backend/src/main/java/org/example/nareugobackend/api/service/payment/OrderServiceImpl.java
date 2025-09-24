@@ -40,22 +40,33 @@ public class OrderServiceImpl implements OrderService {
                     latest.setStatus(OrderStatus.CANCELLED);
                 }
             }
-            // 아직 유효한 대기가 있으면 차단
+            // 아직 유효한 대기가 있으면
             if (latest.getStatus() == OrderStatus.PAYMENT_PENDING) {
+                // 동일 구매자라면 기존 주문을 재사용 (idempotent)
+                if (buyerId != null && buyerId.equals(latest.getBuyerId())) {
+                    return latest.getOrderId();
+                }
+                // 다른 구매자라면 차단
                 throw new IllegalStateException("이미 결제 대기 중인 주문이 있습니다.");
             }
+
+            // product_id UNIQUE 제약으로 인해 새 행을 추가할 수 없음. 기존 주문을 결제 대기 상태로 재활성화.
+            String tossOrderId = generateTossOrderId(productId, buyerId);
+            orderMapper.repend(latest.getOrderId(), buyerId, productPrice, tossOrderId);
+            return latest.getOrderId();
         }
 
+        // 기존 주문이 전혀 없을 때만 신규 생성
         Order order = new Order();
         order.setProductId(productId);
         order.setBuyerId(buyerId);
         order.setStatus(OrderStatus.PAYMENT_PENDING);
         order.setAmount(productPrice); // 실제 상품 가격 사용
-        
+
         // 토스페이먼츠 규격에 맞는 orderId 생성 (영문 대소문자, 숫자, -, _ 허용, 6-64자)
         String tossOrderId = generateTossOrderId(productId, buyerId);
         order.setTossOrderId(tossOrderId);
-        
+
         orderMapper.insert(order);
         return order.getOrderId();
     }
