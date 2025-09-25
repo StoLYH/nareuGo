@@ -418,6 +418,7 @@
               </svg>
             </button>
           </div>
+          
           <div class="camera-content">
             <video ref="video" autoplay playsinline></video>
             <canvas ref="canvas" style="display: none;"></canvas>
@@ -432,7 +433,7 @@
             </div>
           </div>
 
-          
+
           <div class="camera-actions">
             <button @click="takePhoto" class="capture-button">
               <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
