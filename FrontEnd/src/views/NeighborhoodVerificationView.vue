@@ -418,7 +418,7 @@
               </svg>
             </button>
           </div>
-          
+          <!-- 카메라 영역 -->
           <div class="camera-content">
             <video ref="video" autoplay playsinline></video>
             <canvas ref="canvas" style="display: none;"></canvas>

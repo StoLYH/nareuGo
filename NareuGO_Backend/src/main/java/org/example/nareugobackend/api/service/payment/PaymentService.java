@@ -20,6 +20,7 @@ public interface PaymentService {
      * 4. 주문 상태를 PAYMENT_COMPLETED로 변경
      * 5. 결제 정보를 DB에 저장
      *
+     * 
      * @param requestDto 결제 승인 요청 데이터 (paymentKey, orderId, amount)
      * @throws IllegalArgumentException 주문이 존재하지 않거나 금액이 일치하지 않는 경우
      * @throws IllegalStateException 토스 결제 승인이 실패한 경우
