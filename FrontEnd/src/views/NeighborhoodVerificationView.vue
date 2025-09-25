@@ -431,6 +431,7 @@
               <p class="camera-guide">신분증을 프레임 안에 맞춰주세요</p>
             </div>
           </div>
+
           
           <div class="camera-actions">
             <button @click="takePhoto" class="capture-button">
