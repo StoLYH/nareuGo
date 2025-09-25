@@ -25,8 +25,14 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
 
 import java.util.concurrent.CompletableFuture;
+import java.util.HashMap;
+import java.util.Map;
 
 @Slf4j
 @Service
@@ -42,37 +48,61 @@ public class RobotService {
     @Value("${robot.http.url:http://localhost:8888}")
     private String robotHttpUrl;
 
-    public CompletableFuture<RobotStatusResponse> checkRobotStatus(String robotId) {
+    public CompletableFuture<RobotStatusResponse> checkRobotStatus(String robotId, Long deliveryId) {
         CompletableFuture<RobotStatusResponse> future = new CompletableFuture<>();
 
-        // 하드코딩: 개발용으로 항상 성공 응답 반환
-        log.info("로봇 상태 확인 요청 (하드코딩 응답): {}", robotId);
+        try {
+            log.info("로봇 상태 확인 요청: robotId={}, deliveryId={}", robotId, deliveryId);
 
-        RobotStatusResponse robotResponse = RobotStatusResponse.builder()
-            .status(RobotStatus.VALID.getValue())
-            .message("작업 가능")
-            .timestamp(java.time.Instant.now().toString())
-            .build();
+            // 로봇 서버에 상태 확인 요청 (delivery_id 파라미터 추가)
+            String robotStatusUrl = robotHttpUrl + "/robot/status?robotId=" + robotId;
+            if (deliveryId != null) {
+                robotStatusUrl += "&delivery_id=" + deliveryId;
+            }
+            String response = restTemplate.getForObject(robotStatusUrl, String.class);
 
-        log.info("로봇 상태 응답 성공 (하드코딩): status={}, message={}",
-                 robotResponse.getStatus(), robotResponse.getMessage());
-        future.complete(robotResponse);
+            // JSON 응답 파싱
+            JsonNode jsonResponse = objectMapper.readTree(response);
+            String status = jsonResponse.get("status").asText();
+            String message = jsonResponse.get("message").asText();
+            String timestamp = jsonResponse.get("timestamp").asText();
+
+            RobotStatusResponse robotResponse = RobotStatusResponse.builder()
+                .status(status)
+                .message(message)
+                .timestamp(timestamp)
+                .build();
+
+            log.info("로봇 상태 응답 성공: status={}, message={}", status, message);
+            future.complete(robotResponse);
+
+        } catch (Exception e) {
+            log.error("로봇 상태 확인 실패: {}", e.getMessage());
+            future.complete(createErrorResponse());
+        }
 
         return future;
     }
 
     private RobotStatusResponse createErrorResponse() {
-        // 하드코딩: 에러 발생 시에도 성공 응답 반환
         return RobotStatusResponse.builder()
-            .status(RobotStatus.VALID.getValue())
-            .message("작업 가능")
+            .status(RobotStatus.ERROR.getValue())
+            .message("로봇 통신 오류")
             .timestamp(java.time.Instant.now().toString())
             .build();
     }
 
     private String getStatusMessage(RobotStatus status) {
-        // 하드코딩: 모든 상태에 대해 "작업 가능" 반환
-        return "작업 가능";
+        switch (status) {
+            case VALID:
+                return "작업 가능";
+            case BUSY:
+                return "작업 중";
+            case ERROR:
+                return "오류 상태";
+            default:
+                return "알 수 없음";
+        }
     }
 
     public void sendLocationRequest(String robotId, String destination) {
@@ -167,10 +197,52 @@ public class RobotService {
         try {
             log.info("로봇 {}에게 배송 시작 명령 전송: 배송 ID {}, 픽업 주소: {}, 배송 주소: {}",
                     robotId, deliveryId, addresses.getSellerAddress(), addresses.getBuyerAddress());
-            // HTTP 기반 로봇 제어로 변경 예정
+
+            // 로봇에 주소 정보 전송하여 배송 시작
+            sendAddressesToRobot(addresses.getSellerAddress(), addresses.getBuyerAddress(), deliveryId);
+
         } catch (Exception e) {
             log.error("배송 시작 명령 전송 실패: {}", e.getMessage());
             throw new RobotException(RobotErrorCode.ROBOT_COMMAND_FAILED, "배송 시작 명령 전송 실패", e);
+        }
+    }
+
+    /**
+     * 로봇에 주소 정보를 전송하여 배송을 시작시키는 메서드
+     */
+    public void sendAddressesToRobot(String sellerAddress, String buyerAddress, Long deliveryId) {
+        try {
+            log.info("로봇에 주소 전송 시작 - 판매자: {}, 구매자: {}", sellerAddress, buyerAddress);
+
+            // JSON 데이터 생성
+            Map<String, String> addressData = new HashMap<>();
+            addressData.put("sellerAddress", sellerAddress);
+            addressData.put("buyerAddress", buyerAddress);
+
+            // HTTP 헤더 설정
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
+
+            // HTTP 요청 엔티티 생성
+            HttpEntity<Map<String, String>> requestEntity = new HttpEntity<>(addressData, headers);
+
+            // 로봇 서버로 GET 요청 전송 (쿼리 파라미터 포함)
+            String robotUrl = robotHttpUrl + "/robot/delivery/" + deliveryId + "/addresses" +
+                    "?sellerAddress=" + java.net.URLEncoder.encode(sellerAddress, "UTF-8") +
+                    "&buyerAddress=" + java.net.URLEncoder.encode(buyerAddress, "UTF-8");
+
+            // restTemplate.exchange(
+            //     robotUrl,
+            //     HttpMethod.GET,
+            //     new HttpEntity<>(new HttpHeaders()),
+            //     String.class
+            // );
+
+            log.info("로봇에 주소 전송 완료 - URL: {}", robotUrl);
+
+        } catch (Exception e) {
+            log.error("로봇 주소 전송 실패: {}", e.getMessage());
+            throw new RobotException(RobotErrorCode.ROBOT_COMMAND_FAILED, "로봇 주소 전송 실패", e);
         }
     }
 
@@ -284,7 +356,7 @@ public class RobotService {
             // 2. Python 스크립트 실행
             ProcessBuilder processBuilder = new ProcessBuilder(
                 "python3",
-                "../Embedded/src/delivery.py",
+                "/home/hb/Git/Embedded/src/delivery.py",
                 deliveryId.toString(),
                 addresses.getSellerAddress(),
                 addresses.getBuyerAddress()

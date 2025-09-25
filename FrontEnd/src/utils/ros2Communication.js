@@ -87,31 +87,31 @@ class ROS2Communication {
     }
   }
 
-  // 배송 시작 명령 전송
+  // 배송 시작 명령 전송 - 실제 로봇 HTTP API 사용
   async sendDeliveryStart(addresses) {
-    if (!this.isConnected) {
-      console.warn('⚠️ [ROS2] 연결되지 않음, 시뮬레이션 모드')
-      return this.simulateDeliveryStart(addresses)
-    }
-
     try {
-      const message = {
-        op: 'publish',
-        topic: '/delivery/start',
-        msg: {
-          seller_address: addresses.sellerAddress,
-          buyer_address: addresses.buyerAddress,
-          robot_id: 1,
-          timestamp: Date.now()
+      console.log('🚀 [ROBOT] 배송 시작 명령 전송:', addresses)
+
+      // 실제 로봇 백엔드 API 호출 - URL 쿼리 파라미터 사용
+      const params = new URLSearchParams({
+        sellerAddress: addresses.sellerAddress,
+        buyerAddress: addresses.buyerAddress
+      })
+      const response = await fetch(`http://localhost:8888/robot/delivery/1/addresses?${params}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json'
         }
+      })
+
+      if (response.ok) {
+        console.log('✅ [ROBOT] 배송 시작 명령 전송 완료')
+        return { success: true, message: '배송 시작 명령 전송 완료' }
+      } else {
+        throw new Error(`로봇 API 오류: ${response.status}`)
       }
-
-      console.log('🚀 [ROS2] 배송 시작 명령 전송:', message)
-      this.websocket.send(JSON.stringify(message))
-
-      return { success: true, message: '배송 시작 명령 전송 완료' }
     } catch (error) {
-      console.error('❌ [ROS2] 배송 시작 명령 전송 실패:', error)
+      console.error('❌ [ROBOT] 배송 시작 명령 전송 실패:', error)
       throw error
     }
   }
@@ -143,52 +143,6 @@ class ROS2Communication {
     }
   }
 
-  // 시뮬레이션 모드 (ROS2 연결이 없을 때)
-  simulateDeliveryStart(addresses) {
-    console.log('🎭 [ROS2 시뮬레이션] 배송 시작')
-    console.log('🏠 [시뮬레이션] 판매자 주소:', addresses.sellerAddress)
-    console.log('🏠 [시뮬레이션] 구매자 주소:', addresses.buyerAddress)
-
-    // 시뮬레이션: 로봇이 판매자 주소로 이동 시작
-    setTimeout(() => {
-      console.log('🤖 [시뮬레이션] 로봇이 판매자 주소로 이동을 시작했습니다')
-
-      // 판매자 도착 시뮬레이션 (3초 후)
-      setTimeout(async () => {
-        console.log('🏠 [시뮬레이션] 로봇이 판매자 주소에 도착했습니다!')
-
-        try {
-          // 백엔드에 판매자 도착 알림 요청
-          const response = await fetch('http://localhost:8080/robot/simulate-arrival?deliveryId=1&delaySeconds=1', {
-            method: 'POST'
-          })
-
-          if (response.ok) {
-            console.log('🔔 [시뮬레이션] 판매자 도착 알림 발송 완료')
-
-            // 프론트엔드 알림 이벤트 발생
-            window.dispatchEvent(new CustomEvent('robotArrivedAtSeller', {
-              detail: {
-                message: '나르고가 도착했습니다! 상품을 로봇에 넣어주세요.',
-                deliveryId: 1,
-                timestamp: new Date().toISOString()
-              }
-            }))
-          } else {
-            console.error('❌ [시뮬레이션] 판매자 도착 알림 발송 실패')
-          }
-        } catch (error) {
-          console.error('❌ [시뮬레이션] 알림 요청 실패:', error)
-        }
-      }, 3000) // 3초 후 판매자 도착
-    }, 1000)
-
-    return {
-      success: true,
-      message: '시뮬레이션 모드: 배송 시작 명령 처리됨',
-      simulation: true
-    }
-  }
 
   // 연결 종료
   disconnect() {
