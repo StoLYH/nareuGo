@@ -455,11 +455,12 @@ export default {
   data() {
     return {
       currentStep: 1,
-      testMode: true, // 테스트 모드 활성화
+      testMode: false, // 실제 모드로 전환
       currentLatitude: null,
       currentLongitude: null,
       verifiedLocation: null,
       verifiedAddress: null,
+      locationAccuracy: null,
       isLocationVerified: false,
       isPhotoTaken: false,
       capturedImage: null,
@@ -467,6 +468,8 @@ export default {
       stream: null,
       isProcessing: false,
       verificationResult: null,
+      gpsLoading: false,
+      gpsError: null,
       gpsVerified: false,
       ocrVerified: false,
       apartmentVerified: false,
@@ -615,46 +618,23 @@ export default {
     },
     
     async startGpsVerification() {
-      this.locationLoading = true;
-      this.locationError = null;
-      
+      this.gpsLoading = true;
+      this.gpsError = null;
       try {
-        if (this.testMode) {
-          // 테스트 모드: 하드코딩된 위치 정보 사용
-   
-          this.verifiedLocation = "경기도 성남시 분당구"; // 테스트용 주소
-          
-          console.log('🧪 테스트 모드: 하드코딩된 위치 사용');
-          
-        } else {
-          // 실제 모드: GPS 사용
-          const position = await this.getCurrentPosition();
-          this.currentLatitude = position.coords.latitude;
-          this.currentLongitude = position.coords.longitude;
-          this.locationAccuracy = position.coords.accuracy;
-          
-          // 좌표를 주소로 변환
-          const address = await this.reverseGeocode(this.currentLatitude, this.currentLongitude);
-          this.verifiedLocation = address;
-        }
-        
+        // 카카오 지도 헬퍼 사용: 현재 좌표와 주소 동시 획득
+        const { latitude, longitude, fullAddress, accuracy } = await this.getCurrentLocationWithKakao();
+        this.currentLatitude = latitude;
+        this.currentLongitude = longitude;
+        this.verifiedLocation = fullAddress;
+        this.locationAccuracy = accuracy;
+
         this.isLocationVerified = true;
         this.gpsVerified = true;
-        this.currentStep = 2;
-        
-        // console.log('위치 인증 성공:', {
-        //   latitude: this.currentLatitude,
-        //   longitude: this.currentLongitude,
-        //   address: this.verifiedLocation,
-        //   accuracy: this.locationAccuracy,
-        //   testMode: this.testMode
-        // });
-        
       } catch (error) {
         console.error('위치 인증 오류:', error);
-        this.locationError = error.message || '위치 정보를 가져올 수 없습니다. GPS가 활성화되어 있는지 확인해주세요.';
+        this.gpsError = this.getGpsErrorMessage(error);
       } finally {
-        this.locationLoading = false;
+        this.gpsLoading = false;
       }
     },
     
@@ -768,7 +748,7 @@ export default {
             imageFormat: imageFormat,
             latitude: this.currentLatitude,
             longitude: this.currentLongitude,
-            gpsAddress: this.testMode ? "경기도 성남시 분당구" : this.verifiedLocation
+            gpsAddress: this.verifiedLocation
           })
         });
         
