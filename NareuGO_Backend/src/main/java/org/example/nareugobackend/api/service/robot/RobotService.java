@@ -143,8 +143,21 @@ public class RobotService {
             Order order = delivery.getOrder();
             User buyer = order.getBuyer();
 
+            log.info("디버그 - 주문 정보: ID={}, productId={}, 구매자ID={}",
+                     order.getId(), order.getProductId(), buyer.getId());
+
             // 판매자 정보 조회
             User seller = getSeller(order);
+
+            log.info("디버그 - 상품에서 조회된 판매자ID={}", seller.getId());
+
+        
+
+            // 디버그: 사용자 정보 로깅
+            log.info("디버그 - 판매자 정보: ID={}, 이름={}, 동={}, 호={}",
+                     seller.getId(), seller.getName(), seller.getBuildingDong(), seller.getBuildingHo());
+            log.info("디버그 - 구매자 정보: ID={}, 이름={}, 동={}, 호={}",
+                     buyer.getId(), buyer.getName(), buyer.getBuildingDong(), buyer.getBuildingHo());
 
             // 판매자 주소 구성
             String sellerAddress = buildUserAddress(seller);
@@ -226,7 +239,7 @@ public class RobotService {
             HttpEntity<Map<String, String>> requestEntity = new HttpEntity<>(addressData, headers);
 
             // 로봇 서버로 GET 요청 전송 (쿼리 파라미터 포함)
-            String robotUrl = robotHttpUrl + "/robot/delivery/" + deliveryId + "/addresses" +
+            String robotUrl = robotHttpUrl + "/robot/delivery/1/addresses" +
                     "?sellerAddress=" + java.net.URLEncoder.encode(sellerAddress, "UTF-8") +
                     "&buyerAddress=" + java.net.URLEncoder.encode(buyerAddress, "UTF-8");
 
@@ -467,6 +480,36 @@ public class RobotService {
 
         } catch (Exception e) {
             log.error("로봇에게 픽업 완료 신호 전송 실패 - 배송 ID: {}, 오류: {}", deliveryId, e.getMessage(), e);
+            return false;
+        }
+    }
+
+    /**
+     * 로봇에게 구매자 수령 완료 신호 전송
+     */
+    public boolean notifyRobotBuyerPickupComplete(Long deliveryId) {
+        try {
+            log.info("로봇에게 구매자 수령 완료 신호 전송 시작 - 배송 ID: {}", deliveryId);
+
+            String robotUrl = robotHttpUrl + "/robot/delivery/" + deliveryId + "/buyer/orig_pos";
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
+
+            Map<String, Object> requestBody = new HashMap<>();
+            requestBody.put("timestamp", java.time.Instant.now().toString());
+            requestBody.put("deliveryId", deliveryId);
+
+            HttpEntity<Map<String, Object>> entity = new HttpEntity<>(requestBody, headers);
+
+            // 로봇 서버로 POST 요청 전송
+            String response = restTemplate.postForObject(robotUrl, entity, String.class);
+
+            log.info("로봇에게 구매자 수령 완료 신호 전송 성공 - 배송 ID: {}, 응답: {}", deliveryId, response);
+            return true;
+
+        } catch (Exception e) {
+            log.error("로봇에게 구매자 수령 완료 신호 전송 실패 - 배송 ID: {}, 오류: {}", deliveryId, e.getMessage(), e);
             return false;
         }
     }
