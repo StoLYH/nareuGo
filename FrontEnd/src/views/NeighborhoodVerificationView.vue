@@ -479,7 +479,10 @@ export default {
       apartmentName: '',
       buildingDong: '',
       buildingHo: '',
-      isApartmentLoading: false
+      isApartmentLoading: false,
+      ocrLoading: false,
+      ocrError: null,
+      ocrResult: null
     };
   },
   methods: {
