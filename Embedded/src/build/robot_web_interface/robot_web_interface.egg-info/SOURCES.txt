@@ -1,0 +1,15 @@
+package.xml
+setup.cfg
+setup.py
+launch/robot_web_interface.launch.py
+resource/robot_web_interface
+robot_web_interface/__init__.py
+robot_web_interface/robot_status_client.py
+robot_web_interface/robot_status_monitor.py
+robot_web_interface.egg-info/PKG-INFO
+robot_web_interface.egg-info/SOURCES.txt
+robot_web_interface.egg-info/dependency_links.txt
+robot_web_interface.egg-info/entry_points.txt
+robot_web_interface.egg-info/requires.txt
+robot_web_interface.egg-info/top_level.txt
+robot_web_interface.egg-info/zip-safe

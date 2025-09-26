@@ -1,0 +1,255 @@
+[0.000000] (-) TimerEvent: {}
+[0.000160] (turtlebot3_manipulation_gazebo) JobQueued: {'identifier': 'turtlebot3_manipulation_gazebo', 'dependencies': OrderedDict()}
+[0.000297] (turtlebot3_manipulation_gazebo) JobStarted: {'identifier': 'turtlebot3_manipulation_gazebo'}
+[0.006053] (turtlebot3_manipulation_gazebo) JobProgress: {'identifier': 'turtlebot3_manipulation_gazebo', 'progress': 'cmake'}
+[0.006212] (turtlebot3_manipulation_gazebo) Command: {'cmd': ['/usr/bin/cmake', '/home/donggun/S13P21A501/Embedded/src/turtlebot3_simulations/turtlebot3_manipulation_gazebo', '-DCMAKE_INSTALL_PREFIX=/home/donggun/S13P21A501/Embedded/src/turtlebot3_simulations/turtlebot3_manipulation_gazebo/install/turtlebot3_manipulation_gazebo'], 'cwd': '/home/donggun/S13P21A501/Embedded/src/turtlebot3_simulations/turtlebot3_manipulation_gazebo/build/turtlebot3_manipulation_gazebo', 'env': OrderedDict([('GJS_DEBUG_TOPICS', 'JS ERROR;JS LOG'), ('USER', 'donggun'), ('LANGUAGE', 'ko:en'), ('LC_TIME', 'ko_KR.UTF-8'), ('XDG_SESSION_TYPE', 'wayland'), ('SHLVL', '1'), ('LD_LIBRARY_PATH', '/home/donggun/S13P21A501/Embedded/install/turtlebot3_msgs/lib:/home/donggun/S13P21A501/Embedded/install/turtlebot3_manipulation_hardware/lib:/home/donggun/S13P21A501/Embedded/install/turtlebot3_manipulation_gazebo/lib:/home/donggun/S13P21A501/Embedded/install/dynamixel_sdk_custom_interfaces/lib:/home/donggun/S13P21A501/Embedded/install/dynamixel_sdk/lib:/usr/lib/x86_64-linux-gnu/gazebo-11/plugins:/opt/ros/humble/opt/rviz_ogre_vendor/lib:/opt/ros/humble/lib/x86_64-linux-gnu:/opt/ros/humble/lib'), ('HOME', '/home/donggun'), ('OLDPWD', '/home/donggun/S13P21A501/Embedded/src/turtlebot3_simulations'), ('LESS', '-R'), ('DESKTOP_SESSION', 'ubuntu'), ('NVM_BIN', '/home/donggun/.nvm/versions/node/v18.20.8/bin'), ('GIO_LAUNCHED_DESKTOP_FILE', '/usr/share/applications/terminator.desktop'), ('ZSH', '/home/donggun/.oh-my-zsh'), ('LSCOLORS', 'Gxfxcxdxbxegedabagacad'), ('NVM_INC', '/home/donggun/.nvm/versions/node/v18.20.8/include/node'), ('GTK_MODULES', 'gail:atk-bridge'), ('GNOME_SHELL_SESSION_MODE', 'ubuntu'), ('PAGER', 'less'), ('ROS_PYTHON_VERSION', '3'), ('MANAGERPID', '1373'), ('LC_MONETARY', 'ko_KR.UTF-8'), ('SYSTEMD_EXEC_PID', '1644'), ('DBUS_SESSION_BUS_ADDRESS', 'unix:path=/run/user/1000/bus'), ('P9K_TTY', 'old'), ('GIO_LAUNCHED_DESKTOP_FILE_PID', '44417'), ('TERMINATOR_DBUS_NAME', 'net.tenshu.Terminator25ef4b219e3b005583550f2b0f9f990c3'), ('COLORTERM', 'truecolor'), ('NVM_DIR', '/home/donggun/.nvm'), ('WAYLAND_DISPLAY', 'wayland-0'), ('ROS_DISTRO', 'humble'), ('COLCON_PREFIX_PATH', '/home/donggun/S13P21A501/Embedded/install'), ('LOGNAME', 'donggun'), ('JOURNAL_STREAM', '8:17845'), ('_', '/usr/bin/colcon'), ('_P9K_SSH_TTY', '/dev/pts/0'), ('XDG_SESSION_CLASS', 'user'), ('ROS_VERSION', '2'), ('USERNAME', 'donggun'), ('TERM', 'xterm-256color'), ('GNOME_DESKTOP_SESSION_ID', 'this-is-deprecated'), ('ROS_LOCALHOST_ONLY', '0'), ('PATH', '/home/donggun/S13P21A501/Embedded/install/app_navigation/bin:/opt/ros/humble/bin:/home/donggun/.nvm/versions/node/v18.20.8/bin:/home/donggun/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/snap/bin'), ('INVOCATION_ID', '83709e6f881f4b258ae7b2ba44129886'), ('SESSION_MANAGER', 'local/donggun-760XDA:@/tmp/.ICE-unix/1596,unix/donggun-760XDA:/tmp/.ICE-unix/1596'), ('PAPERSIZE', 'a4'), ('GNOME_SETUP_DISPLAY', ':1'), ('XDG_RUNTIME_DIR', '/run/user/1000'), ('LC_ADDRESS', 'ko_KR.UTF-8'), ('XDG_MENU_PREFIX', 'gnome-'), ('DISPLAY', ':0'), ('LC_TELEPHONE', 'ko_KR.UTF-8'), ('TERMINATOR_DBUS_PATH', '/net/tenshu/Terminator2'), ('LANG', 'ko_KR.UTF-8'), ('IBUS_DISABLE_SNOOPER', '1'), ('XDG_CURRENT_DESKTOP', 'ubuntu:GNOME'), ('XAUTHORITY', '/run/user/1000/.mutter-Xwaylandauth.RW40C3'), ('XDG_SESSION_DESKTOP', 'ubuntu'), ('XMODIFIERS', '@im=ibus'), ('LS_COLORS', 'rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.webp=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:'), ('SSH_AGENT_LAUNCHER', 'gnome-keyring'), ('SSH_AUTH_SOCK', '/run/user/1000/keyring/ssh'), ('AMENT_PREFIX_PATH', '/home/donggun/S13P21A501/Embedded/install/turtlebot3:/home/donggun/S13P21A501/Embedded/install/turtlebot3_teleop:/home/donggun/S13P21A501/Embedded/install/turtlebot3_simulations:/home/donggun/S13P21A501/Embedded/install/turtlebot3_bringup:/home/donggun/S13P21A501/Embedded/install/turtlebot3_node:/home/donggun/S13P21A501/Embedded/install/turtlebot3_navigation2:/home/donggun/S13P21A501/Embedded/install/turtlebot3_fake_node:/home/donggun/S13P21A501/Embedded/install/turtlebot3_example:/home/donggun/S13P21A501/Embedded/install/turtlebot3_msgs:/home/donggun/S13P21A501/Embedded/install/turtlebot3_manipulation:/home/donggun/S13P21A501/Embedded/install/turtlebot3_manipulation_teleop:/home/donggun/S13P21A501/Embedded/install/turtlebot3_manipulation_navigation2:/home/donggun/S13P21A501/Embedded/install/turtlebot3_manipulation_moveit_config:/home/donggun/S13P21A501/Embedded/install/turtlebot3_manipulation_hardware:/home/donggun/S13P21A501/Embedded/install/turtlebot3_manipulation_gazebo:/home/donggun/S13P21A501/Embedded/install/turtlebot3_manipulation_bringup:/home/donggun/S13P21A501/Embedded/install/turtlebot3_manipulation_description:/home/donggun/S13P21A501/Embedded/install/turtlebot3_manipulation_cartographer:/home/donggun/S13P21A501/Embedded/install/turtlebot3_gazebo:/home/donggun/S13P21A501/Embedded/install/turtlebot3_description:/home/donggun/S13P21A501/Embedded/install/turtlebot3_cartographer:/home/donggun/S13P21A501/Embedded/install/dynamixel_sdk_examples:/home/donggun/S13P21A501/Embedded/install/dynamixel_sdk_custom_interfaces:/home/donggun/S13P21A501/Embedded/install/dynamixel_sdk:/home/donggun/S13P21A501/Embedded/install/app_navigation:/opt/ros/humble'), ('ROS_DOMAIN_ID', '12'), ('TERMINATOR_UUID', 'urn:uuid:3f619391-6429-4a45-a343-da37742ea4a3'), ('LC_NAME', 'ko_KR.UTF-8'), ('SHELL', '/usr/bin/zsh'), ('GDMSESSION', 'ubuntu'), ('QT_ACCESSIBILITY', '1'), ('LC_MEASUREMENT', 'ko_KR.UTF-8'), ('GJS_DEBUG_OUTPUT', 'stderr'), ('LC_IDENTIFICATION', 'ko_KR.UTF-8'), ('P9K_SSH', '0'), ('QT_IM_MODULE', 'ibus'), ('PWD', '/home/donggun/S13P21A501/Embedded/src/turtlebot3_simulations/turtlebot3_manipulation_gazebo/build/turtlebot3_manipulation_gazebo'), ('LC_ALL', 'en_US.UTF-8'), ('TURTLEBOT3_MODEL', 'waffle'), ('XDG_DATA_DIRS', '/usr/local/share/:/usr/share/:/var/lib/snapd/desktop'), ('_P9K_TTY', '/dev/pts/0'), ('NVM_CD_FLAGS', '-q'), ('LC_NUMERIC', 'ko_KR.UTF-8'), ('PYTHONPATH', '/home/donggun/S13P21A501/Embedded/install/turtlebot3_teleop/lib/python3.10/site-packages:/home/donggun/S13P21A501/Embedded/install/turtlebot3_example/lib/python3.10/site-packages:/home/donggun/S13P21A501/Embedded/install/turtlebot3_msgs/local/lib/python3.10/dist-packages:/home/donggun/S13P21A501/Embedded/install/dynamixel_sdk_custom_interfaces/local/lib/python3.10/dist-packages:/home/donggun/S13P21A501/Embedded/install/dynamixel_sdk/local/lib/python3.10/dist-packages:/home/donggun/S13P21A501/Embedded/install/app_navigation/lib/python3.10/site-packages:/opt/ros/humble/lib/python3.10/site-packages:/opt/ros/humble/local/lib/python3.10/dist-packages'), ('LC_PAPER', 'ko_KR.UTF-8'), ('COLCON', '1'), ('VTE_VERSION', '6800'), ('CMAKE_PREFIX_PATH', '/home/donggun/S13P21A501/Embedded/install/turtlebot3:/home/donggun/S13P21A501/Embedded/install/turtlebot3_simulations:/home/donggun/S13P21A501/Embedded/install/turtlebot3_bringup:/home/donggun/S13P21A501/Embedded/install/turtlebot3_node:/home/donggun/S13P21A501/Embedded/install/turtlebot3_navigation2:/home/donggun/S13P21A501/Embedded/install/turtlebot3_fake_node:/home/donggun/S13P21A501/Embedded/install/turtlebot3_msgs:/home/donggun/S13P21A501/Embedded/install/turtlebot3_manipulation:/home/donggun/S13P21A501/Embedded/install/turtlebot3_manipulation_teleop:/home/donggun/S13P21A501/Embedded/install/turtlebot3_manipulation_navigation2:/home/donggun/S13P21A501/Embedded/install/turtlebot3_manipulation_moveit_config:/home/donggun/S13P21A501/Embedded/install/turtlebot3_manipulation_hardware:/home/donggun/S13P21A501/Embedded/install/turtlebot3_manipulation_gazebo:/home/donggun/S13P21A501/Embedded/install/turtlebot3_manipulation_bringup:/home/donggun/S13P21A501/Embedded/install/turtlebot3_manipulation_description:/home/donggun/S13P21A501/Embedded/install/turtlebot3_manipulation_cartographer:/home/donggun/S13P21A501/Embedded/install/turtlebot3_gazebo:/home/donggun/S13P21A501/Embedded/install/turtlebot3_description:/home/donggun/S13P21A501/Embedded/install/turtlebot3_cartographer:/home/donggun/S13P21A501/Embedded/install/dynamixel_sdk_examples:/home/donggun/S13P21A501/Embedded/install/dynamixel_sdk_custom_interfaces:/home/donggun/S13P21A501/Embedded/install/dynamixel_sdk:/home/donggun/S13P21A501/Embedded/install/turtlebot3_teleop:/home/donggun/S13P21A501/Embedded/install/turtlebot3_example:/home/donggun/S13P21A501/Embedded/install/app_navigation:/opt/ros/humble')]), 'shell': False}
+[0.054759] (turtlebot3_manipulation_gazebo) StdoutLine: {'line': b'-- The C compiler identification is GNU 11.4.0\n'}
+[0.087447] (turtlebot3_manipulation_gazebo) StdoutLine: {'line': b'-- The CXX compiler identification is GNU 11.4.0\n'}
+[0.092369] (turtlebot3_manipulation_gazebo) StdoutLine: {'line': b'-- Detecting C compiler ABI info\n'}
+[0.099912] (-) TimerEvent: {}
+[0.135484] (turtlebot3_manipulation_gazebo) StdoutLine: {'line': b'-- Detecting C compiler ABI info - done\n'}
+[0.140115] (turtlebot3_manipulation_gazebo) StdoutLine: {'line': b'-- Check for working C compiler: /usr/bin/cc - skipped\n'}
+[0.140520] (turtlebot3_manipulation_gazebo) StdoutLine: {'line': b'-- Detecting C compile features\n'}
+[0.140726] (turtlebot3_manipulation_gazebo) StdoutLine: {'line': b'-- Detecting C compile features - done\n'}
+[0.142698] (turtlebot3_manipulation_gazebo) StdoutLine: {'line': b'-- Detecting CXX compiler ABI info\n'}
+[0.191480] (turtlebot3_manipulation_gazebo) StdoutLine: {'line': b'-- Detecting CXX compiler ABI info - done\n'}
+[0.195805] (turtlebot3_manipulation_gazebo) StdoutLine: {'line': b'-- Check for working CXX compiler: /usr/bin/c++ - skipped\n'}
+[0.195951] (turtlebot3_manipulation_gazebo) StdoutLine: {'line': b'-- Detecting CXX compile features\n'}
+[0.196221] (turtlebot3_manipulation_gazebo) StdoutLine: {'line': b'-- Detecting CXX compile features - done\n'}
+[0.198975] (turtlebot3_manipulation_gazebo) StdoutLine: {'line': b'-- Found ament_cmake: 1.3.12 (/opt/ros/humble/share/ament_cmake/cmake)\n'}
+[0.200016] (-) TimerEvent: {}
+[0.300269] (-) TimerEvent: {}
+[0.400477] (-) TimerEvent: {}
+[0.500769] (-) TimerEvent: {}
+[0.601035] (-) TimerEvent: {}
+[0.642187] (turtlebot3_manipulation_gazebo) StdoutLine: {'line': b'-- Found Python3: /usr/bin/python3 (found version "3.10.12") found components: Interpreter \n'}
+[0.701255] (-) TimerEvent: {}
+[0.720006] (turtlebot3_manipulation_gazebo) StdoutLine: {'line': b'-- Found rclcpp: 16.0.14 (/opt/ros/humble/share/rclcpp/cmake)\n'}
+[0.755270] (turtlebot3_manipulation_gazebo) StdoutLine: {'line': b'-- Found rosidl_generator_c: 3.1.7 (/opt/ros/humble/share/rosidl_generator_c/cmake)\n'}
+[0.760157] (turtlebot3_manipulation_gazebo) StdoutLine: {'line': b'-- Found rosidl_adapter: 3.1.7 (/opt/ros/humble/share/rosidl_adapter/cmake)\n'}
+[0.766769] (turtlebot3_manipulation_gazebo) StdoutLine: {'line': b'-- Found rosidl_generator_cpp: 3.1.7 (/opt/ros/humble/share/rosidl_generator_cpp/cmake)\n'}
+[0.776145] (turtlebot3_manipulation_gazebo) StdoutLine: {'line': b'-- Using all available rosidl_typesupport_c: rosidl_typesupport_fastrtps_c;rosidl_typesupport_introspection_c\n'}
+[0.788644] (turtlebot3_manipulation_gazebo) StdoutLine: {'line': b'-- Using all available rosidl_typesupport_cpp: rosidl_typesupport_fastrtps_cpp;rosidl_typesupport_introspection_cpp\n'}
+[0.801385] (-) TimerEvent: {}
+[0.823936] (turtlebot3_manipulation_gazebo) StdoutLine: {'line': b'-- Found rmw_implementation_cmake: 6.1.2 (/opt/ros/humble/share/rmw_implementation_cmake/cmake)\n'}
+[0.826901] (turtlebot3_manipulation_gazebo) StdoutLine: {'line': b'-- Found rmw_fastrtps_cpp: 6.2.8 (/opt/ros/humble/share/rmw_fastrtps_cpp/cmake)\n'}
+[0.885418] (turtlebot3_manipulation_gazebo) StdoutLine: {'line': b'-- Found OpenSSL: /usr/lib/x86_64-linux-gnu/libcrypto.so (found version "3.0.2")  \n'}
+[0.901454] (-) TimerEvent: {}
+[0.903736] (turtlebot3_manipulation_gazebo) StdoutLine: {'line': b'-- Found FastRTPS: /opt/ros/humble/include  \n'}
+[0.930795] (turtlebot3_manipulation_gazebo) StdoutLine: {'line': b"-- Using RMW implementation 'rmw_fastrtps_cpp' as default\n"}
+[0.938800] (turtlebot3_manipulation_gazebo) StdoutLine: {'line': b'-- Looking for pthread.h\n'}
+[0.991009] (turtlebot3_manipulation_gazebo) StdoutLine: {'line': b'-- Looking for pthread.h - found\n'}
+[0.991163] (turtlebot3_manipulation_gazebo) StdoutLine: {'line': b'-- Performing Test CMAKE_HAVE_LIBC_PTHREAD\n'}
+[1.001574] (-) TimerEvent: {}
+[1.050366] (turtlebot3_manipulation_gazebo) StdoutLine: {'line': b'-- Performing Test CMAKE_HAVE_LIBC_PTHREAD - Success\n'}
+[1.051031] (turtlebot3_manipulation_gazebo) StdoutLine: {'line': b'-- Found Threads: TRUE  \n'}
+[1.092314] (turtlebot3_manipulation_gazebo) StdoutLine: {'line': b'-- Found PkgConfig: /usr/bin/pkg-config (found version "0.29.2") \n'}
+[1.093172] (turtlebot3_manipulation_gazebo) StdoutLine: {'line': b"-- Checking for module 'bullet>=2.82'\n"}
+[1.101480] (turtlebot3_manipulation_gazebo) StdoutLine: {'line': b'--   Found bullet, version 3.05\n'}
+[1.101550] (-) TimerEvent: {}
+[1.169706] (turtlebot3_manipulation_gazebo) StdoutLine: {'line': b'-- Found fcl: /usr/include (found suitable version "0.7.0", minimum required is "0.5.0") \n'}
+[1.201740] (-) TimerEvent: {}
+[1.247730] (turtlebot3_manipulation_gazebo) StdoutLine: {'line': b'-- Found assimp: /usr/include (found version "5.2.0") \n'}
+[1.269195] (turtlebot3_manipulation_gazebo) StdoutLine: {'line': b'-- Found DART: /usr/include (Required is at least version "6.6") found components: dart \n'}
+[1.291373] (turtlebot3_manipulation_gazebo) StdoutLine: {'line': b'-- Found Boost: /usr/lib/x86_64-linux-gnu/cmake/Boost-1.74.0/BoostConfig.cmake (found suitable version "1.74.0", minimum required is "1.40.0") found components: thread system filesystem program_options regex iostreams date_time \n'}
+[1.300525] (turtlebot3_manipulation_gazebo) StdoutLine: {'line': b'-- Found Protobuf: /usr/lib/x86_64-linux-gnu/libprotobuf.so (found version "3.12.4") \n'}
+[1.301800] (-) TimerEvent: {}
+[1.305182] (turtlebot3_manipulation_gazebo) StdoutLine: {'line': b'-- Looking for ignition-math6 -- found version 6.15.1\n'}
+[1.309697] (turtlebot3_manipulation_gazebo) StdoutLine: {'line': b'-- Searching for dependencies of ignition-math6\n'}
+[1.310440] (turtlebot3_manipulation_gazebo) StdoutLine: {'line': b'-- Looking for OGRE...\n'}
+[1.310680] (turtlebot3_manipulation_gazebo) StdoutLine: {'line': b'-- OGRE_PREFIX_WATCH changed.\n'}
+[1.313807] (turtlebot3_manipulation_gazebo) StdoutLine: {'line': b"-- Checking for module 'OGRE'\n"}
+[1.321958] (turtlebot3_manipulation_gazebo) StdoutLine: {'line': b'--   Found OGRE, version 1.9.0\n'}
+[1.341531] (turtlebot3_manipulation_gazebo) StdoutLine: {'line': b'-- Found Ogre Ghadamon (1.9.0)\n'}
+[1.347431] (turtlebot3_manipulation_gazebo) StdoutLine: {'line': b'-- Found OGRE: optimized;/usr/lib/x86_64-linux-gnu/libOgreMain.so;debug;/usr/lib/x86_64-linux-gnu/libOgreMain.so\n'}
+[1.353372] (turtlebot3_manipulation_gazebo) StdoutLine: {'line': b'-- Looking for OGRE_Paging...\n'}
+[1.357536] (turtlebot3_manipulation_gazebo) StdoutLine: {'line': b'-- Found OGRE_Paging: optimized;/usr/lib/x86_64-linux-gnu/libOgrePaging.so;debug;/usr/lib/x86_64-linux-gnu/libOgrePaging.so\n'}
+[1.357600] (turtlebot3_manipulation_gazebo) StdoutLine: {'line': b'-- Looking for OGRE_Terrain...\n'}
+[1.361977] (turtlebot3_manipulation_gazebo) StdoutLine: {'line': b'-- Found OGRE_Terrain: optimized;/usr/lib/x86_64-linux-gnu/libOgreTerrain.so;debug;/usr/lib/x86_64-linux-gnu/libOgreTerrain.so\n'}
+[1.362060] (turtlebot3_manipulation_gazebo) StdoutLine: {'line': b'-- Looking for OGRE_Property...\n'}
+[1.366199] (turtlebot3_manipulation_gazebo) StdoutLine: {'line': b'-- Found OGRE_Property: optimized;/usr/lib/x86_64-linux-gnu/libOgreProperty.so;debug;/usr/lib/x86_64-linux-gnu/libOgreProperty.so\n'}
+[1.366267] (turtlebot3_manipulation_gazebo) StdoutLine: {'line': b'-- Looking for OGRE_RTShaderSystem...\n'}
+[1.370465] (turtlebot3_manipulation_gazebo) StdoutLine: {'line': b'-- Found OGRE_RTShaderSystem: optimized;/usr/lib/x86_64-linux-gnu/libOgreRTShaderSystem.so;debug;/usr/lib/x86_64-linux-gnu/libOgreRTShaderSystem.so\n'}
+[1.370528] (turtlebot3_manipulation_gazebo) StdoutLine: {'line': b'-- Looking for OGRE_Volume...\n'}
+[1.374415] (turtlebot3_manipulation_gazebo) StdoutLine: {'line': b'-- Found OGRE_Volume: optimized;/usr/lib/x86_64-linux-gnu/libOgreVolume.so;debug;/usr/lib/x86_64-linux-gnu/libOgreVolume.so\n'}
+[1.374476] (turtlebot3_manipulation_gazebo) StdoutLine: {'line': b'-- Looking for OGRE_Overlay...\n'}
+[1.378620] (turtlebot3_manipulation_gazebo) StdoutLine: {'line': b'-- Found OGRE_Overlay: optimized;/usr/lib/x86_64-linux-gnu/libOgreOverlay.so;debug;/usr/lib/x86_64-linux-gnu/libOgreOverlay.so\n'}
+[1.401994] (-) TimerEvent: {}
+[1.472967] (turtlebot3_manipulation_gazebo) StdoutLine: {'line': b'-- Looking for ignition-math6 -- found version 6.15.1\n'}
+[1.475372] (turtlebot3_manipulation_gazebo) StdoutLine: {'line': b'-- Looking for ignition-transport8 -- found version 8.2.1\n'}
+[1.475604] (turtlebot3_manipulation_gazebo) StdoutLine: {'line': b'-- Searching for dependencies of ignition-transport8\n'}
+[1.487567] (turtlebot3_manipulation_gazebo) StdoutLine: {'line': b'-- Found Protobuf: /usr/lib/x86_64-linux-gnu/libprotobuf.so (found suitable version "3.12.4", minimum required is "3") \n'}
+[1.495237] (turtlebot3_manipulation_gazebo) StdoutLine: {'line': b'-- Config-file not installed for ZeroMQ -- checking for pkg-config\n'}
+[1.498151] (turtlebot3_manipulation_gazebo) StdoutLine: {'line': b"-- Checking for module 'libzmq >= 4'\n"}
+[1.502068] (-) TimerEvent: {}
+[1.506578] (turtlebot3_manipulation_gazebo) StdoutLine: {'line': b'--   Found libzmq , version 4.3.4\n'}
+[1.528885] (turtlebot3_manipulation_gazebo) StdoutLine: {'line': b'-- Found ZeroMQ: TRUE (Required is at least version "4") \n'}
+[1.533251] (turtlebot3_manipulation_gazebo) StdoutLine: {'line': b"-- Checking for module 'uuid'\n"}
+[1.541446] (turtlebot3_manipulation_gazebo) StdoutLine: {'line': b'--   Found uuid, version 2.37.2\n'}
+[1.566827] (turtlebot3_manipulation_gazebo) StdoutLine: {'line': b'-- Found UUID: TRUE  \n'}
+[1.572850] (turtlebot3_manipulation_gazebo) StdoutLine: {'line': b'-- Looking for ignition-msgs5 -- found version 5.8.1\n'}
+[1.573690] (turtlebot3_manipulation_gazebo) StdoutLine: {'line': b'-- Searching for dependencies of ignition-msgs5\n'}
+[1.589283] (turtlebot3_manipulation_gazebo) StdoutLine: {'line': b'-- Looking for ignition-math6 -- found version 6.15.1\n'}
+[1.592117] (turtlebot3_manipulation_gazebo) StdoutLine: {'line': b"-- Checking for module 'tinyxml2'\n"}
+[1.600026] (turtlebot3_manipulation_gazebo) StdoutLine: {'line': b'--   Found tinyxml2, version 9.0.0\n'}
+[1.602154] (-) TimerEvent: {}
+[1.624381] (turtlebot3_manipulation_gazebo) StdoutLine: {'line': b'-- Looking for ignition-msgs5 -- found version 5.8.1\n'}
+[1.627783] (turtlebot3_manipulation_gazebo) StdoutLine: {'line': b'-- Looking for ignition-common3 -- found version 3.14.0\n'}
+[1.628256] (turtlebot3_manipulation_gazebo) StdoutLine: {'line': b'-- Searching for dependencies of ignition-common3\n'}
+[1.628561] (turtlebot3_manipulation_gazebo) StdoutLine: {'line': b'-- Looking for dlfcn.h - found\n'}
+[1.629425] (turtlebot3_manipulation_gazebo) StdoutLine: {'line': b'-- Looking for libdl - found\n'}
+[1.630291] (turtlebot3_manipulation_gazebo) StdoutLine: {'line': b'-- Found DL: TRUE  \n'}
+[1.638010] (turtlebot3_manipulation_gazebo) StdoutLine: {'line': b'-- Found tinyobjloader: /usr/lib/x86_64-linux-gnu/cmake/tinyobjloader/tinyobjloader-config.cmake (found version "2.0.0") \n'}
+[1.638186] (turtlebot3_manipulation_gazebo) StdoutLine: {'line': b'-- Searching for <ignition-common3> component [graphics]\n'}
+[1.640548] (turtlebot3_manipulation_gazebo) StdoutLine: {'line': b'-- Looking for ignition-common3-graphics -- found version 3.14.0\n'}
+[1.640626] (turtlebot3_manipulation_gazebo) StdoutLine: {'line': b'-- Searching for dependencies of ignition-common3-graphics\n'}
+[1.640871] (turtlebot3_manipulation_gazebo) StdoutLine: {'line': b'-- Looking for ignition-math6 -- found version 6.15.1\n'}
+[1.643540] (turtlebot3_manipulation_gazebo) StdoutLine: {'line': b'-- Looking for ignition-fuel_tools4 -- found version 4.4.0\n'}
+[1.643700] (turtlebot3_manipulation_gazebo) StdoutLine: {'line': b'-- Searching for dependencies of ignition-fuel_tools4\n'}
+[1.692055] (turtlebot3_manipulation_gazebo) StdoutLine: {'line': b'-- Found CURL: /usr/lib/x86_64-linux-gnu/libcurl.so (found version "7.81.0")  \n'}
+[1.697993] (turtlebot3_manipulation_gazebo) StdoutLine: {'line': b"-- Checking for module 'jsoncpp'\n"}
+[1.702309] (-) TimerEvent: {}
+[1.705917] (turtlebot3_manipulation_gazebo) StdoutLine: {'line': b'--   Found jsoncpp, version 1.9.5\n'}
+[1.725259] (turtlebot3_manipulation_gazebo) StdoutLine: {'line': b'-- Found JSONCPP: TRUE  \n'}
+[1.728459] (turtlebot3_manipulation_gazebo) StdoutLine: {'line': b"-- Checking for module 'libzip'\n"}
+[1.736668] (turtlebot3_manipulation_gazebo) StdoutLine: {'line': b'--   Found libzip, version 1.7.3\n'}
+[1.756072] (turtlebot3_manipulation_gazebo) StdoutLine: {'line': b'-- Found ZIP: TRUE  \n'}
+[1.756314] (turtlebot3_manipulation_gazebo) StdoutLine: {'line': b'-- Looking for ignition-common3 -- found version 3.14.0\n'}
+[1.756599] (turtlebot3_manipulation_gazebo) StdoutLine: {'line': b'-- Looking for ignition-math6 -- found version 6.15.1\n'}
+[1.756780] (turtlebot3_manipulation_gazebo) StdoutLine: {'line': b'-- Looking for ignition-msgs5 -- found version 5.8.1\n'}
+[1.761802] (turtlebot3_manipulation_gazebo) StdoutLine: {'line': b'-- Found gazebo_dev: 3.9.0 (/opt/ros/humble/share/gazebo_dev/cmake)\n'}
+[1.761962] (turtlebot3_manipulation_gazebo) StdoutLine: {'line': b'-- Gazebo version: 11.10\n'}
+[1.762079] (turtlebot3_manipulation_gazebo) StdoutLine: {'line': b"-- Checking for module 'tbb'\n"}
+[1.770521] (turtlebot3_manipulation_gazebo) StdoutLine: {'line': b'--   Found tbb, version 2021.5.0\n'}
+[1.802478] (-) TimerEvent: {}
+[1.805150] (turtlebot3_manipulation_gazebo) StdoutLine: {'line': b'-- Found gazebo_ros: 3.9.0 (/opt/ros/humble/share/gazebo_ros/cmake)\n'}
+[1.868139] (turtlebot3_manipulation_gazebo) StdoutLine: {'line': b'-- Configuring done\n'}
+[1.885703] (turtlebot3_manipulation_gazebo) StdoutLine: {'line': b'-- Generating done\n'}
+[1.890474] (turtlebot3_manipulation_gazebo) StdoutLine: {'line': b'-- Build files have been written to: /home/donggun/S13P21A501/Embedded/src/turtlebot3_simulations/turtlebot3_manipulation_gazebo/build/turtlebot3_manipulation_gazebo\n'}
+[1.898743] (turtlebot3_manipulation_gazebo) CommandEnded: {'returncode': 0}
+[1.899561] (turtlebot3_manipulation_gazebo) JobProgress: {'identifier': 'turtlebot3_manipulation_gazebo', 'progress': 'build'}
+[1.899947] (turtlebot3_manipulation_gazebo) Command: {'cmd': ['/usr/bin/cmake', '--build', '/home/donggun/S13P21A501/Embedded/src/turtlebot3_simulations/turtlebot3_manipulation_gazebo/build/turtlebot3_manipulation_gazebo', '--', '-j16', '-l16'], 'cwd': '/home/donggun/S13P21A501/Embedded/src/turtlebot3_simulations/turtlebot3_manipulation_gazebo/build/turtlebot3_manipulation_gazebo', 'env': OrderedDict([('GJS_DEBUG_TOPICS', 'JS ERROR;JS LOG'), ('USER', 'donggun'), ('LANGUAGE', 'ko:en'), ('LC_TIME', 'ko_KR.UTF-8'), ('XDG_SESSION_TYPE', 'wayland'), ('SHLVL', '1'), ('LD_LIBRARY_PATH', '/home/donggun/S13P21A501/Embedded/install/turtlebot3_msgs/lib:/home/donggun/S13P21A501/Embedded/install/turtlebot3_manipulation_hardware/lib:/home/donggun/S13P21A501/Embedded/install/turtlebot3_manipulation_gazebo/lib:/home/donggun/S13P21A501/Embedded/install/dynamixel_sdk_custom_interfaces/lib:/home/donggun/S13P21A501/Embedded/install/dynamixel_sdk/lib:/usr/lib/x86_64-linux-gnu/gazebo-11/plugins:/opt/ros/humble/opt/rviz_ogre_vendor/lib:/opt/ros/humble/lib/x86_64-linux-gnu:/opt/ros/humble/lib'), ('HOME', '/home/donggun'), ('OLDPWD', '/home/donggun/S13P21A501/Embedded/src/turtlebot3_simulations'), ('LESS', '-R'), ('DESKTOP_SESSION', 'ubuntu'), ('NVM_BIN', '/home/donggun/.nvm/versions/node/v18.20.8/bin'), ('GIO_LAUNCHED_DESKTOP_FILE', '/usr/share/applications/terminator.desktop'), ('ZSH', '/home/donggun/.oh-my-zsh'), ('LSCOLORS', 'Gxfxcxdxbxegedabagacad'), ('NVM_INC', '/home/donggun/.nvm/versions/node/v18.20.8/include/node'), ('GTK_MODULES', 'gail:atk-bridge'), ('GNOME_SHELL_SESSION_MODE', 'ubuntu'), ('PAGER', 'less'), ('ROS_PYTHON_VERSION', '3'), ('MANAGERPID', '1373'), ('LC_MONETARY', 'ko_KR.UTF-8'), ('SYSTEMD_EXEC_PID', '1644'), ('DBUS_SESSION_BUS_ADDRESS', 'unix:path=/run/user/1000/bus'), ('P9K_TTY', 'old'), ('GIO_LAUNCHED_DESKTOP_FILE_PID', '44417'), ('TERMINATOR_DBUS_NAME', 'net.tenshu.Terminator25ef4b219e3b005583550f2b0f9f990c3'), ('COLORTERM', 'truecolor'), ('NVM_DIR', '/home/donggun/.nvm'), ('WAYLAND_DISPLAY', 'wayland-0'), ('ROS_DISTRO', 'humble'), ('COLCON_PREFIX_PATH', '/home/donggun/S13P21A501/Embedded/install'), ('LOGNAME', 'donggun'), ('JOURNAL_STREAM', '8:17845'), ('_', '/usr/bin/colcon'), ('_P9K_SSH_TTY', '/dev/pts/0'), ('XDG_SESSION_CLASS', 'user'), ('ROS_VERSION', '2'), ('USERNAME', 'donggun'), ('TERM', 'xterm-256color'), ('GNOME_DESKTOP_SESSION_ID', 'this-is-deprecated'), ('ROS_LOCALHOST_ONLY', '0'), ('PATH', '/home/donggun/S13P21A501/Embedded/install/app_navigation/bin:/opt/ros/humble/bin:/home/donggun/.nvm/versions/node/v18.20.8/bin:/home/donggun/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/snap/bin'), ('INVOCATION_ID', '83709e6f881f4b258ae7b2ba44129886'), ('SESSION_MANAGER', 'local/donggun-760XDA:@/tmp/.ICE-unix/1596,unix/donggun-760XDA:/tmp/.ICE-unix/1596'), ('PAPERSIZE', 'a4'), ('GNOME_SETUP_DISPLAY', ':1'), ('XDG_RUNTIME_DIR', '/run/user/1000'), ('LC_ADDRESS', 'ko_KR.UTF-8'), ('XDG_MENU_PREFIX', 'gnome-'), ('DISPLAY', ':0'), ('LC_TELEPHONE', 'ko_KR.UTF-8'), ('TERMINATOR_DBUS_PATH', '/net/tenshu/Terminator2'), ('LANG', 'ko_KR.UTF-8'), ('IBUS_DISABLE_SNOOPER', '1'), ('XDG_CURRENT_DESKTOP', 'ubuntu:GNOME'), ('XAUTHORITY', '/run/user/1000/.mutter-Xwaylandauth.RW40C3'), ('XDG_SESSION_DESKTOP', 'ubuntu'), ('XMODIFIERS', '@im=ibus'), ('LS_COLORS', 'rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.webp=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:'), ('SSH_AGENT_LAUNCHER', 'gnome-keyring'), ('SSH_AUTH_SOCK', '/run/user/1000/keyring/ssh'), ('AMENT_PREFIX_PATH', '/home/donggun/S13P21A501/Embedded/install/turtlebot3:/home/donggun/S13P21A501/Embedded/install/turtlebot3_teleop:/home/donggun/S13P21A501/Embedded/install/turtlebot3_simulations:/home/donggun/S13P21A501/Embedded/install/turtlebot3_bringup:/home/donggun/S13P21A501/Embedded/install/turtlebot3_node:/home/donggun/S13P21A501/Embedded/install/turtlebot3_navigation2:/home/donggun/S13P21A501/Embedded/install/turtlebot3_fake_node:/home/donggun/S13P21A501/Embedded/install/turtlebot3_example:/home/donggun/S13P21A501/Embedded/install/turtlebot3_msgs:/home/donggun/S13P21A501/Embedded/install/turtlebot3_manipulation:/home/donggun/S13P21A501/Embedded/install/turtlebot3_manipulation_teleop:/home/donggun/S13P21A501/Embedded/install/turtlebot3_manipulation_navigation2:/home/donggun/S13P21A501/Embedded/install/turtlebot3_manipulation_moveit_config:/home/donggun/S13P21A501/Embedded/install/turtlebot3_manipulation_hardware:/home/donggun/S13P21A501/Embedded/install/turtlebot3_manipulation_gazebo:/home/donggun/S13P21A501/Embedded/install/turtlebot3_manipulation_bringup:/home/donggun/S13P21A501/Embedded/install/turtlebot3_manipulation_description:/home/donggun/S13P21A501/Embedded/install/turtlebot3_manipulation_cartographer:/home/donggun/S13P21A501/Embedded/install/turtlebot3_gazebo:/home/donggun/S13P21A501/Embedded/install/turtlebot3_description:/home/donggun/S13P21A501/Embedded/install/turtlebot3_cartographer:/home/donggun/S13P21A501/Embedded/install/dynamixel_sdk_examples:/home/donggun/S13P21A501/Embedded/install/dynamixel_sdk_custom_interfaces:/home/donggun/S13P21A501/Embedded/install/dynamixel_sdk:/home/donggun/S13P21A501/Embedded/install/app_navigation:/opt/ros/humble'), ('ROS_DOMAIN_ID', '12'), ('TERMINATOR_UUID', 'urn:uuid:3f619391-6429-4a45-a343-da37742ea4a3'), ('LC_NAME', 'ko_KR.UTF-8'), ('SHELL', '/usr/bin/zsh'), ('GDMSESSION', 'ubuntu'), ('QT_ACCESSIBILITY', '1'), ('LC_MEASUREMENT', 'ko_KR.UTF-8'), ('GJS_DEBUG_OUTPUT', 'stderr'), ('LC_IDENTIFICATION', 'ko_KR.UTF-8'), ('P9K_SSH', '0'), ('QT_IM_MODULE', 'ibus'), ('PWD', '/home/donggun/S13P21A501/Embedded/src/turtlebot3_simulations/turtlebot3_manipulation_gazebo/build/turtlebot3_manipulation_gazebo'), ('LC_ALL', 'en_US.UTF-8'), ('TURTLEBOT3_MODEL', 'waffle'), ('XDG_DATA_DIRS', '/usr/local/share/:/usr/share/:/var/lib/snapd/desktop'), ('_P9K_TTY', '/dev/pts/0'), ('NVM_CD_FLAGS', '-q'), ('LC_NUMERIC', 'ko_KR.UTF-8'), ('PYTHONPATH', '/home/donggun/S13P21A501/Embedded/install/turtlebot3_teleop/lib/python3.10/site-packages:/home/donggun/S13P21A501/Embedded/install/turtlebot3_example/lib/python3.10/site-packages:/home/donggun/S13P21A501/Embedded/install/turtlebot3_msgs/local/lib/python3.10/dist-packages:/home/donggun/S13P21A501/Embedded/install/dynamixel_sdk_custom_interfaces/local/lib/python3.10/dist-packages:/home/donggun/S13P21A501/Embedded/install/dynamixel_sdk/local/lib/python3.10/dist-packages:/home/donggun/S13P21A501/Embedded/install/app_navigation/lib/python3.10/site-packages:/opt/ros/humble/lib/python3.10/site-packages:/opt/ros/humble/local/lib/python3.10/dist-packages'), ('LC_PAPER', 'ko_KR.UTF-8'), ('COLCON', '1'), ('VTE_VERSION', '6800'), ('CMAKE_PREFIX_PATH', '/home/donggun/S13P21A501/Embedded/install/turtlebot3:/home/donggun/S13P21A501/Embedded/install/turtlebot3_simulations:/home/donggun/S13P21A501/Embedded/install/turtlebot3_bringup:/home/donggun/S13P21A501/Embedded/install/turtlebot3_node:/home/donggun/S13P21A501/Embedded/install/turtlebot3_navigation2:/home/donggun/S13P21A501/Embedded/install/turtlebot3_fake_node:/home/donggun/S13P21A501/Embedded/install/turtlebot3_msgs:/home/donggun/S13P21A501/Embedded/install/turtlebot3_manipulation:/home/donggun/S13P21A501/Embedded/install/turtlebot3_manipulation_teleop:/home/donggun/S13P21A501/Embedded/install/turtlebot3_manipulation_navigation2:/home/donggun/S13P21A501/Embedded/install/turtlebot3_manipulation_moveit_config:/home/donggun/S13P21A501/Embedded/install/turtlebot3_manipulation_hardware:/home/donggun/S13P21A501/Embedded/install/turtlebot3_manipulation_gazebo:/home/donggun/S13P21A501/Embedded/install/turtlebot3_manipulation_bringup:/home/donggun/S13P21A501/Embedded/install/turtlebot3_manipulation_description:/home/donggun/S13P21A501/Embedded/install/turtlebot3_manipulation_cartographer:/home/donggun/S13P21A501/Embedded/install/turtlebot3_gazebo:/home/donggun/S13P21A501/Embedded/install/turtlebot3_description:/home/donggun/S13P21A501/Embedded/install/turtlebot3_cartographer:/home/donggun/S13P21A501/Embedded/install/dynamixel_sdk_examples:/home/donggun/S13P21A501/Embedded/install/dynamixel_sdk_custom_interfaces:/home/donggun/S13P21A501/Embedded/install/dynamixel_sdk:/home/donggun/S13P21A501/Embedded/install/turtlebot3_teleop:/home/donggun/S13P21A501/Embedded/install/turtlebot3_example:/home/donggun/S13P21A501/Embedded/install/app_navigation:/opt/ros/humble')]), 'shell': False}
+[1.902525] (-) TimerEvent: {}
+[1.932267] (turtlebot3_manipulation_gazebo) StdoutLine: {'line': b'[ 16%] \x1b[32mBuilding CXX object CMakeFiles/ElevatorRos2Plugin.dir/home/donggun/S13P21A501/Embedded/src/Plugin/ElevatorRos2Plugin.cpp.o\x1b[0m\n'}
+[1.932502] (turtlebot3_manipulation_gazebo) StdoutLine: {'line': b'[ 33%] \x1b[32mBuilding CXX object CMakeFiles/DisplayMarkerRos2Plugin.dir/home/donggun/S13P21A501/Embedded/src/Plugin/DisplayMarkerRos2Plugin.cpp.o\x1b[0m\n'}
+[1.932571] (turtlebot3_manipulation_gazebo) StdoutLine: {'line': b'[ 50%] \x1b[32mBuilding CXX object CMakeFiles/AptDoorRos2Plugin.dir/home/donggun/S13P21A501/Embedded/src/Plugin/AptDoorRos2Plugin.cpp.o\x1b[0m\n'}
+[2.002665] (-) TimerEvent: {}
+[2.102970] (-) TimerEvent: {}
+[2.203303] (-) TimerEvent: {}
+[2.303571] (-) TimerEvent: {}
+[2.403891] (-) TimerEvent: {}
+[2.504204] (-) TimerEvent: {}
+[2.604455] (-) TimerEvent: {}
+[2.704736] (-) TimerEvent: {}
+[2.805044] (-) TimerEvent: {}
+[2.905340] (-) TimerEvent: {}
+[3.005574] (-) TimerEvent: {}
+[3.105843] (-) TimerEvent: {}
+[3.206141] (-) TimerEvent: {}
+[3.306396] (-) TimerEvent: {}
+[3.406680] (-) TimerEvent: {}
+[3.506972] (-) TimerEvent: {}
+[3.607292] (-) TimerEvent: {}
+[3.707529] (-) TimerEvent: {}
+[3.807793] (-) TimerEvent: {}
+[3.908061] (-) TimerEvent: {}
+[4.008353] (-) TimerEvent: {}
+[4.108585] (-) TimerEvent: {}
+[4.208858] (-) TimerEvent: {}
+[4.309152] (-) TimerEvent: {}
+[4.409392] (-) TimerEvent: {}
+[4.509668] (-) TimerEvent: {}
+[4.609978] (-) TimerEvent: {}
+[4.710302] (-) TimerEvent: {}
+[4.810546] (-) TimerEvent: {}
+[4.910827] (-) TimerEvent: {}
+[5.011120] (-) TimerEvent: {}
+[5.111373] (-) TimerEvent: {}
+[5.211690] (-) TimerEvent: {}
+[5.311994] (-) TimerEvent: {}
+[5.412317] (-) TimerEvent: {}
+[5.512673] (-) TimerEvent: {}
+[5.613028] (-) TimerEvent: {}
+[5.713357] (-) TimerEvent: {}
+[5.813648] (-) TimerEvent: {}
+[5.913905] (-) TimerEvent: {}
+[6.014157] (-) TimerEvent: {}
+[6.114448] (-) TimerEvent: {}
+[6.214772] (-) TimerEvent: {}
+[6.315089] (-) TimerEvent: {}
+[6.415376] (-) TimerEvent: {}
+[6.515662] (-) TimerEvent: {}
+[6.615960] (-) TimerEvent: {}
+[6.716333] (-) TimerEvent: {}
+[6.816694] (-) TimerEvent: {}
+[6.917086] (-) TimerEvent: {}
+[7.017446] (-) TimerEvent: {}
+[7.117784] (-) TimerEvent: {}
+[7.218130] (-) TimerEvent: {}
+[7.318456] (-) TimerEvent: {}
+[7.418763] (-) TimerEvent: {}
+[7.519083] (-) TimerEvent: {}
+[7.619467] (-) TimerEvent: {}
+[7.719842] (-) TimerEvent: {}
+[7.820146] (-) TimerEvent: {}
+[7.920464] (-) TimerEvent: {}
+[8.020776] (-) TimerEvent: {}
+[8.121119] (-) TimerEvent: {}
+[8.221462] (-) TimerEvent: {}
+[8.321805] (-) TimerEvent: {}
+[8.422148] (-) TimerEvent: {}
+[8.522492] (-) TimerEvent: {}
+[8.622839] (-) TimerEvent: {}
+[8.723132] (-) TimerEvent: {}
+[8.823490] (-) TimerEvent: {}
+[8.923841] (-) TimerEvent: {}
+[9.024177] (-) TimerEvent: {}
+[9.124515] (-) TimerEvent: {}
+[9.224834] (-) TimerEvent: {}
+[9.325139] (-) TimerEvent: {}
+[9.425477] (-) TimerEvent: {}
+[9.525802] (-) TimerEvent: {}
+[9.626186] (-) TimerEvent: {}
+[9.726478] (-) TimerEvent: {}
+[9.826743] (-) TimerEvent: {}
+[9.927007] (-) TimerEvent: {}
+[10.027354] (-) TimerEvent: {}
+[10.127682] (-) TimerEvent: {}
+[10.228016] (-) TimerEvent: {}
+[10.328357] (-) TimerEvent: {}
+[10.428638] (-) TimerEvent: {}
+[10.528910] (-) TimerEvent: {}
+[10.629188] (-) TimerEvent: {}
+[10.729432] (-) TimerEvent: {}
+[10.829708] (-) TimerEvent: {}
+[10.929961] (-) TimerEvent: {}
+[11.030235] (-) TimerEvent: {}
+[11.130502] (-) TimerEvent: {}
+[11.230809] (-) TimerEvent: {}
+[11.331134] (-) TimerEvent: {}
+[11.431375] (-) TimerEvent: {}
+[11.531641] (-) TimerEvent: {}
+[11.631979] (-) TimerEvent: {}
+[11.732353] (-) TimerEvent: {}
+[11.832594] (-) TimerEvent: {}
+[11.932891] (-) TimerEvent: {}
+[12.033211] (-) TimerEvent: {}
+[12.133522] (-) TimerEvent: {}
+[12.233817] (-) TimerEvent: {}
+[12.334067] (-) TimerEvent: {}
+[12.434336] (-) TimerEvent: {}
+[12.534580] (-) TimerEvent: {}
+[12.634838] (-) TimerEvent: {}
+[12.735121] (-) TimerEvent: {}
+[12.835412] (-) TimerEvent: {}
+[12.842446] (turtlebot3_manipulation_gazebo) StderrLine: {'line': b'gmake[2]: *** [CMakeFiles/AptDoorRos2Plugin.dir/build.make:76: CMakeFiles/AptDoorRos2Plugin.dir/home/donggun/S13P21A501/Embedded/src/Plugin/AptDoorRos2Plugin.cpp.o] \xec\x9d\xb8\xed\x84\xb0\xeb\x9f\xbd\xed\x8a\xb8\n'}
+[12.842656] (turtlebot3_manipulation_gazebo) StderrLine: {'line': b'gmake[2]: *** [CMakeFiles/ElevatorRos2Plugin.dir/build.make:76: CMakeFiles/ElevatorRos2Plugin.dir/home/donggun/S13P21A501/Embedded/src/Plugin/ElevatorRos2Plugin.cpp.o] \xec\x9d\xb8\xed\x84\xb0\xeb\x9f\xbd\xed\x8a\xb8\n'}
+[12.842732] (turtlebot3_manipulation_gazebo) StderrLine: {'line': b'gmake[2]: *** [CMakeFiles/DisplayMarkerRos2Plugin.dir/build.make:76: CMakeFiles/DisplayMarkerRos2Plugin.dir/home/donggun/S13P21A501/Embedded/src/Plugin/DisplayMarkerRos2Plugin.cpp.o] \xec\x9d\xb8\xed\x84\xb0\xeb\x9f\xbd\xed\x8a\xb8\n'}
+[12.842870] (turtlebot3_manipulation_gazebo) StderrLine: {'line': b'gmake[1]: *** [CMakeFiles/Makefile2:141: CMakeFiles/ElevatorRos2Plugin.dir/all] \xec\x9d\xb8\xed\x84\xb0\xeb\x9f\xbd\xed\x8a\xb8\n'}
+[12.842931] (turtlebot3_manipulation_gazebo) StderrLine: {'line': b'gmake[1]: *** [CMakeFiles/Makefile2:193: CMakeFiles/DisplayMarkerRos2Plugin.dir/all] \xec\x9d\xb8\xed\x84\xb0\xeb\x9f\xbd\xed\x8a\xb8\n'}
+[12.842995] (turtlebot3_manipulation_gazebo) StderrLine: {'line': b'gmake[1]: *** [CMakeFiles/Makefile2:167: CMakeFiles/AptDoorRos2Plugin.dir/all] \xec\x9d\xb8\xed\x84\xb0\xeb\x9f\xbd\xed\x8a\xb8\n'}
+[12.843078] (turtlebot3_manipulation_gazebo) StderrLine: {'line': b'gmake: *** [Makefile:146: all] \xec\x9d\xb8\xed\x84\xb0\xeb\x9f\xbd\xed\x8a\xb8\n'}
+[12.921462] (turtlebot3_manipulation_gazebo) CommandEnded: {'returncode': -2}
+[12.926474] (turtlebot3_manipulation_gazebo) JobEnded: {'identifier': 'turtlebot3_manipulation_gazebo', 'rc': 'SIGINT'}
+[12.935563] (-) TimerEvent: {}
+[12.936902] (-) EventReactorShutdown: {}

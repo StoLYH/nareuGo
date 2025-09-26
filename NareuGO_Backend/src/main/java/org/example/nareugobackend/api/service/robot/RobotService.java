@@ -44,8 +44,9 @@ public class RobotService {
     private final RestTemplate restTemplate;
     private final ObjectMapper objectMapper = new ObjectMapper();
 
-    @Value("${robot.http.url:http://localhost:8888}")
-    private String robotHttpUrl;
+    
+    // 임시 하드코딩
+    private String robotHttpUrl = "https://unfearful-orion-furuncular.ngrok-free.dev";
 
     public CompletableFuture<RobotStatusResponse> checkRobotStatus(String robotId, Long deliveryId) {
         CompletableFuture<RobotStatusResponse> future = new CompletableFuture<>();
