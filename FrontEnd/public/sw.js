@@ -71,6 +71,7 @@ self.addEventListener('activate', (event) => {
 self.addEventListener('fetch', (event) => {
   const { request } = event;
   const url = new URL(request.url);
+  //
 
   // WebSocket 연결 및 개발 서버 관련 요청은 Service Worker가 처리하지 않음
   if (url.protocol === 'ws:' || url.protocol === 'wss:' || 
