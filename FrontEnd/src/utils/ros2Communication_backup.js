@@ -1,9 +1,6 @@
 // ROS2 통신 유틸리티
 // WebSocket 또는 ROS Bridge를 통한 ROS2 노드와의 통신
 
-// API 기본 URL
-const BASE_URL = import.meta.env.VITE_BASE_URL || 'http://localhost:8080'
-
 class ROS2Communication {
   constructor() {
     this.websocket = null

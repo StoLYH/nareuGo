@@ -1,8 +1,5 @@
 // 구매자 배송 도착 알림 전역 유틸리티
 
-// API 기본 URL
-const BASE_URL = import.meta.env.VITE_BASE_URL || 'http://localhost:8080'
-
 let buyerModalInstance = null
 let buyerModalCallback = null
 
@@ -128,7 +125,7 @@ if (typeof window !== 'undefined') {
     try {
       console.log('🏠 [TEST] 구매자 도착 API 호출 시뮬레이션...')
 
-      const response = await fetch(`${BASE_URL}/robot/delivery/${deliveryId}/buyer/arrived`, {
+      const response = await fetch(`http://localhost:8080/robot/delivery/${deliveryId}/buyer/arrived`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

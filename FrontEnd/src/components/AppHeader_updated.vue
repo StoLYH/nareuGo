@@ -95,7 +95,7 @@ onUnmounted(() => {
 // 읽지 않은 알림 개수 조회
 const fetchUnreadNotificationCount = async () => {
   try {
-    const baseURL = window.location.hostname === 'localhost' ? 'http://localhost:8080' : 'https://j13a501.p.ssafy.io/api'
+    const baseURL = window.location.hostname === 'localhost' ? 'http://localhost:8080' : 'https://j13a501.p.ssafy.io'
     const response = await fetch(`${baseURL}/notifications/unread-count?userId=3`)
     if (response.ok) {
       const contentType = response.headers.get('content-type')
