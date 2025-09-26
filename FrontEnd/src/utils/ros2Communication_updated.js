@@ -1,6 +1,9 @@
 // ROS2 통신 유틸리티
 // WebSocket 또는 ROS Bridge를 통한 ROS2 노드와의 통신
 
+// API 기본 URL
+const BASE_URL = import.meta.env.VITE_BASE_URL || 'http://localhost:8080'
+
 class ROS2Communication {
   constructor() {
     this.websocket = null
@@ -159,7 +162,7 @@ class ROS2Communication {
 
         try {
           // 백엔드에 판매자 도착 알림 요청
-          const response = await fetch('http://localhost:8080/robot/simulate-arrival?deliveryId=1&delaySeconds=1', {
+          const response = await fetch(`${BASE_URL}/robot/simulate-arrival?deliveryId=1&delaySeconds=1`, {
             method: 'POST'
           })
 
