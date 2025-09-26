@@ -75,6 +75,7 @@ public class RobotController {
             } catch (Exception e) {
                 log.error("로봇 서버 직접 요청 실패: {}", e.getMessage());
             }
+            
 
             // 로봇 서버(8888포트)로 배송 시작 명령 전송
             log.info("로봇 서버로 배송 시작 명령 전송 - deliveryId: {}", deliveryId);
