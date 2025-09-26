@@ -1,6 +1,7 @@
 // Firebase 메시징 Service Worker
 // 백그라운드 메시지 수신을 위한 Service Worker
 
+
 // Firebase SDK 초기화
 importScripts('https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js');
 importScripts('https://www.gstatic.com/firebasejs/10.7.1/firebase-messaging-compat.js');
