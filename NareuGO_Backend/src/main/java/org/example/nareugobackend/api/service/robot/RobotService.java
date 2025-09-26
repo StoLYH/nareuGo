@@ -45,8 +45,17 @@ public class RobotService {
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     
-    // 임시 하드코딩
-    private String robotHttpUrl = "https://unfearful-orion-furuncular.ngrok-free.dev";
+    // 환경에 따른 로봇 URL 설정
+    @Value("${spring.profiles.active:local}")
+    private String activeProfile;
+    
+    private String getRobotHttpUrl() {
+        if ("local".equals(activeProfile)) {
+            return "http://localhost:8888";
+        } else {
+            return "https://unfearful-orion-furuncular.ngrok-free.dev";
+        }
+    }
 
     public CompletableFuture<RobotStatusResponse> checkRobotStatus(String robotId, Long deliveryId) {
         CompletableFuture<RobotStatusResponse> future = new CompletableFuture<>();
@@ -55,7 +64,7 @@ public class RobotService {
             log.info("로봇 상태 확인 요청: robotId={}, deliveryId={}", robotId, deliveryId);
 
             // 로봇 서버에 상태 확인 요청 (delivery_id 파라미터 추가)
-            String robotStatusUrl = robotHttpUrl + "/robot/status?robotId=" + robotId;
+            String robotStatusUrl = getRobotHttpUrl() + "/robot/status?robotId=" + robotId;
             if (deliveryId != null) {
                 robotStatusUrl += "&delivery_id=" + deliveryId;
             }
@@ -240,7 +249,7 @@ public class RobotService {
             HttpEntity<Map<String, String>> requestEntity = new HttpEntity<>(addressData, headers);
 
             // 로봇 서버로 GET 요청 전송 (쿼리 파라미터 포함)
-            String robotUrl = robotHttpUrl + "/robot/delivery/1/addresses" +
+            String robotUrl = getRobotHttpUrl() + "/robot/delivery/1/addresses" +
                     "?sellerAddress=" + java.net.URLEncoder.encode(sellerAddress, "UTF-8") +
                     "&buyerAddress=" + java.net.URLEncoder.encode(buyerAddress, "UTF-8");
 
@@ -462,7 +471,7 @@ public class RobotService {
         try {
             log.info("로봇에게 픽업 완료 신호 전송 시작 - 배송 ID: {}", deliveryId);
 
-            String robotUrl = robotHttpUrl + "/robot/delivery/" + deliveryId + "/seller/placed";
+            String robotUrl = getRobotHttpUrl() + "/robot/delivery/" + deliveryId + "/seller/placed";
 
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON);
@@ -492,7 +501,7 @@ public class RobotService {
         try {
             log.info("로봇에게 구매자 수령 완료 신호 전송 시작 - 배송 ID: {}", deliveryId);
 
-            String robotUrl = robotHttpUrl + "/robot/delivery/" + deliveryId + "/buyer/orig_pos";
+            String robotUrl = getRobotHttpUrl() + "/robot/delivery/" + deliveryId + "/buyer/orig_pos";
 
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON);

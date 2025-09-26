@@ -273,7 +273,7 @@ export default {
       try {
         console.log('주문 정보 로딩 시작 - orderId:', orderId);
         
-        const baseUrl = import.meta.env.VITE_BASE_URL || 'http://localhost:8080';
+        const baseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080';
         const response = await fetch(`${baseUrl}/orders/${orderId}`);
         if (!response.ok) {
           throw new Error('주문 정보를 불러올 수 없습니다.');
@@ -305,7 +305,7 @@ export default {
       try {
         console.log('판매자 정보 로딩 - sellerId:', sellerId);
         
-        const baseUrl = import.meta.env.VITE_BASE_URL || 'http://localhost:8080';
+        const baseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080';
         const response = await fetch(`${baseUrl}/payment/users/${sellerId}`);
         if (!response.ok) {
           throw new Error('판매자 정보를 불러올 수 없습니다.');
@@ -331,7 +331,7 @@ export default {
       try {
         console.log('상품 정보 로딩 - productId:', productId);
         
-        const baseUrl = import.meta.env.VITE_BASE_URL || 'http://localhost:8080';
+        const baseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080';
         const response = await fetch(`${baseUrl}/products/payment/${productId}`);
         if (!response.ok) {
           throw new Error('상품 정보를 불러올 수 없습니다.');
@@ -383,7 +383,7 @@ export default {
         console.log('사용자 정보 API 호출 - userId:', userId);
         
         // 백엔드에서 사용자 정보 조회
-        const baseUrl = import.meta.env.VITE_BASE_URL || 'http://localhost:8080';
+        const baseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080';
         const response = await fetch(`${baseUrl}/general-login/users/${userId}`);
         
         if (!response.ok) {

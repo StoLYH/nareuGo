@@ -195,7 +195,7 @@ const proceedPaymentFlow = async () => {
   }
   const buyerId = getCurrentUserId();
 
-  const baseUrl = import.meta.env.VITE_BASE_URL || "http://localhost:8080";
+  const baseUrl = import.meta.env.VITE_API_BASE_URL || "http://localhost:8080";
   const response = await fetch(`${baseUrl}/orders`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -233,7 +233,7 @@ const productId = ref(null); // 동적으로 가져올 상품 ID (기존 코드�
 // 주의: domain 폴더 및 기존 채팅/상품 코드에는 영향 주지 않도록 이 컴포넌트 내부에서만 사용합니다.
 const fetchProductIdForRoom = async () => {
   try {
-    const baseUrl = import.meta.env.VITE_BASE_URL || "http://localhost:8080";
+    const baseUrl = import.meta.env.VITE_API_BASE_URL || "http://localhost:8080";
     const resp = await fetch(`${baseUrl}/chat/rooms/${roomId.value}/product`);
     if (!resp.ok) throw new Error("상품 ID 조회 실패");
     const pid = await resp.json();
@@ -251,7 +251,7 @@ let stompClient = null;
 // WebSocket 연결
 const connectWebSocket = () => {
   // 환경 변수를 사용하여 WebSocket 서버 URL 설정
-  const baseUrl = import.meta.env.VITE_BASE_URL || "http://localhost:8080";
+  const baseUrl = import.meta.env.VITE_API_BASE_URL || "http://localhost:8080";
   const socket = new SockJS(`${baseUrl}/ws`);
   stompClient = Stomp.over(socket);
 

@@ -1,7 +1,7 @@
 import axios from 'axios'
 
 // API 기본 URL
-const BASE_URL = import.meta.env.VITE_BASE_URL || 'http://localhost:8080'
+const BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080'
 
 // 배송 데이터 조회 API
 export const getDeliveries = async (userId) => {

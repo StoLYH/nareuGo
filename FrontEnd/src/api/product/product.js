@@ -1,7 +1,7 @@
 import axios from 'axios'
 
 // API 기본 URL
-const BASE_URL = import.meta.env.VITE_BASE_URL || 'http://localhost:8080'
+const BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080'
 
 // 상품 등록 API (S3 presigned URL 받기)
 export const createProduct = async (productData) => {
