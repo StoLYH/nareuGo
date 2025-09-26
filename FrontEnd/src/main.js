@@ -25,13 +25,14 @@ const initializeFCM = async () => {
   try {
     // 사용자 ID 가져오기 (로컬스토리지에서)
     const getUserId = () => {
-      const userInfo = localStorage.getItem('user_info')
+      // 여러 키에서 사용자 정보 찾기
+      const userInfo = localStorage.getItem('user_info') || localStorage.getItem('user')
       if (userInfo) {
         try {
           const parsedInfo = JSON.parse(userInfo)
           return parsedInfo.id || parsedInfo.userId || parsedInfo.user_id || 1
         } catch (error) {
-          console.warn('🔔 [FCM INIT] user_info 파싱 실패, 기본값 사용:', error)
+          console.warn('🔔 [FCM INIT] 사용자 정보 파싱 실패, 기본값 사용:', error)
           return 1
         }
       }
@@ -62,8 +63,8 @@ const initializeFCM = async () => {
 // FCM 서비스를 전역에 노출
 window.fcmService = fcmService
 
-// FCM 초기화 실행 (비동기)
-setTimeout(initializeFCM, 1000)
+// FCM 초기화 실행 (비동기) - 로그인 후에 실행되도록 지연
+setTimeout(initializeFCM, 3000)
 
 // ROS2 연결 초기화 (선택적)
 const initializeROS2 = async () => {
