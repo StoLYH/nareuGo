@@ -1,4 +1,117 @@
 <script setup>
+import { ref, onMounted, onUnmounted } from 'vue'
+import SellerPickupModal from './components/SellerPickupModal.vue'
+import BuyerPickupModal from './components/BuyerPickupModal.vue'
+
+// 모달 상태 관리
+const showSellerPickupModal = ref(false)
+const showBuyerPickupModal = ref(false)
+const sellerDeliveryData = ref(null)
+const buyerDeliveryData = ref(null)
+
+// FCM 이벤트 리스너들
+const handleRobotArrivedAtSeller = (event) => {
+  console.log('🤖 판매자 픽업 이벤트 수신:', event.detail)
+  sellerDeliveryData.value = {
+    deliveryId: event.detail.deliveryId,
+    productTitle: event.detail.productTitle,
+    buyerName: event.detail.buyerName,
+    ...event.detail.data
+  }
+  showSellerPickupModal.value = true
+}
+
+const handleRobotArrivedAtBuyer = (event) => {
+  console.log('🏠 구매자 픽업 이벤트 수신:', event.detail)
+  buyerDeliveryData.value = {
+    deliveryId: event.detail.deliveryId,
+    productTitle: event.detail.productTitle,
+    sellerName: event.detail.sellerName,
+    ...event.detail.data
+  }
+  showBuyerPickupModal.value = true
+}
+
+const handleShowPickupModal = (event) => {
+  console.log('📱 픽업 모달 표시 이벤트:', event.detail)
+  handleRobotArrivedAtSeller(event)
+}
+
+const handleShowBuyerPickupModal = (event) => {
+  console.log('📱 구매자 픽업 모달 표시 이벤트:', event.detail)
+  handleRobotArrivedAtBuyer(event)
+}
+
+// 모달 닫기 핸들러들
+const closeSellerPickupModal = () => {
+  showSellerPickupModal.value = false
+  sellerDeliveryData.value = null
+}
+
+const closeBuyerPickupModal = () => {
+  showBuyerPickupModal.value = false
+  buyerDeliveryData.value = null
+}
+
+const handleSellerPickupConfirmed = (data) => {
+  console.log('✅ 판매자 픽업 완료:', data)
+  closeSellerPickupModal()
+}
+
+const handleBuyerPickupConfirmed = (data) => {
+  console.log('✅ 구매자 수령 완료:', data)
+  closeBuyerPickupModal()
+}
+
+// 테스트용 함수들 (개발용)
+const testSellerPickup = () => {
+  const event = {
+    detail: {
+      deliveryId: '1',
+      productTitle: '테스트 상품',
+      buyerName: '구매자 테스트',
+      data: {}
+    }
+  }
+  handleRobotArrivedAtSeller(event)
+}
+
+const testBuyerPickup = () => {
+  const event = {
+    detail: {
+      deliveryId: '1',
+      productTitle: '테스트 상품',
+      sellerName: '판매자 테스트',
+      data: {}
+    }
+  }
+  handleRobotArrivedAtBuyer(event)
+}
+
+// 라이프사이클
+onMounted(() => {
+  console.log('🚀 App.vue 마운트됨 - FCM 이벤트 리스너 등록')
+
+  // FCM 이벤트 리스너 등록
+  window.addEventListener('robotArrivedAtSeller', handleRobotArrivedAtSeller)
+  window.addEventListener('robotArrivedAtBuyer', handleRobotArrivedAtBuyer)
+  window.addEventListener('showPickupModal', handleShowPickupModal)
+  window.addEventListener('showBuyerPickupModal', handleShowBuyerPickupModal)
+
+  // 전역에서 접근 가능하도록 설정 (개발용)
+  window.testSellerPickup = testSellerPickup
+  window.testBuyerPickup = testBuyerPickup
+})
+
+onUnmounted(() => {
+  console.log('🔚 App.vue 언마운트됨 - FCM 이벤트 리스너 제거')
+
+  // FCM 이벤트 리스너 제거
+  window.removeEventListener('robotArrivedAtSeller', handleRobotArrivedAtSeller)
+  window.removeEventListener('robotArrivedAtBuyer', handleRobotArrivedAtBuyer)
+  window.removeEventListener('showPickupModal', handleShowPickupModal)
+  window.removeEventListener('showBuyerPickupModal', handleShowBuyerPickupModal)
+})
 </script>
 
 <template>
@@ -6,6 +119,22 @@
     <div class="content">
       <router-view />
     </div>
+
+    <!-- 판매자 픽업 모달 -->
+    <SellerPickupModal
+      :is-visible="showSellerPickupModal"
+      :delivery-data="sellerDeliveryData"
+      @close="closeSellerPickupModal"
+      @pickup-confirmed="handleSellerPickupConfirmed"
+    />
+
+    <!-- 구매자 픽업 모달 -->
+    <BuyerPickupModal
+      :is-visible="showBuyerPickupModal"
+      :delivery-data="buyerDeliveryData"
+      @close="closeBuyerPickupModal"
+      @pickup-confirmed="handleBuyerPickupConfirmed"
+    />
   </div>
 </template>
 
@@ -103,7 +232,7 @@ body {
   line-height: 1;
   /* 전체 페이지 배경: 헤더/로그인 버튼 그라디언트와 조화되는 라이트 블루 톤 */
   background: linear-gradient(180deg, #EAF3FB 0%, #F5F9FC 100%);
-  font-family: "Pretendard-Regular", "Noto Sans KR", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-family: "Pretendard", "Noto Sans KR", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 }
 ol,
 ul {
@@ -158,13 +287,7 @@ input, textarea, [contenteditable="true"], [contenteditable]:not([contenteditabl
 /* 폰트 & CSS 변수 */
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700&display=swap');
 
-@font-face {
-  font-family: "Pretendard-Regular";
-  src: url("https://cdn.jsdelivr.net/gh/Project-Noonnu/noonfonts_2107@1.1/Pretendard-Regular.woff")
-    format("woff");
-  font-weight: 400;
-  font-style: normal;
-}
+@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.8/dist/web/static/pretendard.css');
 :root {
   --main: #4682b4;
   --disabled: #dcb6b6;
@@ -174,7 +297,7 @@ input, textarea, [contenteditable="true"], [contenteditable]:not([contenteditabl
 }
 * {
   box-sizing: border-box;
-  font-family: "Pretendard-Regular", "Noto Sans KR", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-family: "Pretendard", "Noto Sans KR", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 }
 a {
   text-decoration: none;

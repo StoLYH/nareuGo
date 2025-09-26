@@ -4,6 +4,9 @@ import App from "./App.vue";
 import router from "./router";
 import { connectToROS2 } from "./utils/ros2Communication.js";
 import { useNotificationStore } from "./stores/notification.js";
+import "./utils/buyerNotification.js";
+import { initFCMMessageHandler } from "./utils/fcmMessageHandler.js";
+import fcmService from "./api/fcmService.js";
 
 const app = createApp(App);
 const pinia = createPinia();
@@ -16,6 +19,51 @@ app.mount("#app");
 // 앱 마운트 후 전역 알림 이벤트 리스너 초기화
 const notificationStore = useNotificationStore();
 notificationStore.initEventListeners();
+
+// FCM 서비스 및 메시지 핸들러 초기화
+const initializeFCM = async () => {
+  try {
+    // 사용자 ID 가져오기 (로컬스토리지에서)
+    const getUserId = () => {
+      const userInfo = localStorage.getItem('user_info')
+      if (userInfo) {
+        try {
+          const parsedInfo = JSON.parse(userInfo)
+          return parsedInfo.id || parsedInfo.userId || parsedInfo.user_id || 1
+        } catch (error) {
+          console.warn('🔔 [FCM INIT] user_info 파싱 실패, 기본값 사용:', error)
+          return 1
+        }
+      }
+      console.warn('🔔 [FCM INIT] 사용자 정보 없음, 기본값 사용')
+      return 1 // 테스트용 기본값
+    }
+
+    const userId = getUserId()
+    console.log('🔔 [FCM INIT] FCM 서비스 초기화 시작 - 사용자 ID:', userId)
+
+    // FCM 서비스 초기화
+    const success = await fcmService.initialize(userId)
+    if (success) {
+      console.log('✅ [FCM INIT] FCM 서비스 초기화 성공')
+    } else {
+      console.warn('⚠️ [FCM INIT] FCM 서비스 초기화 실패 (HTTP 환경이거나 권한 문제)')
+    }
+
+    // FCM 메시지 핸들러 초기화
+    initFCMMessageHandler()
+    console.log('✅ [FCM INIT] FCM 메시지 핸들러 초기화 완료')
+
+  } catch (error) {
+    console.error('❌ [FCM INIT] FCM 초기화 실패:', error)
+  }
+}
+
+// FCM 서비스를 전역에 노출
+window.fcmService = fcmService
+
+// FCM 초기화 실행 (비동기)
+setTimeout(initializeFCM, 1000)
 
 // ROS2 연결 초기화 (선택적)
 const initializeROS2 = async () => {

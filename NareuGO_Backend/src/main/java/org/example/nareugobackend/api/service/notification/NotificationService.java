@@ -109,6 +109,19 @@ public class NotificationService {
         log.info("판매자 집 도착 알림 생성 - sellerId: {}, productTitle: {}", sellerId, productTitle);
     }
 
+    /**
+     * 구매자 집 도착 알림 생성
+     */
+    @Transactional
+    public void createBuyerArrivalNotification(Long buyerId, String productTitle, String sellerName, Long deliveryId) {
+        String title = "나르고가 도착했습니다!";
+        String message = String.format("'%s' 상품이 도착했습니다. 물건을 가져가주세요. 판매자: %s", productTitle, sellerName);
+
+        createNotification(buyerId, title, message, "BUYER_ARRIVAL");
+
+        log.info("구매자 집 도착 알림 생성 - buyerId: {}, productTitle: {}, deliveryId: {}", buyerId, productTitle, deliveryId);
+    }
+
     private NotificationResponse convertToResponse(Notification notification) {
         return NotificationResponse.builder()
                 .id(notification.getId())

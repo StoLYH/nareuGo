@@ -33,6 +33,7 @@ build-frontend:
 # 2. 프론트엔드 배포 잡(Job)
 deploy-frontend:
   stage: deploy
+  image: alpine:3.19   # 👈 latest 대신 안정된 버전 사용
   tags:
     - ec2-runner
   dependencies:

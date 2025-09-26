@@ -60,7 +60,7 @@ const handleLogout = async () => {
   width: 100%;
   min-height: 100vh;
   background-color: #B0E0E6; /* 파우더 블루 */
-  font-family: "Pretendard-Regular", sans-serif;
+  font-family: "Pretendard", sans-serif;
 }
 
 /* 헤더 섹션 */

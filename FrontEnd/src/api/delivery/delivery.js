@@ -274,12 +274,17 @@ export const getPaidSalesProducts = async (userId) => {
 }
 
 // 로봇 상태 확인 API
-export const getRobotStatus = async (robotId) => {
+export const getRobotStatus = async (robotId, deliveryId = null) => {
   try {
+    const params = {
+      robotId: robotId
+    }
+
+    // delivery_id를 하드코딩으로 1 전송
+    params.delivery_id = '1'
+
     const response = await axios.get(`${BASE_URL}/robot/status`, {
-      params: {
-        robotId: robotId
-      },
+      params: params,
       headers: {
         'Authorization': `Bearer ${localStorage.getItem('access_token')}`
       }
@@ -295,7 +300,7 @@ export const getRobotStatus = async (robotId) => {
 export const startDelivery = async (deliveryData) => {
   try {
     // 1. 배송 주소 정보 조회
-    const addressResponse = await axios.get(`${BASE_URL}/robot/delivery/${deliveryData.deliveryId}/addresses`, {
+    const addressResponse = await axios.get(`${BASE_URL}/robot/delivery/1/addresses`, {
       headers: {
         'Authorization': `Bearer ${localStorage.getItem('access_token')}`
       }
@@ -313,6 +318,21 @@ export const startDelivery = async (deliveryData) => {
   } catch (error) {
     console.error('나르고 시작 실패:', error)
     throw error
+  }
+}
+
+// 현재 진행 중인 배송 ID 조회 API
+export const getCurrentDeliveryId = async (userId) => {
+  try {
+    const response = await axios.get(`${BASE_URL}/deliveries/current/${userId}`, {
+      headers: {
+        'Authorization': `Bearer ${localStorage.getItem('access_token')}`
+      }
+    })
+    return response.data?.deliveryId || null
+  } catch (error) {
+    console.error('현재 배송 ID 조회 실패:', error)
+    return null
   }
 }
 
@@ -334,7 +354,7 @@ export const confirmPickup = async (deliveryId) => {
 // 배송 주소 조회 API
 export const getDeliveryAddresses = async (deliveryId) => {
   try {
-    const response = await axios.get(`${BASE_URL}/robot/delivery/${deliveryId}/addresses`, {
+    const response = await axios.get(`${BASE_URL}/robot/delivery/1/addresses`, {
       headers: {
         'Authorization': `Bearer ${localStorage.getItem('access_token')}`
       }
@@ -342,6 +362,90 @@ export const getDeliveryAddresses = async (deliveryId) => {
     return response.data
   } catch (error) {
     console.error('배송 주소 조회 실패:', error)
+    throw error
+  }
+}
+
+// 판매자가 물건을 넣었다는 신호 전송 API
+export const confirmSellerPlaced = async (deliveryId) => {
+  try {
+    console.log('📦 [DEBUG] 판매자 물건 넣기 완료 신호 전송 - deliveryId:', deliveryId)
+
+    const response = await axios.post(`${BASE_URL}/robot/delivery/${deliveryId}/seller/placed`, {
+      timestamp: new Date().toISOString()
+    }, {
+      headers: {
+        'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
+        'Content-Type': 'application/json'
+      }
+    })
+
+    console.log('✅ [SUCCESS] 판매자 물건 넣기 완료 신호 전송 성공:', response.data)
+    return response.data
+  } catch (error) {
+    console.error('❌ [ERROR] 판매자 물건 넣기 완료 신호 전송 실패:', error)
+    console.error('❌ [ERROR] Error details:', {
+      message: error.message,
+      status: error.response?.status,
+      statusText: error.response?.statusText,
+      data: error.response?.data
+    })
+    throw error
+  }
+}
+
+// 구매자 집 도착 알림 API (로봇→웹 알림용, 실제로는 백엔드에서 처리됨)
+export const notifyBuyerArrived = async (deliveryId) => {
+  try {
+    console.log('🏠 [DEBUG] 구매자 집 도착 알림 - deliveryId:', deliveryId)
+
+    const response = await axios.post(`${BASE_URL}/robot/delivery/${deliveryId}/buyer/arrived`, {
+      timestamp: new Date().toISOString()
+    }, {
+      headers: {
+        'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
+        'Content-Type': 'application/json'
+      }
+    })
+
+    console.log('✅ [SUCCESS] 구매자 집 도착 알림 성공:', response.data)
+    return response.data
+  } catch (error) {
+    console.error('❌ [ERROR] 구매자 집 도착 알림 실패:', error)
+    console.error('❌ [ERROR] Error details:', {
+      message: error.message,
+      status: error.response?.status,
+      statusText: error.response?.statusText,
+      data: error.response?.data
+    })
+    throw error
+  }
+}
+
+// 구매자가 물건을 찾았다는 신호 전송 API (배송 완료)
+export const confirmBuyerPickup = async (deliveryId) => {
+  try {
+    console.log('📦 [DEBUG] 구매자 물건 수령 완료 신호 전송 - deliveryId:', deliveryId)
+
+    const response = await axios.post(`${BASE_URL}/robot/delivery/${deliveryId}/buyer/orig_pos`, {
+      timestamp: new Date().toISOString()
+    }, {
+      headers: {
+        'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
+        'Content-Type': 'application/json'
+      }
+    })
+
+    console.log('✅ [SUCCESS] 구매자 물건 수령 완료 신호 전송 성공:', response.data)
+    return response.data
+  } catch (error) {
+    console.error('❌ [ERROR] 구매자 물건 수령 완료 신호 전송 실패:', error)
+    console.error('❌ [ERROR] Error details:', {
+      message: error.message,
+      status: error.response?.status,
+      statusText: error.response?.statusText,
+      data: error.response?.data
+    })
     throw error
   }
 }

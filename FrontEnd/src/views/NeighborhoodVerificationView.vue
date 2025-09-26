@@ -418,6 +418,7 @@
               </svg>
             </button>
           </div>
+          <!-- 카메라 영역 -->
           <div class="camera-content">
             <video ref="video" autoplay playsinline></video>
             <canvas ref="canvas" style="display: none;"></canvas>
@@ -431,6 +432,8 @@
               <p class="camera-guide">신분증을 프레임 안에 맞춰주세요</p>
             </div>
           </div>
+
+
           <div class="camera-actions">
             <button @click="takePhoto" class="capture-button">
               <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -476,7 +479,10 @@ export default {
       apartmentName: '',
       buildingDong: '',
       buildingHo: '',
-      isApartmentLoading: false
+      isApartmentLoading: false,
+      ocrLoading: false,
+      ocrError: null,
+      ocrResult: null
     };
   },
   methods: {
@@ -580,7 +586,8 @@ export default {
         }
         
         // 백엔드에 최종 아파트 정보 저장
-        const response = await fetch(`${import.meta.env.VITE_BASE_URL}/neighborhood/verify`, {
+        const baseURL = window.location.hostname === 'localhost' ? 'http://localhost:8080' : 'https://j13a501.p.ssafy.io/api'
+        const response = await fetch(`${baseURL}/neighborhood/verify`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -737,7 +744,8 @@ export default {
         const imageFormat = 'jpg'; // 카메라에서 촬영한 이미지는 보통 jpg
         
         // 백엔드 OCR API 호출
-        const response = await fetch(`${import.meta.env.VITE_BASE_URL}/ocr/verify-address`, {
+        const baseURL = window.location.hostname === 'localhost' ? 'http://localhost:8080' : 'https://j13a501.p.ssafy.io/api'
+        const response = await fetch(`${baseURL}/ocr/verify-address`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -799,7 +807,8 @@ export default {
     async completeVerification() {
       try {
         // 동네 인증 정보를 백엔드에 저장
-        const response = await fetch(`${import.meta.env.VITE_BASE_URL}/neighborhood/verify`, {
+        const baseURL = window.location.hostname === 'localhost' ? 'http://localhost:8080' : 'https://j13a501.p.ssafy.io/api'
+        const response = await fetch(`${baseURL}/neighborhood/verify`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

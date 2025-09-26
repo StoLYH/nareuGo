@@ -1,0 +1,12 @@
+package.xml
+setup.py
+../../build/app_navigation/app_navigation.egg-info/PKG-INFO
+../../build/app_navigation/app_navigation.egg-info/SOURCES.txt
+../../build/app_navigation/app_navigation.egg-info/dependency_links.txt
+../../build/app_navigation/app_navigation.egg-info/entry_points.txt
+../../build/app_navigation/app_navigation.egg-info/requires.txt
+../../build/app_navigation/app_navigation.egg-info/top_level.txt
+../../build/app_navigation/app_navigation.egg-info/zip-safe
+app_navigation/__init__.py
+app_navigation/app_navigator.py
+resource/app_navigation

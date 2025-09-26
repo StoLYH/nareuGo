@@ -1,0 +1,55 @@
+running egg_info
+creating ../../build/robot_web_interface/robot_web_interface.egg-info
+writing ../../build/robot_web_interface/robot_web_interface.egg-info/PKG-INFO
+writing dependency_links to ../../build/robot_web_interface/robot_web_interface.egg-info/dependency_links.txt
+writing entry points to ../../build/robot_web_interface/robot_web_interface.egg-info/entry_points.txt
+writing requirements to ../../build/robot_web_interface/robot_web_interface.egg-info/requires.txt
+writing top-level names to ../../build/robot_web_interface/robot_web_interface.egg-info/top_level.txt
+writing manifest file '../../build/robot_web_interface/robot_web_interface.egg-info/SOURCES.txt'
+reading manifest file '../../build/robot_web_interface/robot_web_interface.egg-info/SOURCES.txt'
+writing manifest file '../../build/robot_web_interface/robot_web_interface.egg-info/SOURCES.txt'
+running build
+running build_py
+creating /home/hb/Git/Embedded/build/robot_web_interface/build
+creating /home/hb/Git/Embedded/build/robot_web_interface/build/lib
+creating /home/hb/Git/Embedded/build/robot_web_interface/build/lib/robot_web_interface
+copying robot_web_interface/delivery_address_client.py -> /home/hb/Git/Embedded/build/robot_web_interface/build/lib/robot_web_interface
+copying robot_web_interface/robot_status_client.py -> /home/hb/Git/Embedded/build/robot_web_interface/build/lib/robot_web_interface
+copying robot_web_interface/robot_status_monitor.py -> /home/hb/Git/Embedded/build/robot_web_interface/build/lib/robot_web_interface
+copying robot_web_interface/turtlebot_status_monitor.py -> /home/hb/Git/Embedded/build/robot_web_interface/build/lib/robot_web_interface
+copying robot_web_interface/robot_http_server.py -> /home/hb/Git/Embedded/build/robot_web_interface/build/lib/robot_web_interface
+copying robot_web_interface/__init__.py -> /home/hb/Git/Embedded/build/robot_web_interface/build/lib/robot_web_interface
+running install
+running install_lib
+creating /home/hb/Git/Embedded/install/robot_web_interface/lib/python3.10/site-packages/robot_web_interface
+copying /home/hb/Git/Embedded/build/robot_web_interface/build/lib/robot_web_interface/delivery_address_client.py -> /home/hb/Git/Embedded/install/robot_web_interface/lib/python3.10/site-packages/robot_web_interface
+copying /home/hb/Git/Embedded/build/robot_web_interface/build/lib/robot_web_interface/robot_status_client.py -> /home/hb/Git/Embedded/install/robot_web_interface/lib/python3.10/site-packages/robot_web_interface
+copying /home/hb/Git/Embedded/build/robot_web_interface/build/lib/robot_web_interface/robot_status_monitor.py -> /home/hb/Git/Embedded/install/robot_web_interface/lib/python3.10/site-packages/robot_web_interface
+copying /home/hb/Git/Embedded/build/robot_web_interface/build/lib/robot_web_interface/turtlebot_status_monitor.py -> /home/hb/Git/Embedded/install/robot_web_interface/lib/python3.10/site-packages/robot_web_interface
+copying /home/hb/Git/Embedded/build/robot_web_interface/build/lib/robot_web_interface/robot_http_server.py -> /home/hb/Git/Embedded/install/robot_web_interface/lib/python3.10/site-packages/robot_web_interface
+copying /home/hb/Git/Embedded/build/robot_web_interface/build/lib/robot_web_interface/__init__.py -> /home/hb/Git/Embedded/install/robot_web_interface/lib/python3.10/site-packages/robot_web_interface
+byte-compiling /home/hb/Git/Embedded/install/robot_web_interface/lib/python3.10/site-packages/robot_web_interface/delivery_address_client.py to delivery_address_client.cpython-310.pyc
+byte-compiling /home/hb/Git/Embedded/install/robot_web_interface/lib/python3.10/site-packages/robot_web_interface/robot_status_client.py to robot_status_client.cpython-310.pyc
+byte-compiling /home/hb/Git/Embedded/install/robot_web_interface/lib/python3.10/site-packages/robot_web_interface/robot_status_monitor.py to robot_status_monitor.cpython-310.pyc
+byte-compiling /home/hb/Git/Embedded/install/robot_web_interface/lib/python3.10/site-packages/robot_web_interface/turtlebot_status_monitor.py to turtlebot_status_monitor.cpython-310.pyc
+byte-compiling /home/hb/Git/Embedded/install/robot_web_interface/lib/python3.10/site-packages/robot_web_interface/robot_http_server.py to robot_http_server.cpython-310.pyc
+byte-compiling /home/hb/Git/Embedded/install/robot_web_interface/lib/python3.10/site-packages/robot_web_interface/__init__.py to __init__.cpython-310.pyc
+running install_data
+creating /home/hb/Git/Embedded/install/robot_web_interface/share/ament_index
+creating /home/hb/Git/Embedded/install/robot_web_interface/share/ament_index/resource_index
+creating /home/hb/Git/Embedded/install/robot_web_interface/share/ament_index/resource_index/packages
+copying resource/robot_web_interface -> /home/hb/Git/Embedded/install/robot_web_interface/share/ament_index/resource_index/packages
+copying package.xml -> /home/hb/Git/Embedded/install/robot_web_interface/share/robot_web_interface
+creating /home/hb/Git/Embedded/install/robot_web_interface/share/robot_web_interface/launch
+copying launch/robot_web_interface.launch.py -> /home/hb/Git/Embedded/install/robot_web_interface/share/robot_web_interface/launch
+copying launch/backend_integration.launch.py -> /home/hb/Git/Embedded/install/robot_web_interface/share/robot_web_interface/launch
+copying launch/robot_web_server.launch.py -> /home/hb/Git/Embedded/install/robot_web_interface/share/robot_web_interface/launch
+running install_egg_info
+Copying ../../build/robot_web_interface/robot_web_interface.egg-info to /home/hb/Git/Embedded/install/robot_web_interface/lib/python3.10/site-packages/robot_web_interface-0.0.0-py3.10.egg-info
+running install_scripts
+Installing delivery_address_client script to /home/hb/Git/Embedded/install/robot_web_interface/lib/robot_web_interface
+Installing robot_http_server script to /home/hb/Git/Embedded/install/robot_web_interface/lib/robot_web_interface
+Installing robot_status_client script to /home/hb/Git/Embedded/install/robot_web_interface/lib/robot_web_interface
+Installing robot_status_monitor script to /home/hb/Git/Embedded/install/robot_web_interface/lib/robot_web_interface
+Installing turtlebot_status_monitor script to /home/hb/Git/Embedded/install/robot_web_interface/lib/robot_web_interface
+writing list of installed files to '/home/hb/Git/Embedded/build/robot_web_interface/install.log'
