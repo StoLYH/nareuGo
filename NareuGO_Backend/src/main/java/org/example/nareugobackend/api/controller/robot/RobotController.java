@@ -65,7 +65,7 @@ public class RobotController {
 
             // 로봇 서버로 주소 정보와 함께 직접 요청 (첫 번째 로직)
             try {
-                String robotUrl = "http://localhost:8888/robot/delivery/" + deliveryId + "/addresses" +
+                String robotUrl = "http://localhost:8888/robot/delivery/1/addresses" +
                         "?sellerAddress=" + addresses.getSellerAddress() +
                         "&buyerAddress=" + addresses.getBuyerAddress();
                 log.info("로봇 서버로 직접 요청 전송: {}", robotUrl);
@@ -198,9 +198,18 @@ public class RobotController {
             // 배송 완료 처리
             robotService.completeBuyerPickup(deliveryId);
 
+            // 로봇에게 구매자 수령 완료 신호 전송
+            boolean success = robotService.notifyRobotBuyerPickupComplete(deliveryId);
+
             BuyerPickupCompleteResponse response = BuyerPickupCompleteResponse.builder()
                     .timestamp(java.time.Instant.now().toString())
                     .build();
+
+            if (success) {
+                log.info("로봇에게 구매자 수령 완료 신호 전송 성공 - 배송 ID: {}", deliveryId);
+            } else {
+                log.warn("로봇에게 구매자 수령 완료 신호 전송 실패 - 배송 ID: {}", deliveryId);
+            }
 
             log.info("구매자 수령 완료 및 배송 완료 처리 성공 - 배송 ID: {}", deliveryId);
             return ResponseEntity.ok(response);
