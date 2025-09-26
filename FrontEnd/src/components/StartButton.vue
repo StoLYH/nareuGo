@@ -20,10 +20,12 @@
 <script setup>
 import { ref } from 'vue'
 import DeliveryStartModal from './DeliveryStartModal.vue'
-import { getRobotStatus } from '../api/delivery/delivery.js'
+import { getRobotStatus, getCurrentDeliveryId } from '../api/delivery/delivery.js'
+import { useAuthStore } from '@/stores/auth'
 
 const showModal = ref(false)
 const checkingRobotStatus = ref(false)
+const authStore = useAuthStore()
 
 const openDeliveryModal = async () => {
   console.log('🔍 [DEBUG] 나르고 시작하기 버튼 클릭됨')
@@ -31,9 +33,15 @@ const openDeliveryModal = async () => {
   try {
     checkingRobotStatus.value = true
     
-    // 로봇 상태 확인
+    // DB에서 현재 진행 중인 배송 ID 조회
+    const userId = authStore.user?.userId || 3
+    console.log('📋 [DEBUG] 현재 배송 ID 조회 중... userId:', userId)
+    const currentDeliveryId = await getCurrentDeliveryId(userId)
+    console.log('📋 [DEBUG] 조회된 배송 ID:', currentDeliveryId)
+
+    // 로봇 상태 확인 (delivery_id 파라미터 포함)
     console.log('🤖 [DEBUG] 로봇 상태 확인 중...')
-    const robotStatus = await getRobotStatus(1)
+    const robotStatus = await getRobotStatus(1, currentDeliveryId)
     console.log('🤖 [DEBUG] 로봇 상태 응답:', robotStatus)
     
     if (robotStatus.status === 'INVALID' || robotStatus.status === 'invalid') {

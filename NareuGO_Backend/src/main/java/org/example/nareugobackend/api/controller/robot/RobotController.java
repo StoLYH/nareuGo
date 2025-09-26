@@ -8,6 +8,8 @@ import org.example.nareugobackend.api.controller.robot.response.DeliveryCompleti
 import org.example.nareugobackend.api.controller.robot.response.PickupConfirmationResponse;
 import org.example.nareugobackend.api.controller.robot.response.RobotStatusResponse;
 import org.example.nareugobackend.api.controller.robot.response.SellerArrivedResponse;
+import org.example.nareugobackend.api.controller.robot.response.BuyerArrivedResponse;
+import org.example.nareugobackend.api.controller.robot.response.BuyerPickupCompleteResponse;
 import org.example.nareugobackend.api.service.robot.RobotService;
 import org.example.nareugobackend.api.service.notification.FcmService;
 import org.springframework.http.ResponseEntity;
@@ -137,6 +139,74 @@ public class RobotController {
 
         } catch (Exception e) {
             log.error("판매자 위치 도착 알림 발송 실패 - 배송 ID: {}, 오류: {}", deliveryId, e.getMessage());
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    @PostMapping("/delivery/{deliveryId}/seller/placed")
+    public ResponseEntity<PickupConfirmationResponse> notifyPickupPlaced(@PathVariable Long deliveryId) {
+        log.info("웹에서 픽업 완료 알림 수신 - 배송 ID: {}", deliveryId);
+
+        try {
+            // 로봇에게 픽업 완료 신호 전송
+            boolean success = robotService.notifyRobotPickupComplete(deliveryId);
+
+            PickupConfirmationResponse response = PickupConfirmationResponse.builder()
+                    .timestamp(java.time.Instant.now().toString())
+                    .build();
+
+            if (success) {
+                log.info("로봇에게 픽업 완료 신호 전송 성공 - 배송 ID: {}", deliveryId);
+                return ResponseEntity.ok(response);
+            } else {
+                log.warn("로봇에게 픽업 완료 신호 전송 실패 - 배송 ID: {}", deliveryId);
+                return ResponseEntity.status(500).body(response);
+            }
+
+        } catch (Exception e) {
+            log.error("픽업 완료 처리 실패 - 배송 ID: {}, 오류: {}", deliveryId, e.getMessage());
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    @PostMapping("/delivery/{deliveryId}/buyer/arrived")
+    public ResponseEntity<BuyerArrivedResponse> notifyBuyerArrival(@PathVariable Long deliveryId) {
+        log.info("로봇이 구매자 위치 도착 알림 요청 - 배송 ID: {}", deliveryId);
+
+        try {
+            // 구매자에게 FCM 알림 발송
+            robotService.notifyBuyerArrival(deliveryId, fcmService);
+
+            BuyerArrivedResponse response = BuyerArrivedResponse.builder()
+                    .timestamp(java.time.Instant.now().toString())
+                    .build();
+
+            log.info("구매자 위치 도착 알림 발송 완료 - 배송 ID: {}", deliveryId);
+            return ResponseEntity.ok(response);
+
+        } catch (Exception e) {
+            log.error("구매자 위치 도착 알림 발송 실패 - 배송 ID: {}, 오류: {}", deliveryId, e.getMessage());
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    @PostMapping("/delivery/{deliveryId}/buyer/orig_pos")
+    public ResponseEntity<BuyerPickupCompleteResponse> notifyBuyerPickupComplete(@PathVariable Long deliveryId) {
+        log.info("로봇이 구매자 수령 완료 및 원점 복귀 알림 - 배송 ID: {}", deliveryId);
+
+        try {
+            // 배송 완료 처리
+            robotService.completeBuyerPickup(deliveryId);
+
+            BuyerPickupCompleteResponse response = BuyerPickupCompleteResponse.builder()
+                    .timestamp(java.time.Instant.now().toString())
+                    .build();
+
+            log.info("구매자 수령 완료 및 배송 완료 처리 성공 - 배송 ID: {}", deliveryId);
+            return ResponseEntity.ok(response);
+
+        } catch (Exception e) {
+            log.error("구매자 수령 완료 처리 실패 - 배송 ID: {}, 오류: {}", deliveryId, e.getMessage());
             return ResponseEntity.internalServerError().build();
         }
     }

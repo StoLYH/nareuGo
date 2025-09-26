@@ -27,7 +27,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 
 import java.util.concurrent.CompletableFuture;
@@ -426,7 +425,8 @@ public class RobotService {
             fcmService.sendSellerArrivalNotification(
                     seller.getId(),
                     product.getTitle(),
-                    buyer.getName()
+                    buyer.getName(),
+                    deliveryId
             );
 
             log.info("판매자 집 도착 알림 처리 완료 - 판매자: {}, 상품: {}, 구매자: {}",
@@ -438,6 +438,143 @@ public class RobotService {
         } catch (Exception e) {
             log.error("판매자 집 도착 알림 처리 실패: {}", e.getMessage());
             throw new RobotException(RobotErrorCode.DELIVERY_ADDRESS_INVALID, "판매자 집 도착 알림 처리 중 오류 발생", e);
+        }
+    }
+
+    /**
+     * 로봇에게 픽업 완료 신호 전송
+     */
+    public boolean notifyRobotPickupComplete(Long deliveryId) {
+        try {
+            log.info("로봇에게 픽업 완료 신호 전송 시작 - 배송 ID: {}", deliveryId);
+
+            String robotUrl = robotHttpUrl + "/robot/delivery/" + deliveryId + "/seller/placed";
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
+
+            Map<String, Object> requestBody = new HashMap<>();
+            requestBody.put("timestamp", java.time.Instant.now().toString());
+            requestBody.put("deliveryId", deliveryId);
+
+            HttpEntity<Map<String, Object>> entity = new HttpEntity<>(requestBody, headers);
+
+            // 로봇 서버로 POST 요청 전송
+            String response = restTemplate.postForObject(robotUrl, entity, String.class);
+
+            log.info("로봇에게 픽업 완료 신호 전송 성공 - 배송 ID: {}, 응답: {}", deliveryId, response);
+            return true;
+
+        } catch (Exception e) {
+            log.error("로봇에게 픽업 완료 신호 전송 실패 - 배송 ID: {}, 오류: {}", deliveryId, e.getMessage(), e);
+            return false;
+        }
+    }
+
+    /**
+     * 구매자 집 도착 알림 처리
+     */
+    @Transactional
+    public void notifyBuyerArrival(Long deliveryId, FcmService fcmService) {
+        try {
+            log.info("배송 ID {}에 대한 구매자 집 도착 알림 처리 시작", deliveryId);
+
+            // 1. 배송 정보 조회 (배송, 주문, 구매자, 판매자 정보 모두 필요)
+            Delivery delivery = deliveryRepository.findByIdWithOrderAndBuyer(deliveryId)
+                    .orElseThrow(() -> new RobotException(RobotErrorCode.DELIVERY_NOT_FOUND,
+                            "배송 정보를 찾을 수 없습니다: " + deliveryId));
+
+            Order order = delivery.getOrder();
+            User buyer = order.getBuyer();
+
+            // 2. 판매자 정보 조회
+            User seller = getSeller(order);
+
+            // 3. 상품 정보 조회
+            Product product = productRepository.findById(order.getProductId())
+                    .orElseThrow(() -> new RobotException(RobotErrorCode.DELIVERY_ADDRESS_INVALID,
+                            "상품 정보를 찾을 수 없습니다: " + order.getProductId()));
+
+            // 4. 알림 DB 저장
+            notificationService.createBuyerArrivalNotification(
+                    buyer.getId(),
+                    product.getTitle(),
+                    seller.getName(),
+                    deliveryId
+            );
+
+            // 5. FCM 알림 발송
+            fcmService.sendBuyerArrivalNotification(
+                    buyer.getId(),
+                    product.getTitle(),
+                    seller.getName(),
+                    deliveryId
+            );
+
+            log.info("구매자 집 도착 알림 처리 완료 - 구매자: {}, 상품: {}, 판매자: {}",
+                    buyer.getName(), product.getTitle(), seller.getName());
+
+        } catch (RobotException e) {
+            log.error("로봇 예외 발생: {}", e.getMessage());
+            throw e;
+        } catch (Exception e) {
+            log.error("구매자 집 도착 알림 처리 실패: {}", e.getMessage());
+            throw new RobotException(RobotErrorCode.DELIVERY_ADDRESS_INVALID, "구매자 집 도착 알림 처리 중 오류 발생", e);
+        }
+    }
+
+    /**
+     * 구매자 수령 완료 및 배송 완료 처리
+     */
+    @Transactional
+    public void completeBuyerPickup(Long deliveryId) {
+        try {
+            log.info("배송 ID {}에 대한 구매자 수령 완료 및 배송 완료 처리 시작", deliveryId);
+
+            // 1. 배송 정보 조회
+            Delivery delivery = deliveryRepository.findByIdWithOrderAndBuyer(deliveryId)
+                    .orElseThrow(() -> new RobotException(RobotErrorCode.DELIVERY_NOT_FOUND,
+                            "배송 정보를 찾을 수 없습니다: " + deliveryId));
+
+            Order order = delivery.getOrder();
+
+            // 2. 배송 상태를 DELIVERY_COMPLETED로 업데이트
+            Delivery updatedDelivery = Delivery.builder()
+                    .id(delivery.getId())
+                    .order(delivery.getOrder())
+                    .status(org.example.nareugobackend.domain.delivery.DeliveryStatus.DELIVERY_COMPLETED)
+                    .trackingNumber(delivery.getTrackingNumber())
+                    .deliveryAddress(delivery.getDeliveryAddress())
+                    .estimatedDeliveryTime(delivery.getEstimatedDeliveryTime())
+                    .actualDeliveryTime(java.time.LocalDateTime.now())
+                    .createdAt(delivery.getCreatedAt())
+                    .updatedAt(java.time.LocalDateTime.now())
+                    .build();
+
+            deliveryRepository.save(updatedDelivery);
+
+            // 3. 주문 상태를 DELIVERY_COMPLETED로 업데이트 (최종 완료)
+            Order updatedOrder = Order.builder()
+                    .id(order.getId())
+                    .productId(order.getProductId())
+                    .buyer(order.getBuyer())
+                    .status(Order.OrderStatus.DELIVERY_COMPLETED)
+                    .amount(order.getAmount())
+                    .createdAt(order.getCreatedAt())
+                    .updatedAt(java.time.LocalDateTime.now())
+                    .build();
+
+            orderRepository.save(updatedOrder);
+
+            log.info("구매자 수령 완료 및 배송 완료 처리 성공 - 배송 ID: {}, 주문 상태: DELIVERY_COMPLETED",
+                    deliveryId);
+
+        } catch (RobotException e) {
+            log.error("로봇 예외 발생: {}", e.getMessage());
+            throw e;
+        } catch (Exception e) {
+            log.error("구매자 수령 완료 처리 실패: {}", e.getMessage());
+            throw new RobotException(RobotErrorCode.DELIVERY_ADDRESS_INVALID, "구매자 수령 완료 처리 중 오류 발생", e);
         }
     }
 }

@@ -7,56 +7,104 @@
       </div>
 
       <div class="modal-body">
-        <div v-if="loading" class="loading">
-          데이터를 불러오는 중...
-        </div>
-
-        <div v-else-if="paidProducts.length === 0" class="no-products">
-          결제 완료된 상품이 없습니다.
-        </div>
-
-        <div v-else class="product-list">
-          <h3>결제 완료된 상품을 선택하세요 (1개)</h3>
-          <div class="product-items">
-            <label
-              v-for="product in paidProducts"
-              :key="product.id"
-              class="product-item"
-              :class="{ 'selected': selectedProduct?.id === product.id }"
-            >
-              <input
-                type="radio"
-                :value="product.id"
-                v-model="selectedProductId"
-                @change="selectProduct(product)"
-              />
-              <div class="product-info">
-                <img
-                  v-if="product.imageUrl"
-                  :src="product.imageUrl"
-                  :alt="product.title"
-                  class="product-image"
-                />
-                <div class="product-details">
-                  <h4>{{ product.title }}</h4>
-                  <p class="product-price">{{ formatPrice(product.price) }}원</p>
-                  <p class="product-buyer">구매자: {{ product.buyerName }}</p>
-                </div>
+        <!-- 배송 시작 성공 화면 -->
+        <div v-if="showDeliveryStarted" class="delivery-started-screen">
+          <div class="success-animation">
+            <div class="robot-icon">🤖</div>
+            <div class="success-message">
+              <h3>배송 시작!</h3>
+              <p>나르고가 판매자 주소로 이동 중입니다.</p>
+            </div>
+          </div>
+          <div class="delivery-progress">
+            <div class="progress-step active">
+              <div class="step-icon">📍</div>
+              <div class="step-text">
+                <div class="step-title">이동 중</div>
+                <div class="step-desc">판매자 주소로 이동</div>
               </div>
-            </label>
+            </div>
+            <div class="progress-step">
+              <div class="step-icon">📦</div>
+              <div class="step-text">
+                <div class="step-title">대기 중</div>
+                <div class="step-desc">물건 픽업 대기</div>
+              </div>
+            </div>
+            <div class="progress-step">
+              <div class="step-icon">🚀</div>
+              <div class="step-text">
+                <div class="step-title">예정</div>
+                <div class="step-desc">구매자에게 배송</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 기존 상품 선택 화면 -->
+        <div v-else>
+          <div v-if="loading" class="loading">
+            데이터를 불러오는 중...
+          </div>
+
+          <div v-else-if="paidProducts.length === 0" class="no-products">
+            결제 완료된 상품이 없습니다.
+          </div>
+
+          <div v-else class="product-list">
+            <h3>결제 완료된 상품을 선택하세요 (1개)</h3>
+            <div class="product-items">
+              <label
+                v-for="product in paidProducts"
+                :key="product.id"
+                class="product-item"
+                :class="{
+                  'selected': selectedProduct?.id === product.id,
+                  'disabled': product.deliveryStarted
+                }"
+              >
+                <input
+                  type="radio"
+                  :value="product.id"
+                  v-model="selectedProductId"
+                  @change="selectProduct(product)"
+                  :disabled="product.deliveryStarted"
+                />
+                <div class="product-info">
+                  <img
+                    v-if="product.imageUrl"
+                    :src="product.imageUrl"
+                    :alt="product.title"
+                    class="product-image"
+                  />
+                  <div class="product-details">
+                    <h4>{{ product.title }}</h4>
+                    <p class="product-price">{{ formatPrice(product.price) }}원</p>
+                    <p class="product-buyer">구매자: {{ product.buyerName }}</p>
+                    <p v-if="product.deliveryStarted" class="delivery-status">🤖 배송 중</p>
+                  </div>
+                </div>
+              </label>
+            </div>
           </div>
         </div>
       </div>
 
       <div class="modal-footer">
-        <button class="cancel-button" @click="closeModal">취소</button>
-        <button
-          class="start-button"
-          @click="startDelivery"
-          :disabled="!selectedProduct || deliveryStarting"
-        >
-          {{ deliveryStarting ? '배송 시작 중...' : '나르고 시작하기' }}
+        <button v-if="showDeliveryStarted" class="confirm-button" @click="closeModal">
+          확인
         </button>
+        <template v-else>
+          <button class="cancel-button" @click="closeModal">취소</button>
+          <button
+            class="start-button"
+            @click="startDelivery"
+            :disabled="!selectedProduct || deliveryStarting || selectedProduct?.deliveryStarted"
+          >
+            {{ deliveryStarting ? '배송 시작 중...' :
+               selectedProduct?.deliveryStarted ? '이미 배송 중' : '나르고 시작하기' }}
+          </button>
+        </template>
       </div>
     </div>
   </div>
@@ -66,6 +114,7 @@
 import { ref, onMounted, watch } from 'vue'
 import { getPaidSalesProducts, startDelivery as startDeliveryAPI } from '../api/delivery/delivery.js'
 import { sendAddressesToROS2 } from '../utils/ros2Communication.js'
+import { checkStoreAvailability } from '../utils/sellerNotification.js'
 
 const props = defineProps({
   isVisible: {
@@ -81,6 +130,7 @@ const deliveryStarting = ref(false)
 const paidProducts = ref([])
 const selectedProductId = ref(null)
 const selectedProduct = ref(null)
+const showDeliveryStarted = ref(false)
 
 const selectProduct = (product) => {
   selectedProduct.value = product
@@ -178,7 +228,19 @@ const startDelivery = async () => {
   try {
     deliveryStarting.value = true
 
-    // 로봇에게 주소 정보 요청 및 전송
+    // 1. 가게 가능 여부 확인
+    console.log('🏪 [DEBUG] 가게 가능 여부 확인 시작')
+    const availability = await checkStoreAvailability()
+    console.log('🏪 [DEBUG] 가게 가능 여부 결과:', availability)
+
+    if (!availability.isAvailable) {
+      alert(`배송을 시작할 수 없습니다.\n\n사유: ${availability.reason}`)
+      return
+    }
+
+    console.log('✅ [DEBUG] 가게 가능 여부 확인 완료 - 배송 가능')
+
+    // 2. 로봇에게 주소 정보 요청 및 전송
     const deliveryData = {
       deliveryId: selectedProduct.value.deliveryId,
       productId: selectedProduct.value.id,
@@ -194,12 +256,35 @@ const startDelivery = async () => {
 
     // 백엔드에서 로봇 서버로 자동 전송하므로 프론트엔드에서는 추가 작업 불필요
 
-    alert('나르고가 시작되었습니다! 판매자 주소로 이동 중입니다.')
+    // 3. 현재 진행 중인 배송 ID를 세션에 저장
+    sessionStorage.setItem('currentDeliveryId', deliveryData.deliveryId.toString())
+    console.log('💾 [DEBUG] 현재 배송 ID 저장:', deliveryData.deliveryId)
+
+    // 4. 배송 시작된 상품 상태 업데이트
+    const targetProduct = paidProducts.value.find(p => p.id === selectedProduct.value.id)
+    if (targetProduct) {
+      targetProduct.deliveryStarted = true
+    }
+
+    // 5. 배송 시작 성공 화면 표시
+    showDeliveryStarted.value = true
+
     emit('delivery-started', selectedProduct.value)
-    closeModal()
+
+    // 6. 로봇 도착은 실제 로봇에서 처리
+    // 로봇이 판매자 호수에 도착하면 백엔드의 /robot/delivery/{deliveryId}/seller/arrived 엔드포인트가 호출되고
+    // 백엔드에서 FCM을 통해 판매자에게 알림을 전송합니다.
+    console.log('🤖 [INFO] 로봇이 판매자 집으로 이동을 시작합니다.')
+    console.log('🤖 [INFO] 로봇 도착 시 백엔드에서 자동으로 FCM 알림이 전송됩니다.')
+
+    // 7. 5초 후 자동으로 모달 닫기 (선택사항)
+    setTimeout(() => {
+      closeModal()
+    }, 5000)
   } catch (error) {
     console.error('❌ [ERROR] 배송 시작 실패:', error)
-    alert('배송 시작에 실패했습니다. 다시 시도해주세요.')
+    const errorMessage = error.response?.data?.message || error.message || '배송 시작에 실패했습니다.'
+    alert(`배송 시작 실패: ${errorMessage}`)
   } finally {
     deliveryStarting.value = false
   }
@@ -209,6 +294,7 @@ const startDelivery = async () => {
 const closeModal = () => {
   selectedProductId.value = null
   selectedProduct.value = null
+  showDeliveryStarted.value = false
   emit('close')
 }
 
@@ -375,6 +461,26 @@ onMounted(() => {
   color: #6b7280;
 }
 
+.delivery-status {
+  margin: 4px 0 0 0;
+  font-size: 12px;
+  color: #16a34a;
+  font-weight: 600;
+}
+
+.product-item.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.product-item.disabled input {
+  cursor: not-allowed;
+}
+
+.product-item.disabled .product-info {
+  pointer-events: none;
+}
+
 .modal-footer {
   display: flex;
   gap: 12px;
@@ -415,5 +521,135 @@ onMounted(() => {
 .start-button:disabled {
   background-color: #b7c7d6;
   cursor: not-allowed;
+}
+
+/* 배송 시작 성공 화면 스타일 */
+.delivery-started-screen {
+  text-align: center;
+  padding: 20px;
+}
+
+.success-animation {
+  margin-bottom: 32px;
+}
+
+.robot-icon {
+  font-size: 80px;
+  margin-bottom: 20px;
+  animation: bounce 2s infinite;
+}
+
+@keyframes bounce {
+  0%, 20%, 50%, 80%, 100% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-20px);
+  }
+  60% {
+    transform: translateY(-10px);
+  }
+}
+
+.success-message h3 {
+  margin: 0 0 8px 0;
+  font-size: 24px;
+  font-weight: 700;
+  color: #16a34a;
+}
+
+.success-message p {
+  margin: 0;
+  font-size: 16px;
+  color: #6b7280;
+}
+
+.delivery-progress {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-width: 300px;
+  margin: 0 auto;
+}
+
+.progress-step {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 12px;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.progress-step.active {
+  background-color: #ecfdf5;
+  border: 2px solid #16a34a;
+}
+
+.progress-step:not(.active) {
+  background-color: #f9fafb;
+  border: 2px solid #e5e7eb;
+}
+
+.step-icon {
+  font-size: 24px;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.progress-step.active .step-icon {
+  background-color: #16a34a;
+  color: white;
+}
+
+.progress-step:not(.active) .step-icon {
+  background-color: #e5e7eb;
+  color: #9ca3af;
+}
+
+.step-text {
+  flex: 1;
+  text-align: left;
+}
+
+.step-title {
+  font-weight: 600;
+  font-size: 14px;
+  margin-bottom: 2px;
+}
+
+.progress-step.active .step-title {
+  color: #16a34a;
+}
+
+.progress-step:not(.active) .step-title {
+  color: #6b7280;
+}
+
+.step-desc {
+  font-size: 12px;
+  color: #9ca3af;
+}
+
+.confirm-button {
+  flex: 1;
+  padding: 12px 24px;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  background: linear-gradient(90deg, #4682B4, #6EC6CA);
+  color: white;
+}
+
+.confirm-button:hover {
+  background: linear-gradient(90deg, #5A9BD6, #7FD7DA);
 }
 </style>

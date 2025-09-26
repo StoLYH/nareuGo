@@ -26,6 +26,17 @@ const messaging = firebase.messaging();
 messaging.onBackgroundMessage((payload) => {
   console.log('[firebase-messaging-sw.js] 백그라운드 메시지 수신:', payload);
 
+  // 메인 앱에 메시지 전달 (포그라운드 상태일 때)
+  self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clients) => {
+    clients.forEach((client) => {
+      console.log('[firebase-messaging-sw.js] 메인 앱으로 메시지 전달:', payload);
+      client.postMessage({
+        type: 'FCM_MESSAGE',
+        payload: payload
+      });
+    });
+  });
+
   const notificationTitle = payload.notification?.title || 'NareuGO 알림';
   const notificationOptions = {
     body: payload.notification?.body || '새로운 알림이 있습니다.',
@@ -82,12 +93,43 @@ self.addEventListener('notificationclick', (event) => {
           case 'CHAT':
             targetUrl = `${self.location.origin}/chat`;
             break;
+          case 'DELIVERY_SELLER_ARRIVED':
+          case 'ROBOT_ARRIVAL':
+          case 'ROBOT_ARRIVAL_SELLER':
+            // 판매자에게 로봇 도착 알림 - 메인 페이지로 이동
+            targetUrl = `${self.location.origin}/`;
+            break;
+          case 'DELIVERY_BUYER_ARRIVED':
+          case 'ROBOT_ARRIVAL_BUYER':
+          case 'DELIVERY_ROBOT_ARRIVED_BUYER':
+            // 구매자에게 로봇 도착 알림 - 메인 페이지로 이동
+            targetUrl = `${self.location.origin}/`;
+            break;
         }
       }
 
-      // 이미 열린 창이 있으면 포커스
+      // 이미 열린 창이 있으면 포커스하고 메시지 전달
       for (const client of clientList) {
         if (client.url.includes(self.location.origin) && 'focus' in client) {
+          // 로봇 도착 알림의 경우 메인 앱에 메시지 전달
+          if (event.notification.data?.type &&
+              (event.notification.data.type === 'ROBOT_ARRIVAL' ||
+               event.notification.data.type === 'ROBOT_ARRIVAL_SELLER' ||
+               event.notification.data.type === 'ROBOT_ARRIVAL_BUYER' ||
+               event.notification.data.type === 'DELIVERY_SELLER_ARRIVED' ||
+               event.notification.data.type === 'DELIVERY_BUYER_ARRIVED' ||
+               event.notification.data.type === 'DELIVERY_ROBOT_ARRIVED_BUYER')) {
+            client.postMessage({
+              type: 'FCM_MESSAGE',
+              payload: {
+                notification: {
+                  title: event.notification.title,
+                  body: event.notification.body
+                },
+                data: event.notification.data
+              }
+            });
+          }
           return client.focus();
         }
       }

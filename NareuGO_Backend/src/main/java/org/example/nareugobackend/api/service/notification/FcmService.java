@@ -98,16 +98,30 @@ public class FcmService {
         sendNotificationToUser(buyerId, title, body, data);
     }
 
-    public void sendSellerArrivalNotification(Long sellerId, String productTitle, String buyerName) {
+    public void sendSellerArrivalNotification(Long sellerId, String productTitle, String buyerName, Long deliveryId) {
         String title = "나르고가 도착했습니다!";
         String body = String.format("'%s' 상품을 로봇에 넣어주세요. 구매자: %s", productTitle, buyerName);
 
         Map<String, String> data = new HashMap<>();
-        data.put("type", "SELLER_ARRIVAL");
+        data.put("type", "DELIVERY_ROBOT_ARRIVED");
         data.put("productTitle", productTitle);
         data.put("buyerName", buyerName);
+        data.put("deliveryId", String.valueOf(deliveryId));
 
         sendNotificationToUser(sellerId, title, body, data);
+    }
+
+    public void sendBuyerArrivalNotification(Long buyerId, String productTitle, String sellerName, Long deliveryId) {
+        String title = "나르고가 도착했습니다!";
+        String body = String.format("'%s' 상품이 도착했습니다. 물건을 가져가주세요. 판매자: %s", productTitle, sellerName);
+
+        Map<String, String> data = new HashMap<>();
+        data.put("type", "DELIVERY_ROBOT_ARRIVED_BUYER");
+        data.put("productTitle", productTitle);
+        data.put("sellerName", sellerName);
+        data.put("deliveryId", String.valueOf(deliveryId));
+
+        sendNotificationToUser(buyerId, title, body, data);
     }
 
     private void sendNotification(String token, String title, String body, Map<String, String> data) {

@@ -1,6 +1,7 @@
 // FCM 토큰 관리 서비스
 import axios from 'axios'
 import { getFCMToken, onMessageListener } from '@/config/firebase.js'
+import { handleFCMMessage } from '@/utils/fcmMessageHandler.js'
 
 class FCMService {
   constructor() {
@@ -117,11 +118,16 @@ class FCMService {
   setupMessageListener() {
     onMessageListener().then((payload) => {
       if (payload) {
-        console.log('포그라운드 메시지 수신:', payload)
+        console.log('🔔 [FCM Service] 포그라운드 메시지 수신:', payload)
+
+        // 새로운 통합 핸들러로 전달
+        handleFCMMessage(payload)
+
+        // 기존 처리도 유지 (호환성)
         this.handleForegroundMessage(payload)
       }
     }).catch((error) => {
-      console.error('메시지 리스너 설정 실패:', error)
+      console.error('❌ [FCM Service] 메시지 리스너 설정 실패:', error)
     })
   }
 
@@ -165,12 +171,64 @@ class FCMService {
       detail: payload
     })
     window.dispatchEvent(event)
+
+    // "물건을 넣어주세요" 알림인 경우 특별 처리
+    if (payload.data?.type === 'DELIVERY_ROBOT_ARRIVED') {
+      const robotArrivedEvent = new CustomEvent('robotArrivedAtSeller', {
+        detail: {
+          message: payload.notification?.body || '나르고가 도착했습니다! 물건을 넣어주세요.',
+          deliveryId: payload.data?.deliveryId,
+          productTitle: payload.data?.productTitle,
+          buyerName: payload.data?.buyerName,
+          data: payload.data
+        }
+      })
+      window.dispatchEvent(robotArrivedEvent)
+    }
+
+    // "물건을 가져가세요" 알림인 경우 특별 처리
+    if (payload.data?.type === 'DELIVERY_ROBOT_ARRIVED_BUYER') {
+      const robotArrivedBuyerEvent = new CustomEvent('robotArrivedAtBuyer', {
+        detail: {
+          message: payload.notification?.body || '나르고가 도착했습니다! 물건을 가져가세요.',
+          deliveryId: payload.data?.deliveryId,
+          productTitle: payload.data?.productTitle,
+          sellerName: payload.data?.sellerName,
+          data: payload.data
+        }
+      })
+      window.dispatchEvent(robotArrivedBuyerEvent)
+    }
   }
 
   // 알림 클릭 처리
   handleNotificationClick(data) {
     if (data?.type) {
       switch (data.type) {
+        case 'DELIVERY_ROBOT_ARRIVED':
+          // 물건 넣기 모달창 열기 이벤트 발생
+          const pickupEvent = new CustomEvent('showPickupModal', {
+            detail: {
+              deliveryId: data.deliveryId,
+              productTitle: data.productTitle,
+              buyerName: data.buyerName,
+              data: data
+            }
+          })
+          window.dispatchEvent(pickupEvent)
+          break
+        case 'DELIVERY_ROBOT_ARRIVED_BUYER':
+          // 물건 가져가기 모달창 열기 이벤트 발생
+          const buyerPickupEvent = new CustomEvent('showBuyerPickupModal', {
+            detail: {
+              deliveryId: data.deliveryId,
+              productTitle: data.productTitle,
+              sellerName: data.sellerName,
+              data: data
+            }
+          })
+          window.dispatchEvent(buyerPickupEvent)
+          break
         case 'LIKE':
           // 상품 상세 페이지로 이동
           if (data.productId) {
