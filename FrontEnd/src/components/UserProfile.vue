@@ -42,7 +42,27 @@ import { useAuthStore } from '@/stores/auth';
 import { useRouter } from 'vue-router';
 import apiClient from '@/api/client';
 
-const defaultProfileImage = 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face';
+// 랜덤 프로필 이미지 배열
+const randomProfileImages = [
+  'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face',
+  'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face',
+  'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&h=150&fit=crop&crop=face',
+  'https://images.unsplash.com/photo-1494790108755-2616b612b786?w=150&h=150&fit=crop&crop=face',
+  'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=150&h=150&fit=crop&crop=face',
+  'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=150&h=150&fit=crop&crop=face',
+  'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&h=150&fit=crop&crop=face',
+  'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=150&h=150&fit=crop&crop=face',
+  'https://images.unsplash.com/photo-1507591064344-4c6ce005b128?w=150&h=150&fit=crop&crop=face',
+  'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&h=150&fit=crop&crop=face'
+];
+
+// 랜덤 기본 프로필 이미지 선택
+const getRandomProfileImage = () => {
+  const randomIndex = Math.floor(Math.random() * randomProfileImages.length);
+  return randomProfileImages[randomIndex];
+};
+
+const defaultProfileImage = getRandomProfileImage();
 
 const authStore = useAuthStore();
 const router = useRouter();
