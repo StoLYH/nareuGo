@@ -12,6 +12,7 @@ import org.example.nareugobackend.api.controller.robot.response.BuyerArrivedResp
 import org.example.nareugobackend.api.controller.robot.response.BuyerPickupCompleteResponse;
 import org.example.nareugobackend.api.service.robot.RobotService;
 import org.example.nareugobackend.api.service.notification.FcmService;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,6 +26,18 @@ public class RobotController {
 
     private final RobotService robotService;
     private final FcmService fcmService;
+
+    @Value("${spring.profiles.active:local}")
+    private String activeProfile;
+
+    private String getRobotHttpUrl() {
+        if ("local".equals(activeProfile)) {
+            return "http://localhost:8888";
+        } else {
+            return "https://unfearful-orion-furuncular.ngrok-free.dev";
+        }
+    }
+
 
     @GetMapping("/status")
     public CompletableFuture<ResponseEntity<RobotStatusResponse>> checkRobotStatus(
@@ -65,7 +78,7 @@ public class RobotController {
 
             // 로봇 서버로 주소 정보와 함께 직접 요청 (첫 번째 로직)
             try {
-                String robotUrl = "http://localhost:8888/robot/delivery/1/addresses" +
+                String robotUrl = getRobotHttpUrl() + "/robot/delivery/1/addresses" +
                         "?sellerAddress=" + addresses.getSellerAddress() +
                         "&buyerAddress=" + addresses.getBuyerAddress();
                 log.info("로봇 서버로 직접 요청 전송: {}", robotUrl);
