@@ -139,6 +139,9 @@ onUnmounted(() => {
 </template>
 
 <style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700&display=swap');
+@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.8/dist/web/static/pretendard.css');
+
 /* reset */
 html,
 body,
@@ -285,9 +288,6 @@ input, textarea, [contenteditable="true"], [contenteditable]:not([contenteditabl
   user-select: text;
 }
 /* 폰트 & CSS 변수 */
-@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700&display=swap');
-
-@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.8/dist/web/static/pretendard.css');
 :root {
   --main: #4682b4;
   --disabled: #dcb6b6;
