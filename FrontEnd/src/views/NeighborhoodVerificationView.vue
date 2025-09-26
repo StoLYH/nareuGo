@@ -586,7 +586,7 @@ export default {
         }
         
         // 백엔드에 최종 아파트 정보 저장
-        const baseURL = window.location.hostname === 'localhost' ? 'http://localhost:8080' : 'https://j13a501.p.ssafy.io'
+        const baseURL = window.location.hostname === 'localhost' ? 'http://localhost:8080' : 'https://j13a501.p.ssafy.io/api'
         const response = await fetch(`${baseURL}/neighborhood/verify`, {
           method: 'POST',
           headers: {
@@ -744,7 +744,7 @@ export default {
         const imageFormat = 'jpg'; // 카메라에서 촬영한 이미지는 보통 jpg
         
         // 백엔드 OCR API 호출
-        const baseURL = window.location.hostname === 'localhost' ? 'http://localhost:8080' : 'https://j13a501.p.ssafy.io'
+        const baseURL = window.location.hostname === 'localhost' ? 'http://localhost:8080' : 'https://j13a501.p.ssafy.io/api'
         const response = await fetch(`${baseURL}/ocr/verify-address`, {
           method: 'POST',
           headers: {
@@ -807,7 +807,7 @@ export default {
     async completeVerification() {
       try {
         // 동네 인증 정보를 백엔드에 저장
-        const baseURL = window.location.hostname === 'localhost' ? 'http://localhost:8080' : 'https://j13a501.p.ssafy.io'
+        const baseURL = window.location.hostname === 'localhost' ? 'http://localhost:8080' : 'https://j13a501.p.ssafy.io/api'
         const response = await fetch(`${baseURL}/neighborhood/verify`, {
           method: 'POST',
           headers: {

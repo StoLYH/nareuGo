@@ -44,10 +44,15 @@ export const useNotificationStore = defineStore('notification', () => {
       const baseURL = window.location.hostname === 'localhost' ? 'http://localhost:8080' : 'https://j13a501.p.ssafy.io'
       const response = await fetch(`${baseURL}/notifications/unread-count?userId=${userId}`)
       if (response.ok) {
-        const data = await response.json()
-        if (data.success) {
-          unreadCount.value = data.unreadCount
-          return data.unreadCount
+        const contentType = response.headers.get('content-type')
+        if (contentType && contentType.includes('application/json')) {
+          const data = await response.json()
+          if (data.success) {
+            unreadCount.value = data.unreadCount
+            return data.unreadCount
+          }
+        } else {
+          console.warn('응답이 JSON이 아닙니다:', contentType)
         }
       }
     } catch (error) {
