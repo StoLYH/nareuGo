@@ -41,7 +41,8 @@ export const useNotificationStore = defineStore('notification', () => {
 
   const fetchUnreadCount = async (userId) => {
     try {
-      const response = await fetch(`http://localhost:8080/notifications/unread-count?userId=${userId}`)
+      const baseURL = window.location.hostname === 'localhost' ? 'http://localhost:8080' : 'https://j13a501.p.ssafy.io'
+      const response = await fetch(`${baseURL}/notifications/unread-count?userId=${userId}`)
       if (response.ok) {
         const data = await response.json()
         if (data.success) {

@@ -145,7 +145,7 @@ const handleLogin = async () => {
   background: linear-gradient(180deg, #4682B4 40%, #F5F9FC 100%);
   display: flex;
   flex-direction: column;
-  font-family: "Pretendard-Regular", sans-serif;
+  font-family: "Pretendard", sans-serif;
   overflow: hidden;
 }
 
