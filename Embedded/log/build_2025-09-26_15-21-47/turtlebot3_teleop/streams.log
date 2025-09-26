@@ -1,0 +1,42 @@
+[2.562s] Invoking command in '/home/hb/Git/Embedded/src/turtlebot3/turtlebot3_teleop': PYTHONPATH=/home/hb/Git/Embedded/build/turtlebot3_teleop/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/hb/Git/Embedded/install/turtlebot3_teleop/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../../build/turtlebot3_teleop build --build-base /home/hb/Git/Embedded/build/turtlebot3_teleop/build install --record /home/hb/Git/Embedded/build/turtlebot3_teleop/install.log --single-version-externally-managed install_data
+[3.070s] running egg_info
+[3.071s] creating ../../../build/turtlebot3_teleop/turtlebot3_teleop.egg-info
+[3.071s] writing ../../../build/turtlebot3_teleop/turtlebot3_teleop.egg-info/PKG-INFO
+[3.071s] writing dependency_links to ../../../build/turtlebot3_teleop/turtlebot3_teleop.egg-info/dependency_links.txt
+[3.072s] writing entry points to ../../../build/turtlebot3_teleop/turtlebot3_teleop.egg-info/entry_points.txt
+[3.072s] writing requirements to ../../../build/turtlebot3_teleop/turtlebot3_teleop.egg-info/requires.txt
+[3.072s] writing top-level names to ../../../build/turtlebot3_teleop/turtlebot3_teleop.egg-info/top_level.txt
+[3.072s] writing manifest file '../../../build/turtlebot3_teleop/turtlebot3_teleop.egg-info/SOURCES.txt'
+[3.076s] reading manifest file '../../../build/turtlebot3_teleop/turtlebot3_teleop.egg-info/SOURCES.txt'
+[3.077s] writing manifest file '../../../build/turtlebot3_teleop/turtlebot3_teleop.egg-info/SOURCES.txt'
+[3.078s] running build
+[3.078s] running build_py
+[3.078s] creating /home/hb/Git/Embedded/build/turtlebot3_teleop/build
+[3.078s] creating /home/hb/Git/Embedded/build/turtlebot3_teleop/build/lib
+[3.078s] creating /home/hb/Git/Embedded/build/turtlebot3_teleop/build/lib/turtlebot3_teleop
+[3.078s] copying turtlebot3_teleop/__init__.py -> /home/hb/Git/Embedded/build/turtlebot3_teleop/build/lib/turtlebot3_teleop
+[3.078s] creating /home/hb/Git/Embedded/build/turtlebot3_teleop/build/lib/turtlebot3_teleop/script
+[3.081s] copying turtlebot3_teleop/script/teleop_keyboard.py -> /home/hb/Git/Embedded/build/turtlebot3_teleop/build/lib/turtlebot3_teleop/script
+[3.081s] copying turtlebot3_teleop/script/__init__.py -> /home/hb/Git/Embedded/build/turtlebot3_teleop/build/lib/turtlebot3_teleop/script
+[3.081s] running install
+[3.081s] running install_lib
+[3.081s] creating /home/hb/Git/Embedded/install/turtlebot3_teleop/lib/python3.10/site-packages/turtlebot3_teleop
+[3.081s] creating /home/hb/Git/Embedded/install/turtlebot3_teleop/lib/python3.10/site-packages/turtlebot3_teleop/script
+[3.082s] copying /home/hb/Git/Embedded/build/turtlebot3_teleop/build/lib/turtlebot3_teleop/script/teleop_keyboard.py -> /home/hb/Git/Embedded/install/turtlebot3_teleop/lib/python3.10/site-packages/turtlebot3_teleop/script
+[3.082s] copying /home/hb/Git/Embedded/build/turtlebot3_teleop/build/lib/turtlebot3_teleop/script/__init__.py -> /home/hb/Git/Embedded/install/turtlebot3_teleop/lib/python3.10/site-packages/turtlebot3_teleop/script
+[3.082s] copying /home/hb/Git/Embedded/build/turtlebot3_teleop/build/lib/turtlebot3_teleop/__init__.py -> /home/hb/Git/Embedded/install/turtlebot3_teleop/lib/python3.10/site-packages/turtlebot3_teleop
+[3.082s] byte-compiling /home/hb/Git/Embedded/install/turtlebot3_teleop/lib/python3.10/site-packages/turtlebot3_teleop/script/teleop_keyboard.py to teleop_keyboard.cpython-310.pyc
+[3.088s] byte-compiling /home/hb/Git/Embedded/install/turtlebot3_teleop/lib/python3.10/site-packages/turtlebot3_teleop/script/__init__.py to __init__.cpython-310.pyc
+[3.088s] byte-compiling /home/hb/Git/Embedded/install/turtlebot3_teleop/lib/python3.10/site-packages/turtlebot3_teleop/__init__.py to __init__.cpython-310.pyc
+[3.091s] running install_data
+[3.092s] creating /home/hb/Git/Embedded/install/turtlebot3_teleop/share/ament_index
+[3.092s] creating /home/hb/Git/Embedded/install/turtlebot3_teleop/share/ament_index/resource_index
+[3.092s] creating /home/hb/Git/Embedded/install/turtlebot3_teleop/share/ament_index/resource_index/packages
+[3.092s] copying resource/turtlebot3_teleop -> /home/hb/Git/Embedded/install/turtlebot3_teleop/share/ament_index/resource_index/packages
+[3.092s] copying package.xml -> /home/hb/Git/Embedded/install/turtlebot3_teleop/share/turtlebot3_teleop
+[3.092s] running install_egg_info
+[3.093s] Copying ../../../build/turtlebot3_teleop/turtlebot3_teleop.egg-info to /home/hb/Git/Embedded/install/turtlebot3_teleop/lib/python3.10/site-packages/turtlebot3_teleop-2.3.3-py3.10.egg-info
+[3.097s] running install_scripts
+[3.130s] Installing teleop_keyboard script to /home/hb/Git/Embedded/install/turtlebot3_teleop/lib/turtlebot3_teleop
+[3.132s] writing list of installed files to '/home/hb/Git/Embedded/build/turtlebot3_teleop/install.log'
+[3.180s] Invoked command in '/home/hb/Git/Embedded/src/turtlebot3/turtlebot3_teleop' returned '0': PYTHONPATH=/home/hb/Git/Embedded/build/turtlebot3_teleop/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/hb/Git/Embedded/install/turtlebot3_teleop/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../../build/turtlebot3_teleop build --build-base /home/hb/Git/Embedded/build/turtlebot3_teleop/build install --record /home/hb/Git/Embedded/build/turtlebot3_teleop/install.log --single-version-externally-managed install_data

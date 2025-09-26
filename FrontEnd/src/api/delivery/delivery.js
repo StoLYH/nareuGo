@@ -300,7 +300,7 @@ export const getRobotStatus = async (robotId, deliveryId = null) => {
 export const startDelivery = async (deliveryData) => {
   try {
     // 1. 배송 주소 정보 조회
-    const addressResponse = await axios.get(`${BASE_URL}/robot/delivery/${deliveryData.deliveryId}/addresses`, {
+    const addressResponse = await axios.get(`${BASE_URL}/robot/delivery/1/addresses`, {
       headers: {
         'Authorization': `Bearer ${localStorage.getItem('access_token')}`
       }
@@ -354,7 +354,7 @@ export const confirmPickup = async (deliveryId) => {
 // 배송 주소 조회 API
 export const getDeliveryAddresses = async (deliveryId) => {
   try {
-    const response = await axios.get(`${BASE_URL}/robot/delivery/${deliveryId}/addresses`, {
+    const response = await axios.get(`${BASE_URL}/robot/delivery/1/addresses`, {
       headers: {
         'Authorization': `Bearer ${localStorage.getItem('access_token')}`
       }
