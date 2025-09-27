@@ -36,7 +36,7 @@ const openDeliveryModal = async () => {
     // DB에서 현재 진행 중인 배송 ID 조회
     const userId = authStore.user?.userId || 3
     console.log('📋 [DEBUG] 현재 배송 ID 조회 중... userId:', userId)
-    const currentDeliveryId = await getCurrentDeliveryId(userId)
+    const currentDeliveryId = null;   // 수정사항
     console.log('📋 [DEBUG] 조회된 배송 ID:', currentDeliveryId)
 
     // 로봇 상태 확인 (delivery_id 파라미터 포함)
