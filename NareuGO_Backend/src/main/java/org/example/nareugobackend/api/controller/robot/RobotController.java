@@ -27,7 +27,7 @@ public class RobotController {
     private final RobotService robotService;
     private final FcmService fcmService;
 
-    @Value("${spring.profiles.active:local}")
+    @Value("${server.env}")
     private String activeProfile;
 
     private String getRobotHttpUrl() {
@@ -43,6 +43,8 @@ public class RobotController {
     public CompletableFuture<ResponseEntity<RobotStatusResponse>> checkRobotStatus(
             @RequestParam String robotId,
             @RequestParam(required = false) Long delivery_id) {
+
+        log.info("1. 로봇 상태확인 [프론트 -> 백앤드]");
 
         log.info("로봇 상태 확인 요청: robotId={}, delivery_id={}", robotId, delivery_id);
 

@@ -46,7 +46,7 @@ public class RobotService {
 
     
     // 환경에 따른 로봇 URL 설정
-    @Value("${spring.profiles.active:local}")
+    @Value("${server.env}")
     private String activeProfile;
     
     private String getRobotHttpUrl() {
