@@ -1,0 +1,25 @@
+{
+    "python.autoComplete.extraPaths": [
+        "/home/donggun/ros2_study/install/my_first_package/lib/python3.10/site-packages",
+        "/home/donggun/turtle_ws/build/turtlebot3_teleop",
+        "/home/donggun/turtle_ws/install/turtlebot3_teleop/lib/python3.10/site-packages",
+        "/home/donggun/turtle_ws/build/turtlebot3_example",
+        "/home/donggun/turtle_ws/install/turtlebot3_example/lib/python3.10/site-packages",
+        "/home/donggun/turtle_ws/install/turtlebot3_msgs/local/lib/python3.10/dist-packages",
+        "/opt/ros/humble/lib/python3.10/site-packages",
+        "/opt/ros/humble/local/lib/python3.10/dist-packages"
+    ],
+    "python.analysis.extraPaths": [
+        "/home/donggun/ros2_study/install/my_first_package/lib/python3.10/site-packages",
+        "/home/donggun/turtle_ws/build/turtlebot3_teleop",
+        "/home/donggun/turtle_ws/install/turtlebot3_teleop/lib/python3.10/site-packages",
+        "/home/donggun/turtle_ws/build/turtlebot3_example",
+        "/home/donggun/turtle_ws/install/turtlebot3_example/lib/python3.10/site-packages",
+        "/home/donggun/turtle_ws/install/turtlebot3_msgs/local/lib/python3.10/dist-packages",
+        "/opt/ros/humble/lib/python3.10/site-packages",
+        "/opt/ros/humble/local/lib/python3.10/dist-packages"
+    ],
+    "ros.distro": "humble",
+    "cmake.sourceDirectory": "/home/donggun/turtle_ws/build/turtlebot3_msgs/turtlebot3_msgs__py",
+    "python-envs.pythonProjects": []
+}

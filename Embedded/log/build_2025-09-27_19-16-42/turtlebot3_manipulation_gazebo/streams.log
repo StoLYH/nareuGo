@@ -1,0 +1,296 @@
+[0.081s] Invoking command in '/home/hb/Git/Embedded/build/turtlebot3_manipulation_gazebo': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/hb/Git/Embedded/install/turtlebot3_teleop:/home/hb/Git/Embedded/install/turtlebot3_example:/home/hb/Git/Embedded/install/robot_web_interface:/home/hb/Git/Embedded/install/delivery_interface:/home/hb/Git/Embedded/install/app_navigation:/opt/ros/humble /usr/bin/cmake /home/hb/Git/Embedded/src/turtlebot3_simulations/turtlebot3_manipulation_gazebo -DCMAKE_INSTALL_PREFIX=/home/hb/Git/Embedded/install/turtlebot3_manipulation_gazebo
+[1.756s] -- The C compiler identification is GNU 11.4.0
+[1.756s] -- The CXX compiler identification is GNU 11.4.0
+[1.756s] -- Detecting C compiler ABI info
+[1.756s] -- Detecting C compiler ABI info - done
+[1.757s] -- Check for working C compiler: /usr/bin/cc - skipped
+[1.757s] -- Detecting C compile features
+[1.757s] -- Detecting C compile features - done
+[1.757s] -- Detecting CXX compiler ABI info
+[1.757s] -- Detecting CXX compiler ABI info - done
+[1.757s] -- Check for working CXX compiler: /usr/bin/c++ - skipped
+[1.757s] -- Detecting CXX compile features
+[1.757s] -- Detecting CXX compile features - done
+[1.757s] -- Found ament_cmake: 1.3.12 (/opt/ros/humble/share/ament_cmake/cmake)
+[1.757s] -- Found Python3: /usr/bin/python3 (found version "3.10.12") found components: Interpreter 
+[1.757s] -- Found rclcpp: 16.0.14 (/opt/ros/humble/share/rclcpp/cmake)
+[1.757s] -- Found rosidl_generator_c: 3.1.7 (/opt/ros/humble/share/rosidl_generator_c/cmake)
+[1.757s] -- Found rosidl_adapter: 3.1.7 (/opt/ros/humble/share/rosidl_adapter/cmake)
+[1.757s] -- Found rosidl_generator_cpp: 3.1.7 (/opt/ros/humble/share/rosidl_generator_cpp/cmake)
+[1.757s] -- Using all available rosidl_typesupport_c: rosidl_typesupport_fastrtps_c;rosidl_typesupport_introspection_c
+[1.757s] -- Using all available rosidl_typesupport_cpp: rosidl_typesupport_fastrtps_cpp;rosidl_typesupport_introspection_cpp
+[1.757s] -- Found rmw_implementation_cmake: 6.1.2 (/opt/ros/humble/share/rmw_implementation_cmake/cmake)
+[1.757s] -- Found rmw_fastrtps_cpp: 6.2.8 (/opt/ros/humble/share/rmw_fastrtps_cpp/cmake)
+[1.757s] -- Found OpenSSL: /usr/lib/x86_64-linux-gnu/libcrypto.so (found version "3.0.2")  
+[1.758s] -- Found FastRTPS: /opt/ros/humble/include  
+[1.758s] -- Using RMW implementation 'rmw_fastrtps_cpp' as default
+[1.758s] -- Looking for pthread.h
+[1.758s] -- Looking for pthread.h - found
+[1.758s] -- Performing Test CMAKE_HAVE_LIBC_PTHREAD
+[1.758s] -- Performing Test CMAKE_HAVE_LIBC_PTHREAD - Success
+[1.758s] -- Found Threads: TRUE  
+[1.758s] -- Found PkgConfig: /usr/bin/pkg-config (found version "0.29.2") 
+[1.758s] -- Checking for module 'bullet>=2.82'
+[1.758s] --   Found bullet, version 3.05
+[1.821s] -- Found fcl: /usr/include (found suitable version "0.7.0", minimum required is "0.5.0") 
+[2.020s] -- Found assimp: /usr/include (found version "5.2.0") 
+[2.142s] -- Found DART: /usr/include (Required is at least version "6.6") found components: dart 
+[2.276s] -- Found Boost: /usr/lib/x86_64-linux-gnu/cmake/Boost-1.74.0/BoostConfig.cmake (found suitable version "1.74.0", minimum required is "1.40.0") found components: thread system filesystem program_options regex iostreams date_time 
+[2.330s] -- Found Protobuf: /usr/lib/x86_64-linux-gnu/libprotobuf.so (found version "3.12.4") 
+[2.344s] -- Looking for ignition-math6 -- found version 6.15.1
+[2.356s] -- Searching for dependencies of ignition-math6
+[2.359s] -- Looking for OGRE...
+[2.361s] -- OGRE_PREFIX_WATCH changed.
+[2.371s] -- Checking for module 'OGRE'
+[2.403s] --   Found OGRE, version 1.9.0
+[2.466s] -- Found Ogre Ghadamon (1.9.0)
+[2.490s] -- Found OGRE: optimized;/usr/lib/x86_64-linux-gnu/libOgreMain.so;debug;/usr/lib/x86_64-linux-gnu/libOgreMain.so
+[2.509s] -- Looking for OGRE_Paging...
+[2.531s] -- Found OGRE_Paging: optimized;/usr/lib/x86_64-linux-gnu/libOgrePaging.so;debug;/usr/lib/x86_64-linux-gnu/libOgrePaging.so
+[2.531s] -- Looking for OGRE_Terrain...
+[2.551s] -- Found OGRE_Terrain: optimized;/usr/lib/x86_64-linux-gnu/libOgreTerrain.so;debug;/usr/lib/x86_64-linux-gnu/libOgreTerrain.so
+[2.552s] -- Looking for OGRE_Property...
+[2.576s] -- Found OGRE_Property: optimized;/usr/lib/x86_64-linux-gnu/libOgreProperty.so;debug;/usr/lib/x86_64-linux-gnu/libOgreProperty.so
+[2.581s] -- Looking for OGRE_RTShaderSystem...
+[2.608s] -- Found OGRE_RTShaderSystem: optimized;/usr/lib/x86_64-linux-gnu/libOgreRTShaderSystem.so;debug;/usr/lib/x86_64-linux-gnu/libOgreRTShaderSystem.so
+[2.608s] -- Looking for OGRE_Volume...
+[2.629s] -- Found OGRE_Volume: optimized;/usr/lib/x86_64-linux-gnu/libOgreVolume.so;debug;/usr/lib/x86_64-linux-gnu/libOgreVolume.so
+[2.630s] -- Looking for OGRE_Overlay...
+[2.664s] -- Found OGRE_Overlay: optimized;/usr/lib/x86_64-linux-gnu/libOgreOverlay.so;debug;/usr/lib/x86_64-linux-gnu/libOgreOverlay.so
+[3.181s] -- Looking for ignition-math6 -- found version 6.15.1
+[3.183s] -- Looking for ignition-transport8 -- found version 8.2.1
+[3.184s] -- Searching for dependencies of ignition-transport8
+[3.220s] -- Found Protobuf: /usr/lib/x86_64-linux-gnu/libprotobuf.so (found suitable version "3.12.4", minimum required is "3") 
+[3.248s] -- Config-file not installed for ZeroMQ -- checking for pkg-config
+[3.257s] -- Checking for module 'libzmq >= 4'
+[3.292s] --   Found libzmq , version 4.3.4
+[3.392s] -- Found ZeroMQ: TRUE (Required is at least version "4") 
+[3.414s] -- Checking for module 'uuid'
+[3.431s] --   Found uuid, version 2.37.2
+[3.492s] -- Found UUID: TRUE  
+[3.497s] -- Looking for ignition-msgs5 -- found version 5.8.1
+[3.498s] -- Searching for dependencies of ignition-msgs5
+[3.538s] -- Looking for ignition-math6 -- found version 6.15.1
+[3.550s] -- Checking for module 'tinyxml2'
+[3.577s] --   Found tinyxml2, version 9.0.0
+[3.638s] -- Looking for ignition-msgs5 -- found version 5.8.1
+[3.644s] -- Looking for ignition-common3 -- found version 3.14.0
+[3.645s] -- Searching for dependencies of ignition-common3
+[3.646s] -- Looking for dlfcn.h - found
+[3.649s] -- Looking for libdl - found
+[3.650s] -- Found DL: TRUE  
+[3.676s] -- Found tinyobjloader: /usr/lib/x86_64-linux-gnu/cmake/tinyobjloader/tinyobjloader-config.cmake (found version "2.0.0") 
+[3.676s] -- Searching for <ignition-common3> component [graphics]
+[3.681s] -- Looking for ignition-common3-graphics -- found version 3.14.0
+[3.682s] -- Searching for dependencies of ignition-common3-graphics
+[3.682s] -- Looking for ignition-math6 -- found version 6.15.1
+[3.690s] -- Looking for ignition-fuel_tools4 -- found version 4.4.0
+[3.692s] -- Searching for dependencies of ignition-fuel_tools4
+[3.924s] -- Found CURL: /usr/lib/x86_64-linux-gnu/libcurl.so (found version "7.81.0")  
+[3.943s] -- Checking for module 'jsoncpp'
+[3.981s] --   Found jsoncpp, version 1.9.5
+[4.126s] -- Found JSONCPP: TRUE  
+[4.148s] -- Checking for module 'libzip'
+[4.181s] --   Found libzip, version 1.7.3
+[4.329s] -- Found ZIP: TRUE  
+[4.331s] -- Looking for ignition-common3 -- found version 3.14.0
+[4.331s] -- Looking for ignition-math6 -- found version 6.15.1
+[4.334s] -- Looking for ignition-msgs5 -- found version 5.8.1
+[4.379s] -- Found gazebo_dev: 3.9.0 (/opt/ros/humble/share/gazebo_dev/cmake)
+[4.379s] -- Gazebo version: 11.10
+[4.380s] -- Checking for module 'tbb'
+[4.468s] --   Found tbb, version 2021.5.0
+[4.578s] -- Found gazebo_ros: 3.9.0 (/opt/ros/humble/share/gazebo_ros/cmake)
+[4.875s] -- Configuring done
+[5.139s] -- Generating done
+[5.205s] -- Build files have been written to: /home/hb/Git/Embedded/build/turtlebot3_manipulation_gazebo
+[5.250s] Invoked command in '/home/hb/Git/Embedded/build/turtlebot3_manipulation_gazebo' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/hb/Git/Embedded/install/turtlebot3_teleop:/home/hb/Git/Embedded/install/turtlebot3_example:/home/hb/Git/Embedded/install/robot_web_interface:/home/hb/Git/Embedded/install/delivery_interface:/home/hb/Git/Embedded/install/app_navigation:/opt/ros/humble /usr/bin/cmake /home/hb/Git/Embedded/src/turtlebot3_simulations/turtlebot3_manipulation_gazebo -DCMAKE_INSTALL_PREFIX=/home/hb/Git/Embedded/install/turtlebot3_manipulation_gazebo
+[5.251s] Invoking command in '/home/hb/Git/Embedded/build/turtlebot3_manipulation_gazebo': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/hb/Git/Embedded/install/turtlebot3_teleop:/home/hb/Git/Embedded/install/turtlebot3_example:/home/hb/Git/Embedded/install/robot_web_interface:/home/hb/Git/Embedded/install/delivery_interface:/home/hb/Git/Embedded/install/app_navigation:/opt/ros/humble /usr/bin/cmake --build /home/hb/Git/Embedded/build/turtlebot3_manipulation_gazebo -- -j16 -l16
+[5.406s] [ 10%] [32mBuilding CXX object CMakeFiles/StorageDoorRos2Plugin.dir/home/hb/Git/Embedded/src/Plugin/StorageDoorRos2Plugin.cpp.o[0m
+[5.417s] [ 20%] [32mBuilding CXX object CMakeFiles/BoxControlPlugin.dir/home/hb/Git/Embedded/src/Plugin/BoxControlPlugin.cpp.o[0m
+[5.423s] [ 30%] [32mBuilding CXX object CMakeFiles/CoordinatorRos2Plugin.dir/home/hb/Git/Embedded/src/Plugin/CoordinatorRos2Plugin.cpp.o[0m
+[5.443s] [ 40%] [32mBuilding CXX object CMakeFiles/AptDoorRos2Plugin.dir/home/hb/Git/Embedded/src/Plugin/AptDoorRos2Plugin.cpp.o[0m
+[5.444s] [ 50%] [32mBuilding CXX object CMakeFiles/ElevatorRos2Plugin.dir/home/hb/Git/Embedded/src/Plugin/ElevatorRos2Plugin.cpp.o[0m
+[41.160s] [ 60%] [32m[1mLinking CXX shared library libStorageDoorRos2Plugin.so[0m
+[41.970s] [ 60%] Built target StorageDoorRos2Plugin
+[44.582s] [ 70%] [32m[1mLinking CXX shared library libAptDoorRos2Plugin.so[0m
+[44.998s] [ 80%] [32m[1mLinking CXX shared library libBoxControlPlugin.so[0m
+[45.327s] [ 80%] Built target AptDoorRos2Plugin
+[45.805s] [ 80%] Built target BoxControlPlugin
+[46.862s] [ 90%] [32m[1mLinking CXX shared library libElevatorRos2Plugin.so[0m
+[47.540s] [ 90%] Built target ElevatorRos2Plugin
+[48.734s] [100%] [32m[1mLinking CXX shared library libCoordinatorRos2Plugin.so[0m
+[49.589s] [100%] Built target CoordinatorRos2Plugin
+[49.600s] Invoked command in '/home/hb/Git/Embedded/build/turtlebot3_manipulation_gazebo' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/hb/Git/Embedded/install/turtlebot3_teleop:/home/hb/Git/Embedded/install/turtlebot3_example:/home/hb/Git/Embedded/install/robot_web_interface:/home/hb/Git/Embedded/install/delivery_interface:/home/hb/Git/Embedded/install/app_navigation:/opt/ros/humble /usr/bin/cmake --build /home/hb/Git/Embedded/build/turtlebot3_manipulation_gazebo -- -j16 -l16
+[49.602s] Invoking command in '/home/hb/Git/Embedded/build/turtlebot3_manipulation_gazebo': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/hb/Git/Embedded/install/turtlebot3_teleop:/home/hb/Git/Embedded/install/turtlebot3_example:/home/hb/Git/Embedded/install/robot_web_interface:/home/hb/Git/Embedded/install/delivery_interface:/home/hb/Git/Embedded/install/app_navigation:/opt/ros/humble /usr/bin/cmake --install /home/hb/Git/Embedded/build/turtlebot3_manipulation_gazebo
+[49.608s] -- Install configuration: ""
+[49.608s] -- Installing: /home/hb/Git/Embedded/install/turtlebot3_manipulation_gazebo/lib/libElevatorRos2Plugin.so
+[49.614s] -- Set runtime path of "/home/hb/Git/Embedded/install/turtlebot3_manipulation_gazebo/lib/libElevatorRos2Plugin.so" to ""
+[49.614s] -- Installing: /home/hb/Git/Embedded/install/turtlebot3_manipulation_gazebo/lib/libAptDoorRos2Plugin.so
+[49.618s] -- Set runtime path of "/home/hb/Git/Embedded/install/turtlebot3_manipulation_gazebo/lib/libAptDoorRos2Plugin.so" to ""
+[49.618s] -- Installing: /home/hb/Git/Embedded/install/turtlebot3_manipulation_gazebo/lib/libCoordinatorRos2Plugin.so
+[49.626s] -- Set runtime path of "/home/hb/Git/Embedded/install/turtlebot3_manipulation_gazebo/lib/libCoordinatorRos2Plugin.so" to ""
+[49.627s] -- Installing: /home/hb/Git/Embedded/install/turtlebot3_manipulation_gazebo/lib/libStorageDoorRos2Plugin.so
+[49.631s] -- Set runtime path of "/home/hb/Git/Embedded/install/turtlebot3_manipulation_gazebo/lib/libStorageDoorRos2Plugin.so" to ""
+[49.632s] -- Installing: /home/hb/Git/Embedded/install/turtlebot3_manipulation_gazebo/lib/libBoxControlPlugin.so
+[49.636s] -- Set runtime path of "/home/hb/Git/Embedded/install/turtlebot3_manipulation_gazebo/lib/libBoxControlPlugin.so" to ""
+[49.636s] -- Installing: /home/hb/Git/Embedded/install/turtlebot3_manipulation_gazebo/share/turtlebot3_manipulation_gazebo/config
+[49.636s] -- Installing: /home/hb/Git/Embedded/install/turtlebot3_manipulation_gazebo/share/turtlebot3_manipulation_gazebo/config/gazebo_controller_manager.yaml
+[49.636s] -- Installing: /home/hb/Git/Embedded/install/turtlebot3_manipulation_gazebo/share/turtlebot3_manipulation_gazebo/config/hardware_controller_manager.yaml
+[49.636s] -- Installing: /home/hb/Git/Embedded/install/turtlebot3_manipulation_gazebo/share/turtlebot3_manipulation_gazebo/gazebo
+[49.637s] -- Installing: /home/hb/Git/Embedded/install/turtlebot3_manipulation_gazebo/share/turtlebot3_manipulation_gazebo/gazebo/open_manipulator_x.gazebo.xacro
+[49.637s] -- Installing: /home/hb/Git/Embedded/install/turtlebot3_manipulation_gazebo/share/turtlebot3_manipulation_gazebo/gazebo/turtlebot3_waffle_pi.gazebo.xacro
+[49.637s] -- Installing: /home/hb/Git/Embedded/install/turtlebot3_manipulation_gazebo/share/turtlebot3_manipulation_gazebo/gazebo/materials.xacro
+[49.637s] -- Installing: /home/hb/Git/Embedded/install/turtlebot3_manipulation_gazebo/share/turtlebot3_manipulation_gazebo/launch
+[49.637s] -- Installing: /home/hb/Git/Embedded/install/turtlebot3_manipulation_gazebo/share/turtlebot3_manipulation_gazebo/launch/gazebo.launch.py
+[49.637s] -- Installing: /home/hb/Git/Embedded/install/turtlebot3_manipulation_gazebo/share/turtlebot3_manipulation_gazebo/launch/gazebo.launch_backup.py
+[49.638s] -- Installing: /home/hb/Git/Embedded/install/turtlebot3_manipulation_gazebo/share/turtlebot3_manipulation_gazebo/launch/fake.launch.py
+[49.638s] -- Installing: /home/hb/Git/Embedded/install/turtlebot3_manipulation_gazebo/share/turtlebot3_manipulation_gazebo/launch/turtlebot3_home_service_challenge.launch_backup.py
+[49.638s] -- Installing: /home/hb/Git/Embedded/install/turtlebot3_manipulation_gazebo/share/turtlebot3_manipulation_gazebo/launch/turtlebot3_home_service_challenge.launch.py
+[49.638s] -- Installing: /home/hb/Git/Embedded/install/turtlebot3_manipulation_gazebo/share/turtlebot3_manipulation_gazebo/launch/base.launch.py
+[49.638s] -- Installing: /home/hb/Git/Embedded/install/turtlebot3_manipulation_gazebo/share/turtlebot3_manipulation_gazebo/ros2_control
+[49.638s] -- Installing: /home/hb/Git/Embedded/install/turtlebot3_manipulation_gazebo/share/turtlebot3_manipulation_gazebo/ros2_control/turtlebot3_manipulation_system.ros2_control.xacro
+[49.638s] -- Installing: /home/hb/Git/Embedded/install/turtlebot3_manipulation_gazebo/share/turtlebot3_manipulation_gazebo/rviz
+[49.639s] -- Installing: /home/hb/Git/Embedded/install/turtlebot3_manipulation_gazebo/share/turtlebot3_manipulation_gazebo/rviz/turtlebot3_manipulation.rviz
+[49.639s] -- Installing: /home/hb/Git/Embedded/install/turtlebot3_manipulation_gazebo/share/turtlebot3_manipulation_gazebo/urdf
+[49.639s] -- Installing: /home/hb/Git/Embedded/install/turtlebot3_manipulation_gazebo/share/turtlebot3_manipulation_gazebo/urdf/turtlebot3_manipulation.urdf.xacro
+[49.639s] -- Installing: /home/hb/Git/Embedded/install/turtlebot3_manipulation_gazebo/share/turtlebot3_manipulation_gazebo/urdf/open_manipulator_x.urdf.xacro
+[49.639s] -- Installing: /home/hb/Git/Embedded/install/turtlebot3_manipulation_gazebo/share/turtlebot3_manipulation_gazebo/urdf/turtlebot3_waffle_pi.urdf.xacro
+[49.640s] -- Installing: /home/hb/Git/Embedded/install/turtlebot3_manipulation_gazebo/share/turtlebot3_manipulation_gazebo/worlds
+[49.640s] -- Installing: /home/hb/Git/Embedded/install/turtlebot3_manipulation_gazebo/share/turtlebot3_manipulation_gazebo/worlds/outer.world
+[49.641s] -- Installing: /home/hb/Git/Embedded/install/turtlebot3_manipulation_gazebo/share/turtlebot3_manipulation_gazebo/worlds/turtlebot3_home_service_challenge.world
+[49.641s] -- Installing: /home/hb/Git/Embedded/install/turtlebot3_manipulation_gazebo/share/turtlebot3_manipulation_gazebo/models
+[49.641s] -- Installing: /home/hb/Git/Embedded/install/turtlebot3_manipulation_gazebo/share/turtlebot3_manipulation_gazebo/models/turtlebot3_home_service_challenge
+[49.642s] -- Installing: /home/hb/Git/Embedded/install/turtlebot3_manipulation_gazebo/share/turtlebot3_manipulation_gazebo/models/turtlebot3_home_service_challenge/marker6
+[49.642s] -- Installing: /home/hb/Git/Embedded/install/turtlebot3_manipulation_gazebo/share/turtlebot3_manipulation_gazebo/models/turtlebot3_home_service_challenge/marker6/model.config
+[49.642s] -- Installing: /home/hb/Git/Embedded/install/turtlebot3_manipulation_gazebo/share/turtlebot3_manipulation_gazebo/models/turtlebot3_home_service_challenge/marker6/model-1_4.sdf
+[49.642s] -- Installing: /home/hb/Git/Embedded/install/turtlebot3_manipulation_gazebo/share/turtlebot3_manipulation_gazebo/models/turtlebot3_home_service_challenge/marker6/model.sdf
+[49.642s] -- Installing: /home/hb/Git/Embedded/install/turtlebot3_manipulation_gazebo/share/turtlebot3_manipulation_gazebo/models/turtlebot3_home_service_challenge/marker6/meshes
+[49.642s] -- Installing: /home/hb/Git/Embedded/install/turtlebot3_manipulation_gazebo/share/turtlebot3_manipulation_gazebo/models/turtlebot3_home_service_challenge/marker6/meshes/Marker6.dae
+[49.642s] -- Installing: /home/hb/Git/Embedded/install/turtlebot3_manipulation_gazebo/share/turtlebot3_manipulation_gazebo/models/turtlebot3_home_service_challenge/marker6/model-1_5.sdf
+[49.643s] -- Installing: /home/hb/Git/Embedded/install/turtlebot3_manipulation_gazebo/share/turtlebot3_manipulation_gazebo/models/turtlebot3_home_service_challenge/marker6/materials
+[49.643s] -- Installing: /home/hb/Git/Embedded/install/turtlebot3_manipulation_gazebo/share/turtlebot3_manipulation_gazebo/models/turtlebot3_home_service_challenge/marker6/materials/textures
+[49.643s] -- Installing: /home/hb/Git/Embedded/install/turtlebot3_manipulation_gazebo/share/turtlebot3_manipulation_gazebo/models/turtlebot3_home_service_challenge/marker6/materials/textures/Marker6.png
+[49.643s] -- Installing: /home/hb/Git/Embedded/install/turtlebot3_manipulation_gazebo/share/turtlebot3_manipulation_gazebo/models/turtlebot3_home_service_challenge/marker1
+[49.643s] -- Installing: /home/hb/Git/Embedded/install/turtlebot3_manipulation_gazebo/share/turtlebot3_manipulation_gazebo/models/turtlebot3_home_service_challenge/marker1/model.config
+[49.643s] -- Installing: /home/hb/Git/Embedded/install/turtlebot3_manipulation_gazebo/share/turtlebot3_manipulation_gazebo/models/turtlebot3_home_service_challenge/marker1/model-1_4.sdf
+[49.643s] -- Installing: /home/hb/Git/Embedded/install/turtlebot3_manipulation_gazebo/share/turtlebot3_manipulation_gazebo/models/turtlebot3_home_service_challenge/marker1/model.sdf
+[49.644s] -- Installing: /home/hb/Git/Embedded/install/turtlebot3_manipulation_gazebo/share/turtlebot3_manipulation_gazebo/models/turtlebot3_home_service_challenge/marker1/meshes
+[49.644s] -- Installing: /home/hb/Git/Embedded/install/turtlebot3_manipulation_gazebo/share/turtlebot3_manipulation_gazebo/models/turtlebot3_home_service_challenge/marker1/meshes/Marker1.dae
+[49.644s] -- Installing: /home/hb/Git/Embedded/install/turtlebot3_manipulation_gazebo/share/turtlebot3_manipulation_gazebo/models/turtlebot3_home_service_challenge/marker1/model-1_5.sdf
+[49.644s] -- Installing: /home/hb/Git/Embedded/install/turtlebot3_manipulation_gazebo/share/turtlebot3_manipulation_gazebo/models/turtlebot3_home_service_challenge/marker1/materials
+[49.644s] -- Installing: /home/hb/Git/Embedded/install/turtlebot3_manipulation_gazebo/share/turtlebot3_manipulation_gazebo/models/turtlebot3_home_service_challenge/marker1/materials/textures
+[49.644s] -- Installing: /home/hb/Git/Embedded/install/turtlebot3_manipulation_gazebo/share/turtlebot3_manipulation_gazebo/models/turtlebot3_home_service_challenge/marker1/materials/textures/Marker1.png
+[49.644s] -- Installing: /home/hb/Git/Embedded/install/turtlebot3_manipulation_gazebo/share/turtlebot3_manipulation_gazebo/models/turtlebot3_home_service_challenge/marker8
+[49.644s] -- Installing: /home/hb/Git/Embedded/install/turtlebot3_manipulation_gazebo/share/turtlebot3_manipulation_gazebo/models/turtlebot3_home_service_challenge/marker8/model.config
+[49.644s] -- Installing: /home/hb/Git/Embedded/install/turtlebot3_manipulation_gazebo/share/turtlebot3_manipulation_gazebo/models/turtlebot3_home_service_challenge/marker8/model-1_4.sdf
+[49.645s] -- Installing: /home/hb/Git/Embedded/install/turtlebot3_manipulation_gazebo/share/turtlebot3_manipulation_gazebo/models/turtlebot3_home_service_challenge/marker8/model.sdf
+[49.645s] -- Installing: /home/hb/Git/Embedded/install/turtlebot3_manipulation_gazebo/share/turtlebot3_manipulation_gazebo/models/turtlebot3_home_service_challenge/marker8/meshes
+[49.645s] -- Installing: /home/hb/Git/Embedded/install/turtlebot3_manipulation_gazebo/share/turtlebot3_manipulation_gazebo/models/turtlebot3_home_service_challenge/marker8/meshes/Marker8.dae
+[49.645s] -- Installing: /home/hb/Git/Embedded/install/turtlebot3_manipulation_gazebo/share/turtlebot3_manipulation_gazebo/models/turtlebot3_home_service_challenge/marker8/model-1_5.sdf
+[49.645s] -- Installing: /home/hb/Git/Embedded/install/turtlebot3_manipulation_gazebo/share/turtlebot3_manipulation_gazebo/models/turtlebot3_home_service_challenge/marker8/materials
+[49.645s] -- Installing: /home/hb/Git/Embedded/install/turtlebot3_manipulation_gazebo/share/turtlebot3_manipulation_gazebo/models/turtlebot3_home_service_challenge/marker8/materials/textures
+[49.645s] -- Installing: /home/hb/Git/Embedded/install/turtlebot3_manipulation_gazebo/share/turtlebot3_manipulation_gazebo/models/turtlebot3_home_service_challenge/marker8/materials/textures/Marker8.png
+[49.645s] -- Installing: /home/hb/Git/Embedded/install/turtlebot3_manipulation_gazebo/share/turtlebot3_manipulation_gazebo/models/turtlebot3_home_service_challenge/marker0
+[49.645s] -- Installing: /home/hb/Git/Embedded/install/turtlebot3_manipulation_gazebo/share/turtlebot3_manipulation_gazebo/models/turtlebot3_home_service_challenge/marker0/model.config
+[49.645s] -- Installing: /home/hb/Git/Embedded/install/turtlebot3_manipulation_gazebo/share/turtlebot3_manipulation_gazebo/models/turtlebot3_home_service_challenge/marker0/model-1_4.sdf
+[49.646s] -- Installing: /home/hb/Git/Embedded/install/turtlebot3_manipulation_gazebo/share/turtlebot3_manipulation_gazebo/models/turtlebot3_home_service_challenge/marker0/model.sdf
+[49.646s] -- Installing: /home/hb/Git/Embedded/install/turtlebot3_manipulation_gazebo/share/turtlebot3_manipulation_gazebo/models/turtlebot3_home_service_challenge/marker0/meshes
+[49.646s] -- Installing: /home/hb/Git/Embedded/install/turtlebot3_manipulation_gazebo/share/turtlebot3_manipulation_gazebo/models/turtlebot3_home_service_challenge/marker0/meshes/Marker0.dae
+[49.646s] -- Installing: /home/hb/Git/Embedded/install/turtlebot3_manipulation_gazebo/share/turtlebot3_manipulation_gazebo/models/turtlebot3_home_service_challenge/marker0/model-1_5.sdf
+[49.646s] -- Installing: /home/hb/Git/Embedded/install/turtlebot3_manipulation_gazebo/share/turtlebot3_manipulation_gazebo/models/turtlebot3_home_service_challenge/marker0/materials
+[49.646s] -- Installing: /home/hb/Git/Embedded/install/turtlebot3_manipulation_gazebo/share/turtlebot3_manipulation_gazebo/models/turtlebot3_home_service_challenge/marker0/materials/textures
+[49.646s] -- Installing: /home/hb/Git/Embedded/install/turtlebot3_manipulation_gazebo/share/turtlebot3_manipulation_gazebo/models/turtlebot3_home_service_challenge/marker0/materials/textures/Marker0.png
+[49.646s] -- Installing: /home/hb/Git/Embedded/install/turtlebot3_manipulation_gazebo/share/turtlebot3_manipulation_gazebo/models/turtlebot3_home_service_challenge/marker3
+[49.647s] -- Installing: /home/hb/Git/Embedded/install/turtlebot3_manipulation_gazebo/share/turtlebot3_manipulation_gazebo/models/turtlebot3_home_service_challenge/marker3/model.config
+[49.647s] -- Installing: /home/hb/Git/Embedded/install/turtlebot3_manipulation_gazebo/share/turtlebot3_manipulation_gazebo/models/turtlebot3_home_service_challenge/marker3/model-1_4.sdf
+[49.647s] -- Installing: /home/hb/Git/Embedded/install/turtlebot3_manipulation_gazebo/share/turtlebot3_manipulation_gazebo/models/turtlebot3_home_service_challenge/marker3/model.sdf
+[49.647s] -- Installing: /home/hb/Git/Embedded/install/turtlebot3_manipulation_gazebo/share/turtlebot3_manipulation_gazebo/models/turtlebot3_home_service_challenge/marker3/meshes
+[49.647s] -- Installing: /home/hb/Git/Embedded/install/turtlebot3_manipulation_gazebo/share/turtlebot3_manipulation_gazebo/models/turtlebot3_home_service_challenge/marker3/meshes/Marker3.dae
+[49.647s] -- Installing: /home/hb/Git/Embedded/install/turtlebot3_manipulation_gazebo/share/turtlebot3_manipulation_gazebo/models/turtlebot3_home_service_challenge/marker3/model-1_5.sdf
+[49.647s] -- Installing: /home/hb/Git/Embedded/install/turtlebot3_manipulation_gazebo/share/turtlebot3_manipulation_gazebo/models/turtlebot3_home_service_challenge/marker3/materials
+[49.647s] -- Installing: /home/hb/Git/Embedded/install/turtlebot3_manipulation_gazebo/share/turtlebot3_manipulation_gazebo/models/turtlebot3_home_service_challenge/marker3/materials/textures
+[49.648s] -- Installing: /home/hb/Git/Embedded/install/turtlebot3_manipulation_gazebo/share/turtlebot3_manipulation_gazebo/models/turtlebot3_home_service_challenge/marker3/materials/textures/Marker3.png
+[49.648s] -- Installing: /home/hb/Git/Embedded/install/turtlebot3_manipulation_gazebo/share/turtlebot3_manipulation_gazebo/models/turtlebot3_home_service_challenge/marker2
+[49.648s] -- Installing: /home/hb/Git/Embedded/install/turtlebot3_manipulation_gazebo/share/turtlebot3_manipulation_gazebo/models/turtlebot3_home_service_challenge/marker2/model.config
+[49.648s] -- Installing: /home/hb/Git/Embedded/install/turtlebot3_manipulation_gazebo/share/turtlebot3_manipulation_gazebo/models/turtlebot3_home_service_challenge/marker2/model-1_4.sdf
+[49.648s] -- Installing: /home/hb/Git/Embedded/install/turtlebot3_manipulation_gazebo/share/turtlebot3_manipulation_gazebo/models/turtlebot3_home_service_challenge/marker2/model.sdf
+[49.648s] -- Installing: /home/hb/Git/Embedded/install/turtlebot3_manipulation_gazebo/share/turtlebot3_manipulation_gazebo/models/turtlebot3_home_service_challenge/marker2/meshes
+[49.648s] -- Installing: /home/hb/Git/Embedded/install/turtlebot3_manipulation_gazebo/share/turtlebot3_manipulation_gazebo/models/turtlebot3_home_service_challenge/marker2/meshes/Marker2.dae
+[49.649s] -- Installing: /home/hb/Git/Embedded/install/turtlebot3_manipulation_gazebo/share/turtlebot3_manipulation_gazebo/models/turtlebot3_home_service_challenge/marker2/model-1_5.sdf
+[49.649s] -- Installing: /home/hb/Git/Embedded/install/turtlebot3_manipulation_gazebo/share/turtlebot3_manipulation_gazebo/models/turtlebot3_home_service_challenge/marker2/materials
+[49.649s] -- Installing: /home/hb/Git/Embedded/install/turtlebot3_manipulation_gazebo/share/turtlebot3_manipulation_gazebo/models/turtlebot3_home_service_challenge/marker2/materials/textures
+[49.649s] -- Installing: /home/hb/Git/Embedded/install/turtlebot3_manipulation_gazebo/share/turtlebot3_manipulation_gazebo/models/turtlebot3_home_service_challenge/marker2/materials/textures/Marker2.png
+[49.649s] -- Installing: /home/hb/Git/Embedded/install/turtlebot3_manipulation_gazebo/share/turtlebot3_manipulation_gazebo/models/turtlebot3_home_service_challenge/marker7
+[49.649s] -- Installing: /home/hb/Git/Embedded/install/turtlebot3_manipulation_gazebo/share/turtlebot3_manipulation_gazebo/models/turtlebot3_home_service_challenge/marker7/model.config
+[49.649s] -- Installing: /home/hb/Git/Embedded/install/turtlebot3_manipulation_gazebo/share/turtlebot3_manipulation_gazebo/models/turtlebot3_home_service_challenge/marker7/model-1_4.sdf
+[49.649s] -- Installing: /home/hb/Git/Embedded/install/turtlebot3_manipulation_gazebo/share/turtlebot3_manipulation_gazebo/models/turtlebot3_home_service_challenge/marker7/model.sdf
+[49.649s] -- Installing: /home/hb/Git/Embedded/install/turtlebot3_manipulation_gazebo/share/turtlebot3_manipulation_gazebo/models/turtlebot3_home_service_challenge/marker7/meshes
+[49.649s] -- Installing: /home/hb/Git/Embedded/install/turtlebot3_manipulation_gazebo/share/turtlebot3_manipulation_gazebo/models/turtlebot3_home_service_challenge/marker7/meshes/Marker7.dae
+[49.649s] -- Installing: /home/hb/Git/Embedded/install/turtlebot3_manipulation_gazebo/share/turtlebot3_manipulation_gazebo/models/turtlebot3_home_service_challenge/marker7/model-1_5.sdf
+[49.649s] -- Installing: /home/hb/Git/Embedded/install/turtlebot3_manipulation_gazebo/share/turtlebot3_manipulation_gazebo/models/turtlebot3_home_service_challenge/marker7/materials
+[49.649s] -- Installing: /home/hb/Git/Embedded/install/turtlebot3_manipulation_gazebo/share/turtlebot3_manipulation_gazebo/models/turtlebot3_home_service_challenge/marker7/materials/textures
+[49.649s] -- Installing: /home/hb/Git/Embedded/install/turtlebot3_manipulation_gazebo/share/turtlebot3_manipulation_gazebo/models/turtlebot3_home_service_challenge/marker7/materials/textures/Marker7.png
+[49.650s] -- Installing: /home/hb/Git/Embedded/install/turtlebot3_manipulation_gazebo/share/turtlebot3_manipulation_gazebo/models/turtlebot3_home_service_challenge/marker9
+[49.650s] -- Installing: /home/hb/Git/Embedded/install/turtlebot3_manipulation_gazebo/share/turtlebot3_manipulation_gazebo/models/turtlebot3_home_service_challenge/marker9/model.config
+[49.650s] -- Installing: /home/hb/Git/Embedded/install/turtlebot3_manipulation_gazebo/share/turtlebot3_manipulation_gazebo/models/turtlebot3_home_service_challenge/marker9/model-1_4.sdf
+[49.650s] -- Installing: /home/hb/Git/Embedded/install/turtlebot3_manipulation_gazebo/share/turtlebot3_manipulation_gazebo/models/turtlebot3_home_service_challenge/marker9/model.sdf
+[49.650s] -- Installing: /home/hb/Git/Embedded/install/turtlebot3_manipulation_gazebo/share/turtlebot3_manipulation_gazebo/models/turtlebot3_home_service_challenge/marker9/meshes
+[49.650s] -- Installing: /home/hb/Git/Embedded/install/turtlebot3_manipulation_gazebo/share/turtlebot3_manipulation_gazebo/models/turtlebot3_home_service_challenge/marker9/meshes/Marker9.dae
+[49.650s] -- Installing: /home/hb/Git/Embedded/install/turtlebot3_manipulation_gazebo/share/turtlebot3_manipulation_gazebo/models/turtlebot3_home_service_challenge/marker9/model-1_5.sdf
+[49.650s] -- Installing: /home/hb/Git/Embedded/install/turtlebot3_manipulation_gazebo/share/turtlebot3_manipulation_gazebo/models/turtlebot3_home_service_challenge/marker9/materials
+[49.650s] -- Installing: /home/hb/Git/Embedded/install/turtlebot3_manipulation_gazebo/share/turtlebot3_manipulation_gazebo/models/turtlebot3_home_service_challenge/marker9/materials/textures
+[49.650s] -- Installing: /home/hb/Git/Embedded/install/turtlebot3_manipulation_gazebo/share/turtlebot3_manipulation_gazebo/models/turtlebot3_home_service_challenge/marker9/materials/textures/Marker9.png
+[49.650s] -- Installing: /home/hb/Git/Embedded/install/turtlebot3_manipulation_gazebo/share/turtlebot3_manipulation_gazebo/models/turtlebot3_home_service_challenge/marker5
+[49.650s] -- Installing: /home/hb/Git/Embedded/install/turtlebot3_manipulation_gazebo/share/turtlebot3_manipulation_gazebo/models/turtlebot3_home_service_challenge/marker5/model.config
+[49.650s] -- Installing: /home/hb/Git/Embedded/install/turtlebot3_manipulation_gazebo/share/turtlebot3_manipulation_gazebo/models/turtlebot3_home_service_challenge/marker5/model-1_4.sdf
+[49.651s] -- Installing: /home/hb/Git/Embedded/install/turtlebot3_manipulation_gazebo/share/turtlebot3_manipulation_gazebo/models/turtlebot3_home_service_challenge/marker5/model.sdf
+[49.651s] -- Installing: /home/hb/Git/Embedded/install/turtlebot3_manipulation_gazebo/share/turtlebot3_manipulation_gazebo/models/turtlebot3_home_service_challenge/marker5/meshes
+[49.651s] -- Installing: /home/hb/Git/Embedded/install/turtlebot3_manipulation_gazebo/share/turtlebot3_manipulation_gazebo/models/turtlebot3_home_service_challenge/marker5/meshes/Marker5.dae
+[49.651s] -- Installing: /home/hb/Git/Embedded/install/turtlebot3_manipulation_gazebo/share/turtlebot3_manipulation_gazebo/models/turtlebot3_home_service_challenge/marker5/model-1_5.sdf
+[49.651s] -- Installing: /home/hb/Git/Embedded/install/turtlebot3_manipulation_gazebo/share/turtlebot3_manipulation_gazebo/models/turtlebot3_home_service_challenge/marker5/materials
+[49.651s] -- Installing: /home/hb/Git/Embedded/install/turtlebot3_manipulation_gazebo/share/turtlebot3_manipulation_gazebo/models/turtlebot3_home_service_challenge/marker5/materials/textures
+[49.652s] -- Installing: /home/hb/Git/Embedded/install/turtlebot3_manipulation_gazebo/share/turtlebot3_manipulation_gazebo/models/turtlebot3_home_service_challenge/marker5/materials/textures/Marker5.png
+[49.652s] -- Installing: /home/hb/Git/Embedded/install/turtlebot3_manipulation_gazebo/share/turtlebot3_manipulation_gazebo/models/turtlebot3_home_service_challenge/marker4
+[49.652s] -- Installing: /home/hb/Git/Embedded/install/turtlebot3_manipulation_gazebo/share/turtlebot3_manipulation_gazebo/models/turtlebot3_home_service_challenge/marker4/model.config
+[49.652s] -- Installing: /home/hb/Git/Embedded/install/turtlebot3_manipulation_gazebo/share/turtlebot3_manipulation_gazebo/models/turtlebot3_home_service_challenge/marker4/model-1_4.sdf
+[49.652s] -- Installing: /home/hb/Git/Embedded/install/turtlebot3_manipulation_gazebo/share/turtlebot3_manipulation_gazebo/models/turtlebot3_home_service_challenge/marker4/model.sdf
+[49.652s] -- Installing: /home/hb/Git/Embedded/install/turtlebot3_manipulation_gazebo/share/turtlebot3_manipulation_gazebo/models/turtlebot3_home_service_challenge/marker4/meshes
+[49.652s] -- Installing: /home/hb/Git/Embedded/install/turtlebot3_manipulation_gazebo/share/turtlebot3_manipulation_gazebo/models/turtlebot3_home_service_challenge/marker4/meshes/Marker4.dae
+[49.652s] -- Installing: /home/hb/Git/Embedded/install/turtlebot3_manipulation_gazebo/share/turtlebot3_manipulation_gazebo/models/turtlebot3_home_service_challenge/marker4/model-1_5.sdf
+[49.653s] -- Installing: /home/hb/Git/Embedded/install/turtlebot3_manipulation_gazebo/share/turtlebot3_manipulation_gazebo/models/turtlebot3_home_service_challenge/marker4/materials
+[49.653s] -- Installing: /home/hb/Git/Embedded/install/turtlebot3_manipulation_gazebo/share/turtlebot3_manipulation_gazebo/models/turtlebot3_home_service_challenge/marker4/materials/textures
+[49.653s] -- Installing: /home/hb/Git/Embedded/install/turtlebot3_manipulation_gazebo/share/turtlebot3_manipulation_gazebo/models/turtlebot3_home_service_challenge/marker4/materials/textures/Marker4.png
+[49.653s] -- Installing: /home/hb/Git/Embedded/install/turtlebot3_manipulation_gazebo/share/turtlebot3_manipulation_gazebo/models/small_red_box
+[49.653s] -- Installing: /home/hb/Git/Embedded/install/turtlebot3_manipulation_gazebo/share/turtlebot3_manipulation_gazebo/models/small_red_box/model.config
+[49.653s] -- Installing: /home/hb/Git/Embedded/install/turtlebot3_manipulation_gazebo/share/turtlebot3_manipulation_gazebo/models/small_red_box/model.sdf
+[49.653s] -- Installing: /home/hb/Git/Embedded/install/turtlebot3_manipulation_gazebo/share/turtlebot3_manipulation_gazebo/meshes
+[49.653s] -- Installing: /home/hb/Git/Embedded/install/turtlebot3_manipulation_gazebo/share/turtlebot3_manipulation_gazebo/meshes/turtlebot3_waffle_pi
+[49.653s] -- Installing: /home/hb/Git/Embedded/install/turtlebot3_manipulation_gazebo/share/turtlebot3_manipulation_gazebo/meshes/turtlebot3_waffle_pi/right_tire.stl
+[49.655s] -- Installing: /home/hb/Git/Embedded/install/turtlebot3_manipulation_gazebo/share/turtlebot3_manipulation_gazebo/meshes/turtlebot3_waffle_pi/left_tire.stl
+[49.657s] -- Installing: /home/hb/Git/Embedded/install/turtlebot3_manipulation_gazebo/share/turtlebot3_manipulation_gazebo/meshes/turtlebot3_waffle_pi/ladar.stl
+[49.659s] -- Installing: /home/hb/Git/Embedded/install/turtlebot3_manipulation_gazebo/share/turtlebot3_manipulation_gazebo/meshes/turtlebot3_waffle_pi/base.stl
+[49.667s] -- Installing: /home/hb/Git/Embedded/install/turtlebot3_manipulation_gazebo/share/turtlebot3_manipulation_gazebo/meshes/open_manipulator_x
+[49.667s] -- Installing: /home/hb/Git/Embedded/install/turtlebot3_manipulation_gazebo/share/turtlebot3_manipulation_gazebo/meshes/open_manipulator_x/link3.stl
+[49.668s] -- Installing: /home/hb/Git/Embedded/install/turtlebot3_manipulation_gazebo/share/turtlebot3_manipulation_gazebo/meshes/open_manipulator_x/link5.stl
+[49.670s] -- Installing: /home/hb/Git/Embedded/install/turtlebot3_manipulation_gazebo/share/turtlebot3_manipulation_gazebo/meshes/open_manipulator_x/link2.stl
+[49.671s] -- Installing: /home/hb/Git/Embedded/install/turtlebot3_manipulation_gazebo/share/turtlebot3_manipulation_gazebo/meshes/open_manipulator_x/gripper_right_palm.stl
+[49.671s] -- Installing: /home/hb/Git/Embedded/install/turtlebot3_manipulation_gazebo/share/turtlebot3_manipulation_gazebo/meshes/open_manipulator_x/link1.stl
+[49.673s] -- Installing: /home/hb/Git/Embedded/install/turtlebot3_manipulation_gazebo/share/turtlebot3_manipulation_gazebo/meshes/open_manipulator_x/gripper_left_palm.stl
+[49.673s] -- Installing: /home/hb/Git/Embedded/install/turtlebot3_manipulation_gazebo/share/turtlebot3_manipulation_gazebo/meshes/open_manipulator_x/link4.stl
+[49.675s] -- Installing: /home/hb/Git/Embedded/install/turtlebot3_manipulation_gazebo/share/ament_index/resource_index/package_run_dependencies/turtlebot3_manipulation_gazebo
+[49.675s] -- Installing: /home/hb/Git/Embedded/install/turtlebot3_manipulation_gazebo/share/ament_index/resource_index/parent_prefix_path/turtlebot3_manipulation_gazebo
+[49.675s] -- Installing: /home/hb/Git/Embedded/install/turtlebot3_manipulation_gazebo/share/turtlebot3_manipulation_gazebo/environment/ament_prefix_path.sh
+[49.675s] -- Installing: /home/hb/Git/Embedded/install/turtlebot3_manipulation_gazebo/share/turtlebot3_manipulation_gazebo/environment/ament_prefix_path.dsv
+[49.675s] -- Installing: /home/hb/Git/Embedded/install/turtlebot3_manipulation_gazebo/share/turtlebot3_manipulation_gazebo/environment/path.sh
+[49.676s] -- Installing: /home/hb/Git/Embedded/install/turtlebot3_manipulation_gazebo/share/turtlebot3_manipulation_gazebo/environment/path.dsv
+[49.676s] -- Installing: /home/hb/Git/Embedded/install/turtlebot3_manipulation_gazebo/share/turtlebot3_manipulation_gazebo/local_setup.bash
+[49.676s] -- Installing: /home/hb/Git/Embedded/install/turtlebot3_manipulation_gazebo/share/turtlebot3_manipulation_gazebo/local_setup.sh
+[49.676s] -- Installing: /home/hb/Git/Embedded/install/turtlebot3_manipulation_gazebo/share/turtlebot3_manipulation_gazebo/local_setup.zsh
+[49.676s] -- Installing: /home/hb/Git/Embedded/install/turtlebot3_manipulation_gazebo/share/turtlebot3_manipulation_gazebo/local_setup.dsv
+[49.676s] -- Installing: /home/hb/Git/Embedded/install/turtlebot3_manipulation_gazebo/share/turtlebot3_manipulation_gazebo/package.dsv
+[49.676s] -- Installing: /home/hb/Git/Embedded/install/turtlebot3_manipulation_gazebo/share/ament_index/resource_index/packages/turtlebot3_manipulation_gazebo
+[49.676s] -- Installing: /home/hb/Git/Embedded/install/turtlebot3_manipulation_gazebo/share/turtlebot3_manipulation_gazebo/cmake/turtlebot3_manipulation_gazeboConfig.cmake
+[49.676s] -- Installing: /home/hb/Git/Embedded/install/turtlebot3_manipulation_gazebo/share/turtlebot3_manipulation_gazebo/cmake/turtlebot3_manipulation_gazeboConfig-version.cmake
+[49.676s] -- Installing: /home/hb/Git/Embedded/install/turtlebot3_manipulation_gazebo/share/turtlebot3_manipulation_gazebo/package.xml
+[49.679s] Invoked command in '/home/hb/Git/Embedded/build/turtlebot3_manipulation_gazebo' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/hb/Git/Embedded/install/turtlebot3_teleop:/home/hb/Git/Embedded/install/turtlebot3_example:/home/hb/Git/Embedded/install/robot_web_interface:/home/hb/Git/Embedded/install/delivery_interface:/home/hb/Git/Embedded/install/app_navigation:/opt/ros/humble /usr/bin/cmake --install /home/hb/Git/Embedded/build/turtlebot3_manipulation_gazebo
