@@ -4,7 +4,7 @@ spring:
 
   profiles:
     active: local
-    group:                     # spring.profiles.active 값에 따른 정의
+    group:
       local: local,common
       blue: blue,common
       green: green,common
@@ -43,47 +43,6 @@ spring:
       read-timeout: 10000
       write-timeout: 10000
 
-  security:
-    oauth2:
-      client:
-        registration:
-          kakao:
-            client-id: ${OAUTH2_KAKAO_CLIENT_ID}
-            client-secret: ${OAUTH2_KAKAO_CLIENT_SECRET_KEY}
-            client-authentication-method: client_secret_post
-            authorization-grant-type: ${OAUTH2_KAKAO_GRANT_TYPE}
-            redirect-uri: ${OAUTH2_KAKAO_LOGIN_REDIRECT_URI}
-            scope: profile_nickname, profile_image, account_email
-            client-name: Kakao
-          naver:
-            client-id: ${OAUTH2_NAVER_CLIENT_ID}
-            client-secret: ${OAUTH2_NAVER_CLIENT_SECRET_KEY}
-            client-authentication-method: client_secret_post
-            authorization-grant-type: ${OAUTH2_NAVER_GRANT_TYPE}
-            redirect-uri: ${OAUTH2_NAVER_LOGIN_REDIRECT_URI}
-            scope: name, email, profile_image
-            client-name: Naver
-        provider:
-          kakao:
-            authorization-uri: ${OAUTH2_KAKAO_AUTHORIZATION_URL}
-            token-uri: ${OAUTH2_KAKAO_TOKEN_URL}
-            user-info-uri: ${OAUTH2_KAKAO_USER_INFO_URI}
-            jwk-set-uri: ${OAUTH2_KAKAO_OIDC_JWK_SET_URI}
-            user-name-attribute: id
-          naver:
-            authorization-uri: ${OAUTH2_NAVER_AUTHORIZATION_URL}
-            token-uri: ${OAUTH2_NAVER_TOKEN_URL}
-            user-info-uri: ${OAUTH2_NAVER_USER_INFO_URI}
-            user-name-attribute: response
-
-
-jwt:
-  secret: ${JWT_SECRET}
-
-cookie:
-  domain: ${COOKIE_DOMAIN}
-  secure-mode: true
-
 host:
   frontend: ${HOST_FRONTEND}
   allowed-origins: ${HOST_ALLOWED_ORIGINS}
@@ -94,8 +53,6 @@ mybatis:   # 위치고정
   type-aliases-package: org.example.nareugobackend.common.model
   configuration:
     map-underscore-to-camel-case: true
-
-
 
 # ROS2 로봇 통신 설정
 ros:
@@ -121,8 +78,6 @@ ros:
       - id: "2"
         name: "NareuGO2"
         type: "turtlebot3"
-
-# WebClient 설정 (ROS2 서버와 통신용)
 
 # ===========================================
 # AWS S3 설정
@@ -158,7 +113,7 @@ clova:
 firebase:
   enabled: true
   service-account-key: firebase-service-account.json
-  project-id: nareugo  # 여기에 실제 Firebase 프로젝트 ID 입력
+  project-id: nareugo
 
 # Local 환경
 ---
