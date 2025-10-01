@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class HealthCheckController {
 
     @Value("${server.env}")
-    private String env;                 // Dockerfile 로 인해 값의 변동이 생긴다.
+    private String env;                 // Dockerfile 로 인해 값의 변동
     @Value("${server.port}")
     private String serverPort;
     @Value("${server.serverAddress}")
