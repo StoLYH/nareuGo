@@ -31,12 +31,6 @@ spring:
         dialect: org.hibernate.dialect.MySQLDialect
         format_sql: true
 
-  data:
-    redis:
-      host: ${REDIS_HOST}
-      port: 6379
-      password: ${REDIS_PASSWORD}
-
   webflux:
     webclient:
       connect-timeout: 5000

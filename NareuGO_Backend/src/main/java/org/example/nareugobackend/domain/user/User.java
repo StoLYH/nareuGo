@@ -15,7 +15,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.example.nareugobackend.api.service.auth.info.SocialUserInfo;
 
 @Getter
 @Entity
@@ -69,20 +68,5 @@ public class User {
 
   @Enumerated(STRING)
   private Role role;
-
-
-  public static User from(SocialUserInfo userInfo) {
-    return User.builder()
-        .email(userInfo.getEmail())
-        .name(userInfo.getName())
-        .sex(userInfo.getGender())
-        .birth(userInfo.getBirth())
-        .phoneNumber(userInfo.getPhoneNumber())
-        .providerType(userInfo.getProviderType())
-        .providerId(userInfo.getProviderId())
-        .isActive(true)
-        .role(Role.USER)
-        .build();
-  }
   
 }

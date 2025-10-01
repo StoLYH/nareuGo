@@ -1,7 +1,6 @@
 package org.example.nareugobackend.api.service.user;
 
 import lombok.RequiredArgsConstructor;
-import org.example.nareugobackend.api.service.auth.info.SocialUserInfo;
 import org.example.nareugobackend.api.service.user.request.LoginServiceRequest;
 import org.example.nareugobackend.api.service.user.response.LoginServiceResponse;
 import org.example.nareugobackend.api.service.user.response.UserProfileResponse;
@@ -21,15 +20,6 @@ public class UserService {
 
   private final UserRepository userRepository;
   private final UserMapper userMapper;
-
-  @Transactional
-  public User registerUser(SocialUserInfo userInfo) {
-    if (userRepository.existsMemberByEmail(userInfo.getEmail())) {
-      return userRepository.findByEmail(userInfo.getEmail());
-    }
-    User savedUser = userRepository.save(User.from(userInfo));
-    return savedUser;
-  }
 
   public User findById(Long userId) {
     return userRepository.findById(userId)
