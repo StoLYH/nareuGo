@@ -13,5 +13,3 @@ public class NareuGoBackendApplication {
     SpringApplication.run(NareuGoBackendApplication.class, args);
   }
 }
-
-// https test7
