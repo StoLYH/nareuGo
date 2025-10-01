@@ -1,3 +1,0 @@
-[console_scripts]
-app_navigator = app_navigation.app_navigator:main
-
