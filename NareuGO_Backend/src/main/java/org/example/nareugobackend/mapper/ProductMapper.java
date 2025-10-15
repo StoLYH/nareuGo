@@ -16,7 +16,7 @@ public interface ProductMapper {
     int insertImageKeys(@Param("productId") Long productId,
                          @Param("imageUrls") String[] imageUrls);
 
-    // int deleteProduct(@Param("productId") Long productId);
+    int deleteProduct(@Param("productId") Long productId);
 
 
     // 전체 (읍,면,동 기준)

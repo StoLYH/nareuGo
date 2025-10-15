@@ -4,6 +4,7 @@ import java.util.List;
 import org.example.nareugobackend.api.controller.product.request.ProductCreateRequest;
 import org.example.nareugobackend.api.controller.product.response.ProductCreateResponse;
 import org.example.nareugobackend.api.controller.product.response.ProductDetailResponse;
+import org.example.nareugobackend.api.controller.product.response.ProductDeleteResponse;
 
 public interface ProductService {
 
@@ -20,5 +21,7 @@ public interface ProductService {
      * @return ProductDetailResponse
      */
     ProductDetailResponse getProductForPayment(long productId);
+
+    ProductDeleteResponse deleteProduct(long productId);
 
 }

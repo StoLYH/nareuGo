@@ -61,10 +61,7 @@ public class NeighborhoodServiceImpl implements NeighborhoodService {
             response.setVerifiedAddress(request.getOcrAddress());
             response.setVerificationDate(LocalDateTime.now());
             
-            log.info("동네 인증 정보 저장 완료 - 사용자: {}, 위치: {}", userEmail, request.getGpsAddress());
-            
         } catch (Exception e) {
-            log.error("동네 인증 정보 저장 실패", e);
             response.setSuccess(false);
             response.setMessage("동네 인증 정보 저장에 실패했습니다: " + e.getMessage());
         }
@@ -124,7 +121,7 @@ public class NeighborhoodServiceImpl implements NeighborhoodService {
         
         // OCR 텍스트 전처리
         String address = preprocessOcrText(ocrAddress);
-        log.info("OCR 주소 파싱 시작 (전처리 후): {}", address);
+        // OCR 주소 파싱 시작
         
         try {
             // 정규식을 사용한 상세 주소 파싱
@@ -208,12 +205,8 @@ public class NeighborhoodServiceImpl implements NeighborhoodService {
             
             // 아파트명은 프론트엔드에서 사용자 입력으로 처리
             
-            log.info("파싱 결과 - 시도: {}, 시군구: {}, 읍면동: {}, 동: {}, 호: {}, 아파트: {}", 
-                    components.getSiDo(), components.getSiGunGu(), components.getEupMyeonDong(),
-                    components.getBuildingDong(), components.getBuildingHo(), components.getApartmentName());
-            
         } catch (Exception e) {
-            log.warn("주소 파싱 중 오류 발생: {}", e.getMessage());
+            // 주소 파싱 중 오류 발생
         }
         
         return components;
@@ -268,7 +261,6 @@ public class NeighborhoodServiceImpl implements NeighborhoodService {
             response.setMessage("인증 상태 조회 완료");
             
         } catch (Exception e) {
-            log.error("동네 인증 상태 조회 실패", e);
             response.setSuccess(false);
             response.setMessage("인증 상태 조회에 실패했습니다: " + e.getMessage());
         }

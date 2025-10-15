@@ -39,7 +39,6 @@ public class FirebaseConfig {
             FirebaseApp app;
             if (FirebaseApp.getApps().isEmpty()) {
                 app = FirebaseApp.initializeApp(options);
-                log.info("Firebase application initialized successfully");
             } else {
                 app = FirebaseApp.getInstance();
             }
@@ -47,7 +46,6 @@ public class FirebaseConfig {
             return FirebaseMessaging.getInstance(app);
 
         } catch (Exception e) {
-            log.error("Failed to initialize Firebase", e);
             throw e;
         }
     }

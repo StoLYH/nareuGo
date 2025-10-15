@@ -67,52 +67,34 @@ private String generateRandomTrackingNumber() {
      * @param requestDto 프론트엔드에서 받은 결제 승인 요청 데이터 (paymentKey, orderId, amount)
      */
     @Override
-    @Transactional // 이 어노테이션이 붙은 메소드 내의 모든 DB 작업은 하나의 트랜잭션으로 묶입니다.
-    // 중간에 예외가 발생하면 모든 DB 작업이 자동으로 롤백(취소)됩니다.
+    @Transactional
     public void confirmPayment(PaymentConfirmRequestDto requestDto) {
-
-        // 상세 로깅 추가: 시작
-        String maskedPaymentKey = requestDto.getPaymentKey() == null ? null
-            : (requestDto.getPaymentKey().length() <= 6 ? "******" : requestDto.getPaymentKey().substring(0, 6) + "******");
-        log.info("[Payments] confirmPayment START - tossOrderId={}, amount={}, paymentKey(masked)={}",
-                requestDto.getOrderId(), requestDto.getAmount(), maskedPaymentKey);
-
         try {
-            // --- 1. DB에서 주문 정보 조회 및 검증 ---
-            // 토스 결제용 orderId(tossOrderId)는 문자열이므로 해당 값으로 주문을 조회합니다.
             Order order = orderMapper.findByTossOrderId(requestDto.getOrderId());
             if (order == null) {
-                log.warn("[Payments] Order not found by tossOrderId={}", requestDto.getOrderId());
                 throw new IllegalArgumentException("존재하지 않는 주문입니다. tossOrderId=" + requestDto.getOrderId());
             }
-            log.info("[Payments] Order loaded - orderId={}, productId={}, buyerId={}, dbAmount={}",
-                    order.getOrderId(), order.getProductId(), order.getBuyerId(), order.getAmount());
 
-            // --- 2. 결제 금액 위변조 검증 (매우 중요!) ---
             if (order.getAmount() == null || requestDto.getAmount() == null || order.getAmount().compareTo(requestDto.getAmount()) != 0) {
                 log.warn("[Payments] Amount mismatch - dbAmount={}, requestAmount={}", order.getAmount(), requestDto.getAmount());
                 throw new IllegalArgumentException("주문 금액이 일치하지 않습니다.");
             }
-            log.info("[Payments] Amount verified successfully");
 
-            // --- 3. 토스페이먼츠 API 호출 준비 ---
             String encodedSecretKey = Base64.getEncoder()
                 .encodeToString((tossSecretKey + ":").getBytes(StandardCharsets.UTF_8));
             WebClient webClient = webClientBuilder.baseUrl(tossConfirmUrl).build();
-            log.info("[Payments] Calling Toss confirm API - url={}", tossConfirmUrl);
 
-            // --- 4. 토스페이먼츠 결제 승인 API 호출 ---
             TossPaymentConfirmResponseDto tossResponse = webClient.post()
                 .header("Authorization", "Basic " + encodedSecretKey)
                 .header("Content-Type", "application/json")
-                .bodyValue(requestDto) // paymentKey, orderId, amount
+                .bodyValue(requestDto)
                 .retrieve()
                 .onStatus(
                     status -> status.is4xxClientError() || status.is5xxServerError(),
                     clientResponse -> clientResponse.bodyToMono(String.class)
                         .flatMap(body -> {
                             String message = "Toss confirm failed: " + body;
-                            log.error("[Payments] Toss confirm API error: status={}, body={}", clientResponse.statusCode(), body);
+                            log.error("[Payments] Toss API error: status={}", clientResponse.statusCode());
                             if (clientResponse.statusCode().is4xxClientError()) {
                                 return reactor.core.publisher.Mono.error(new org.springframework.web.server.ResponseStatusException(org.springframework.http.HttpStatus.BAD_REQUEST, message));
                             }
@@ -127,27 +109,19 @@ private String generateRandomTrackingNumber() {
                 throw new IllegalStateException("Empty response from Toss Payments");
             }
 
-            log.info("[Payments] Toss response received - status={}, totalAmount={}, approvedAt={}",
-                    tossResponse.getStatus(), tossResponse.getTotalAmount(), tossResponse.getApprovedAt());
-
-            // 상태/금액 재검증
             if (!"DONE".equalsIgnoreCase(tossResponse.getStatus())) {
                 log.warn("[Payments] Toss status not DONE - status={}", tossResponse.getStatus());
                 throw new IllegalStateException("Payment not completed. status=" + tossResponse.getStatus());
             }
             if (tossResponse.getTotalAmount() == null ||
                 order.getAmount().compareTo(java.math.BigDecimal.valueOf(tossResponse.getTotalAmount().longValue())) != 0) {
-                log.warn("[Payments] Toss amount mismatch - dbAmount={}, tossAmount={}", order.getAmount(), tossResponse.getTotalAmount());
+                log.warn("[Payments] Toss amount mismatch");
                 throw new IllegalArgumentException("승인 응답 금액이 주문 금액과 일치하지 않습니다.");
             }
-            log.info("[Payments] Toss response verified successfully");
 
-            // --- 5. DB 상태 업데이트 ---
-            log.info("[Payments] Updating order status to PAYMENT_COMPLETED - orderId={}", order.getOrderId());
             order.setStatus(OrderStatus.PAYMENT_COMPLETED);
             orderMapper.updateStatus(order.getOrderId(), OrderStatus.PAYMENT_COMPLETED);
 
-            log.info("[Payments] Inserting payment record - orderId={}", order.getOrderId());
             Payment payment = new Payment();
             payment.setOrderId(order.getOrderId());
             payment.setPaymentKey(requestDto.getPaymentKey());
@@ -156,10 +130,8 @@ private String generateRandomTrackingNumber() {
             payment.setApprovedAt(tossResponse.getApprovedAt() != null ? tossResponse.getApprovedAt().toLocalDateTime() : LocalDateTime.now());
             paymentMapper.save(payment);
 
-            log.info("[Payments] Updating product status to SOLD - productId={}", order.getProductId());
             productMapper.updateStatus(order.getProductId(), ProductStatus.SOLD);
 
-            // --- 6. 배송 초기 레코드 생성 (RECEIPT_COMPLETED) ---
             try {
                 UserEntity buyer = userMapper.findById(order.getBuyerId());
                 StringBuilder addr = new StringBuilder();
@@ -178,8 +150,6 @@ private String generateRandomTrackingNumber() {
                 }
                 String deliveryAddress = addr.toString();
                 String trackingNumber = generateRandomTrackingNumber();
-                log.info("[Payments] Inserting initial delivery - orderId={}, address='{}', status=RECEIPT_COMPLETED",
-                        order.getOrderId(), deliveryAddress);
                 deliveryMapper.insertInitialDelivery(
                         order.getOrderId(),
                         deliveryAddress,
@@ -187,15 +157,12 @@ private String generateRandomTrackingNumber() {
                         trackingNumber
                 );
             } catch (Exception de) {
-                // 배송 생성 실패는 결제 자체를 실패시키지 않음. 로깅만 수행.
-                log.error("[Payments] Failed to create initial delivery record for orderId={}: {}",
-                        order.getOrderId(), de.getMessage(), de);
+                log.error("[Payments] Failed to create initial delivery record", de);
             }
 
-            log.info("[Payments] confirmPayment SUCCESS - tossOrderId={}", requestDto.getOrderId());
+            log.info("[Payments] Payment completed - orderId={}", requestDto.getOrderId());
         } catch (RuntimeException ex) {
-            // 런타임 예외 로깅 후 재던짐(트랜잭션 롤백)
-            log.error("[Payments] confirmPayment FAILED - tossOrderId={}, reason={}", requestDto.getOrderId(), ex.getMessage(), ex);
+            log.error("[Payments] Payment failed - orderId={}", requestDto.getOrderId(), ex);
             throw ex;
         }
     }

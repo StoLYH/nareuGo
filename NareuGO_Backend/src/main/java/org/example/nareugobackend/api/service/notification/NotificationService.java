@@ -92,8 +92,6 @@ public class NotificationService {
                 .build();
 
         notificationRepository.save(notification);
-
-        log.info("알림 생성 완료 - userId: {}, title: {}", userId, title);
     }
 
     /**
@@ -105,8 +103,6 @@ public class NotificationService {
         String message = String.format("'%s' 상품을 로봇에 넣어주세요. 구매자: %s", productTitle, buyerName);
 
         createNotification(sellerId, title, message, "SELLER_ARRIVAL");
-
-        log.info("판매자 집 도착 알림 생성 - sellerId: {}, productTitle: {}", sellerId, productTitle);
     }
 
     /**
@@ -118,8 +114,6 @@ public class NotificationService {
         String message = String.format("'%s' 상품이 도착했습니다. 물건을 가져가주세요. 판매자: %s", productTitle, sellerName);
 
         createNotification(buyerId, title, message, "BUYER_ARRIVAL");
-
-        log.info("구매자 집 도착 알림 생성 - buyerId: {}, productTitle: {}, deliveryId: {}", buyerId, productTitle, deliveryId);
     }
 
     private NotificationResponse convertToResponse(Notification notification) {

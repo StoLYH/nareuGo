@@ -126,7 +126,6 @@ public class FcmService {
 
     private void sendNotification(String token, String title, String body, Map<String, String> data) {
         if (firebaseMessaging == null) {
-            log.warn("Firebase messaging is not configured. Skipping notification.");
             return;
         }
 
@@ -159,10 +158,8 @@ public class FcmService {
                 .build();
 
             String response = firebaseMessaging.send(message);
-            log.info("Successfully sent message: {}", response);
 
         } catch (Exception e) {
-            log.error("Failed to send FCM notification to token: {}", token, e);
             // 토큰이 만료되었을 경우 비활성화
             fcmTokenRepository.findByTokenAndIsActiveTrue(token)
                 .forEach(FcmToken::deactivate);

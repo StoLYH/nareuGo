@@ -1,0 +1,16 @@
+{
+  "settings": {
+    "analysis": {
+      "analyzer": {
+        "korean_nori": {
+          "type": "custom",
+          "tokenizer": "nori_tokenizer",
+          "filter": [
+            "lowercase",
+            "nori_part_of_speech"
+          ]
+        }
+      }
+    }
+  }
+}

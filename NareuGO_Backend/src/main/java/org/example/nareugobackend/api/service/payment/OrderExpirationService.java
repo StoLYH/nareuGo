@@ -24,7 +24,6 @@ public class OrderExpirationService {
             List<Order> expiredOrders = orderMapper.findExpiredPendingOrders();
 
             if (expiredOrders.isEmpty()) {
-                log.debug("만료된 결제 대기 주문이 없습니다.");
                 return;
             }
 
@@ -34,11 +33,8 @@ public class OrderExpirationService {
 
             orderMapper.expireOrders(orderIds);
 
-            log.info("만료된 결제 대기 주문 {}건을 취소 처리했습니다. orderIds: {}",
-                expiredOrders.size(), orderIds);
-
         } catch (Exception e) {
-            log.error("결제 대기 주문 만료 처리 중 오류 발생", e);
+            // 결제 대기 주문 만료 처리 중 오류 발생
         }
     }
 }

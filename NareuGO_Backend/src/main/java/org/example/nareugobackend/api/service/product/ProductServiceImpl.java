@@ -14,7 +14,10 @@ import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import lombok.RequiredArgsConstructor;
 import org.example.nareugobackend.api.controller.product.request.ProductCreateRequest;
 import org.example.nareugobackend.api.controller.product.response.ProductCreateResponse;
+import org.example.nareugobackend.api.controller.product.response.ProductDeleteResponse;
 import org.example.nareugobackend.mapper.ProductMapper;
+import org.example.nareugobackend.search.ProductSearchService;
+import org.example.nareugobackend.util.S3UrlGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -27,21 +30,8 @@ import java.time.Duration;
 public class ProductServiceImpl implements ProductService {
 
     private final ProductMapper productMapper;
-
-    @Autowired
-    private S3Client s3Client;
-    
-    @Value("${cloud.aws.s3.bucket}")
-    private String bucketName;
-    
-    @Value("${cloud.aws.credentials.access-key}")
-    private String accessKey;
-    
-    @Value("${cloud.aws.credentials.secret-key}")
-    private String secretKey;
-    
-    @Value("${cloud.aws.s3.region}")
-    private String region;
+    private final ProductSearchService productSearchService;
+    private final S3UrlGenerator s3UrlGenerator;
 
 
     /**
@@ -87,12 +77,15 @@ public class ProductServiceImpl implements ProductService {
                 s3Keys[i] = s3Key;
 
                 // Presigned URL 생성 (업로드용)
-                String uploadUrl = generatePresignedUploadUrl(s3Key);
+                String uploadUrl = s3UrlGenerator.generatePresignedUploadUrl(s3Key);
                 uploadUrls[i] = uploadUrl;
             }
 
             // DB에 S3 KEY들 저장
             productMapper.insertImageKeys(productId, s3Keys);
+
+            // Elasticsearch 색인 (이미지 키 저장 이후 실행)
+            productSearchService.indexProduct(productId);
 
             // Presigned URL 목록 반환 (프론트엔드 업로드용)
             ProductCreateResponse productServiceResponse = new ProductCreateResponse();
@@ -100,45 +93,12 @@ public class ProductServiceImpl implements ProductService {
             return productServiceResponse;
         }
 
+        // 이미지가 없는 경우에도 Elasticsearch 색인 실행
+        productSearchService.indexProduct(productId);
+
         return new ProductCreateResponse();
     }
 
-    /**
-     * AWS S3 UPLOAD URL 생성
-     * product/{productId}/{numbering}
-     *
-     * @param s3Key
-     * @return String
-     */
-    private String generatePresignedUploadUrl(String s3Key) {
-        try {
-            // S3Presigner를 리전과 함께 생성
-            S3Presigner presigner = S3Presigner.builder()
-                .region(software.amazon.awssdk.regions.Region.of(region))
-                .credentialsProvider(software.amazon.awssdk.auth.credentials.StaticCredentialsProvider.create(
-                    software.amazon.awssdk.auth.credentials.AwsBasicCredentials.create(accessKey, secretKey)
-                ))
-                .build();
-
-            PutObjectRequest putObjectRequest = PutObjectRequest.builder()
-                .bucket(bucketName)
-                .key(s3Key)
-                .build();
-
-            PutObjectPresignRequest presignRequest = PutObjectPresignRequest.builder()
-                .signatureDuration(Duration.ofHours(24))
-                .putObjectRequest(putObjectRequest)
-                .build();
-
-            String presignedUrl = presigner.presignPutObject(presignRequest).url().toString();
-            presigner.close();
-
-            return presignedUrl;
-
-        } catch (Exception e) {
-            throw new RuntimeException("Presigned URL 생성 실패: " + e.getMessage(), e);
-        }
-    }
 
     /**
      * 아파트 별 상품 목록 조회
@@ -158,11 +118,10 @@ public class ProductServiceImpl implements ProductService {
             // 해당 상품에 있는 이미지들
             List<String> fileImageKEYS = productMapper.selectProductImages(productDetailResponse.getProductId());
 
-            // KEYS 이용해서 S3 PRESIGNED DOWNLOAD URLS 발급
+            // KEYS 이용해서 S3 직접 URL 생성
             List<String> downloadUrls = new ArrayList<>();
             for (String s3Key : fileImageKEYS) {
-                // 직접 S3 URL 사용
-                String directUrl = "https://" + bucketName + ".s3." + region + ".amazonaws.com/" + s3Key;
+                String directUrl = s3UrlGenerator.generateDirectUrl(s3Key);
                 downloadUrls.add(directUrl);
             }
 
@@ -173,40 +132,6 @@ public class ProductServiceImpl implements ProductService {
     }
 
 
-    /**
-     * AWS S3 Download URL 생성
-     *
-     * @param s3Key
-     * @return String
-     */
-    private String generatePresignedDownloadUrl(String s3Key) {
-        try {
-            S3Presigner presigner = S3Presigner.builder()
-                .region(software.amazon.awssdk.regions.Region.of(region))
-                .credentialsProvider(software.amazon.awssdk.auth.credentials.StaticCredentialsProvider.create(
-                    software.amazon.awssdk.auth.credentials.AwsBasicCredentials.create(accessKey, secretKey)
-                ))
-                .build();
-
-            GetObjectRequest getObjectRequest = GetObjectRequest.builder()
-                .bucket(bucketName)
-                .key(s3Key)
-                .build();
-
-            GetObjectPresignRequest presignRequest = GetObjectPresignRequest.builder()
-                .signatureDuration(Duration.ofHours(24)) // 24시간 후 만료
-                .getObjectRequest(getObjectRequest)
-                .build();
-
-            String presignedUrl = presigner.presignGetObject(presignRequest).url().toString();
-            presigner.close();
-
-            return presignedUrl;
-
-        } catch (Exception e) {
-            throw new RuntimeException("Presigned Download URL 생성 실패: " + e.getMessage(), e);
-        }
-    }
 
 
     /**
@@ -220,8 +145,6 @@ public class ProductServiceImpl implements ProductService {
         // 상품 기본 정보 조회
         ProductDetailResponse product = productMapper.selectOneProduct(productId);
 
-        System.out.println(product.getApartmentName());
-
         if (product == null) {
             return null; // 상품이 존재하지 않음
         }
@@ -232,7 +155,7 @@ public class ProductServiceImpl implements ProductService {
         // S3 KEY들을 Presigned Download URL로 변환
         List<String> downloadUrls = new ArrayList<>();
         for (String s3Key : imageKeys) {
-            String downloadUrl = generatePresignedDownloadUrl(s3Key);
+            String downloadUrl = s3UrlGenerator.generatePresignedDownloadUrl(s3Key);
             downloadUrls.add(downloadUrl);
         }
 
@@ -246,7 +169,7 @@ public class ProductServiceImpl implements ProductService {
     /**
      * 결제용 상품 단일 조회
      * @param productId 상품 ID
-     * @return ProductDetailResponse
+     * @return ProductDetailResponseㄴ
      */
     @Override
     public ProductDetailResponse getProductForPayment(long productId) {
@@ -263,8 +186,7 @@ public class ProductServiceImpl implements ProductService {
         // S3 KEY들을 직접 URL로 변환 (기존 로직과 동일)
         List<String> downloadUrls = new ArrayList<>();
         for (String s3Key : imageKeys) {
-            // 직접 S3 URL 사용
-            String directUrl = "https://" + bucketName + ".s3." + region + ".amazonaws.com/" + s3Key;
+            String directUrl = s3UrlGenerator.generateDirectUrl(s3Key);
             downloadUrls.add(directUrl);
         }
         
@@ -272,6 +194,17 @@ public class ProductServiceImpl implements ProductService {
         product.setImageUrls(downloadUrls);
         
         return product;
+    }
+
+    @Transactional
+    @Override
+    public ProductDeleteResponse deleteProduct(long productId) {
+        int row = productMapper.deleteProduct(productId);
+        if (row > 0) {
+            productSearchService.deleteFromIndex(productId);
+            return new ProductDeleteResponse(true, "상품이 삭제되었습니다.");
+        }
+        return new ProductDeleteResponse(false, "상품을 찾을 수 없습니다.");
     }
 
 }

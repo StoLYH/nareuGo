@@ -37,7 +37,6 @@ public class OcrServiceImpl implements OcrService {
         OcrResponseDto response = new OcrResponseDto();
         
         try {
-            // 환경변수 확인
             if (clovaOcrApiUrl == null || clovaOcrApiUrl.isEmpty()) {
                 throw new RuntimeException("CLOVA_OCR_API_URL 환경변수가 설정되지 않았습니다.");
             }
@@ -45,39 +44,23 @@ public class OcrServiceImpl implements OcrService {
                 throw new RuntimeException("CLOVA_OCR_SECRET_KEY 환경변수가 설정되지 않았습니다.");
             }
             
-            log.info("OCR API URL: {}", clovaOcrApiUrl);
-            log.info("OCR Secret Key 설정됨: {}", clovaOcrSecretKey != null && !clovaOcrSecretKey.isEmpty());
-            
-            // 1. Clova OCR API 호출
             String ocrResult = callClovaOcrApi(requestDto.getImageData(), requestDto.getImageFormat());
-            log.info("OCR API 응답: {}", ocrResult);
-            
-            // 2. OCR 결과에서 텍스트 추출
             List<String> extractedTexts = parseOcrResult(ocrResult);
-            log.info("추출된 텍스트들: {}", extractedTexts);
             response.setAllExtractedTexts(extractedTexts);
             
-            // 3. 주소 정보 추출
             String extractedAddress = extractAddressFromTexts(extractedTexts);
-            log.info("추출된 주소: {}", extractedAddress);
             response.setExtractedAddress(extractedAddress);
             
-            // 4. 주소 구성 요소 파싱
             OcrResponseDto.AddressComponents components = parseAddressComponents(extractedAddress);
             response.setAddressComponents(components);
             
-            // 5. GPS 주소와 비교 (70% 이상 일치 기준)
             if (requestDto.getGpsAddress() != null && !requestDto.getGpsAddress().isEmpty()) {
                 double matchScore = calculateAddressMatchScore(extractedAddress, requestDto.getGpsAddress());
                 response.setMatchScore(matchScore);
-                response.setAddressMatched(matchScore >= 0.7); // 70% 이상 일치 시 성공
-                
-                log.info("주소 매칭 결과 - 일치도: {:.2f}%, 매칭 성공: {}", matchScore * 100, matchScore >= 0.7);
+                response.setAddressMatched(matchScore >= 0.7);
             }
             
             response.setSuccess(true);
-            log.info("OCR 처리 성공: {}", extractedAddress);
-            
         } catch (Exception e) {
             log.error("OCR 처리 실패", e);
             response.setSuccess(false);
@@ -92,24 +75,20 @@ public class OcrServiceImpl implements OcrService {
      */
     private String callClovaOcrApi(String imageData, String imageFormat) {
         try {
-            // 타임아웃 설정이 있는 RestTemplate 생성
             RestTemplate restTemplate = createRestTemplateWithTimeout();
             
-            // HTTP 헤더 설정
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON);
             headers.set("X-OCR-SECRET", clovaOcrSecretKey);
 
-            // 요청 바디 생성
             Map<String, Object> requestBody = new HashMap<>();
             requestBody.put("version", "V2");
             requestBody.put("requestId", UUID.randomUUID().toString());
             requestBody.put("timestamp", System.currentTimeMillis());
             
-            // 이미지 정보
             Map<String, Object> image = new HashMap<>();
             image.put("format", imageFormat.toLowerCase());
-            image.put("data", imageData.replaceFirst("^data:image/[^;]*;base64,", "")); // Base64 prefix 제거
+            image.put("data", imageData.replaceFirst("^data:image/[^;]*;base64,", ""));
             image.put("name", "id_card");
             
             List<Map<String, Object>> images = new ArrayList<>();
@@ -117,30 +96,22 @@ public class OcrServiceImpl implements OcrService {
             requestBody.put("images", images);
 
             HttpEntity<Map<String, Object>> entity = new HttpEntity<>(requestBody, headers);
-
-            log.info("Clova OCR API 호출 시작: {}", clovaOcrApiUrl);
             
-            // 재시도 로직 추가
             int maxRetries = 3;
             for (int attempt = 1; attempt <= maxRetries; attempt++) {
                 try {
-                    // API 호출
                     ResponseEntity<String> response = restTemplate.postForEntity(clovaOcrApiUrl, entity, String.class);
                     
                     if (response.getStatusCode() == HttpStatus.OK) {
-                        log.info("Clova OCR API 호출 성공 (시도 {}회)", attempt);
                         return response.getBody();
                     } else {
                         throw new RuntimeException("Clova OCR API 호출 실패: " + response.getStatusCode());
                     }
                 } catch (Exception e) {
-                    log.warn("Clova OCR API 호출 실패 (시도 {}/{}): {}", attempt, maxRetries, e.getMessage());
-                    
                     if (attempt == maxRetries) {
-                        throw e; // 마지막 시도에서 실패하면 예외 던지기
+                        throw e;
                     }
                     
-                    // 재시도 전 대기 (1초씩 증가)
                     try {
                         Thread.sleep(attempt * 1000);
                     } catch (InterruptedException ie) {
@@ -151,9 +122,8 @@ public class OcrServiceImpl implements OcrService {
             }
             
             throw new RuntimeException("모든 재시도 실패");
-            
         } catch (Exception e) {
-            log.error("Clova OCR API 호출 중 오류 발생", e);
+            log.error("Clova OCR API 호출 실패", e);
             throw new RuntimeException("OCR API 호출 실패", e);
         }
     }
@@ -166,25 +136,15 @@ public class OcrServiceImpl implements OcrService {
                                             Double longitude, boolean addressMatched, 
                                             double matchScore) {
         try {
-            log.info("사용자 인증 정보 업데이트 시작 - 사용자 ID: {}", userId);
-            
-            // 사용자 조회
             UserEntity user = userMapper.findById(userId);
             if (user == null) {
-                log.warn("사용자를 찾을 수 없음 - ID: {}", userId);
                 return;
             }
             
-            // 인증 정보 업데이트 (단순화된 로직)
             user.updateAddressVerification(extractedAddress, addressMatched);
-            
-            // DB 업데이트
             userMapper.updateNeighborhoodVerification(user);
-            
-
         } catch (Exception e) {
             log.error("사용자 인증 정보 업데이트 실패", e);
-            // 인증 정보 업데이트 실패해도 OCR 결과는 반환
         }
     }
 
@@ -239,7 +199,6 @@ public class OcrServiceImpl implements OcrService {
      * 텍스트에서 주소 정보 추출
      */
     private String extractAddressFromTexts(List<String> texts) {
-        // 주소 패턴 정규식들
         List<Pattern> addressPatterns = Arrays.asList(
             Pattern.compile(".*[시도]\\s+.*[시군구]\\s+.*[동면읍].*"),
             Pattern.compile(".*특별시.*구.*동.*"),
@@ -257,8 +216,6 @@ public class OcrServiceImpl implements OcrService {
             }
         }
         
-        // 패턴 매칭 실패 시, 모든 텍스트를 합쳐서 반환
-        log.warn("주소 패턴 매칭 실패. 모든 텍스트: {}", texts);
         return String.join(" ", texts);
     }
 
@@ -278,8 +235,6 @@ public class OcrServiceImpl implements OcrService {
         
         // 불필요한 텍스트 제거 및 주소 부분만 추출
         String cleanAddress = extractAddressPart(address, isDriverLicense, isIdCard);
-        
-        log.info("정제된 주소: {}", cleanAddress);
         
         // 시/도 추출
         Pattern sidoPattern = Pattern.compile("([가-힣]+[시도]|[가-힣]+특별시|[가-힣]+광역시)");
@@ -357,33 +312,19 @@ public class OcrServiceImpl implements OcrService {
             return 0.0;
         }
         
-        log.info("주소 비교 시작 - OCR: {}, GPS: {}", ocrAddress, gpsAddress);
-        
         try {
-            // OCR 주소에서 주요 구성 요소 추출
             AddressComponents ocrComponents = extractAddressComponents(ocrAddress);
             AddressComponents gpsComponents = extractAddressComponents(gpsAddress);
             
-            log.info("OCR 주소 구성요소 - 시도: {}, 시군구: {}, 읍면동: {}", 
-                    ocrComponents.getSiDo(), ocrComponents.getSiGunGu(), ocrComponents.getEupMyeonDong());
-            log.info("GPS 주소 구성요소 - 시도: {}, 시군구: {}, 읍면동: {}", 
-                    gpsComponents.getSiDo(), gpsComponents.getSiGunGu(), gpsComponents.getEupMyeonDong());
-            
-            // 각 구성 요소별 일치도 계산
             double sidoMatch = compareAddressPart(ocrComponents.getSiDo(), gpsComponents.getSiDo());
             double sigunguMatch = compareAddressPart(ocrComponents.getSiGunGu(), gpsComponents.getSiGunGu());
             double eupMyeonDongMatch = compareAddressPart(ocrComponents.getEupMyeonDong(), gpsComponents.getEupMyeonDong());
             
-            // 가중 평균 계산 (시도: 30%, 시군구: 40%, 읍면동: 30%)
             double totalScore = (sidoMatch * 0.3) + (sigunguMatch * 0.4) + (eupMyeonDongMatch * 0.3);
             
-            log.info("주소 일치도 계산 결과 - 시도: {:.2f}, 시군구: {:.2f}, 읍면동: {:.2f}, 총점: {:.2f}", 
-                    sidoMatch, sigunguMatch, eupMyeonDongMatch, totalScore);
-            
             return totalScore;
-            
         } catch (Exception e) {
-            log.warn("주소 비교 중 오류 발생: {}", e.getMessage());
+            log.warn("주소 비교 중 오류 발생", e);
             return 0.0;
         }
     }
