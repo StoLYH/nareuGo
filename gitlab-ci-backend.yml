@@ -4,7 +4,7 @@ stages:
 
 variables:
   JAR_NAME: live_server.jar
-  DOCKER_IMAGE: $DOCKERHUB_USERNAME/a501 # 도커허브에 저장되는 이름
+  DOCKER_IMAGE: $DOCKERHUB_USERNAME/a501 
 
 # ========================
 # Build 단계 (CI)
@@ -13,7 +13,7 @@ build:
   stage: build
   image: gradle:7-jdk21
   tags:
-    - ec2-runner-backend # ✅ 러너 태그 추가
+    - ec2-runner-backend 
   script:
     - cd "NareuGO_Backend"
     - chmod +x ./gradlew
@@ -30,7 +30,7 @@ build:
 deploy:
   stage: deploy
   tags:
-    - ec2-runner-backend   # ✅ 러너 태그 추가
+    - ec2-runner-backend  
   before_script:
     - sudo apt-get update -y && sudo apt-get install -y openssh-client curl
     - mkdir -p ~/.ssh
@@ -84,13 +84,13 @@ deploy:
       until curl -s http://$LIVE_SERVER_IP:$STOPPED_PORT/api/env > /dev/null; do
         RETRY_COUNT=$((RETRY_COUNT+1))
         if [ $RETRY_COUNT -ge $MAX_RETRY ]; then
-          echo "❌ 새 컨테이너 헬스체크 실패 (최대 대기 ${MAX_RETRY}회)"
+          echo "새 컨테이너 헬스체크 실패 (최대 대기 ${MAX_RETRY}회)"
           exit 1
         fi
         echo "⏳ 컨테이너 기동 대기중... (${RETRY_COUNT}/${MAX_RETRY})"
         sleep 10
       done
-      echo "✅ 새 컨테이너 헬스체크 성공"
+      echo "새 컨테이너 헬스체크 성공"
 
       echo "====== [5] Nginx 라우팅 갱신 ======"
       ssh -o StrictHostKeyChecking=no ubuntu@$LIVE_SERVER_IP "
